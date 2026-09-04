@@ -292,6 +292,7 @@ main#app {
 
 .btn-next {
   margin-top: 20px;
+  margin-bottom: 12px;
   width: 100%;
   padding: 14px;
   border-radius: 10px;
@@ -303,6 +304,7 @@ main#app {
   font-size: 1rem;
   letter-spacing: 0.02em;
   cursor: pointer;
+  scroll-margin-block: 16px;
 }
 .btn-next:hover { filter: brightness(1.06); }
 
@@ -350,3 +352,176 @@ main#app {
   border-color: #2c313a;
 }
 .btn-secondary:hover { border-color: var(--line-yellow); }
+
+/* --- Grille de révision (fin de QCM) --- */
+.review-title {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin: 40px 0 4px;
+}
+
+.review-hint {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin: 0 0 16px;
+}
+
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 10px;
+}
+
+.review-item {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: 1px solid #2c313a;
+  border-radius: 10px;
+  background: var(--panel);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.review-item:hover,
+.review-item:focus-visible {
+  border-color: var(--line-yellow);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.review-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 10px;
+}
+
+.review-item-number {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.review-item-badge {
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 2px solid var(--bg);
+}
+
+.review-item--correct .review-item-badge {
+  background: var(--sign-green);
+  color: #06210f;
+}
+
+.review-item--wrong .review-item-badge {
+  background: var(--sign-red);
+  color: #2a0710;
+}
+
+/* --- Modale de révision --- */
+.review-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.review-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 9, 11, 0.72);
+}
+
+.review-modal-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 360px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--panel);
+  border: 1px solid #2c313a;
+  border-radius: var(--radius);
+  padding: 24px;
+  animation: fade-in 0.15s ease;
+}
+
+.review-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #2c313a;
+  background: var(--panel-alt);
+  color: var(--text);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.review-modal-close:hover { border-color: var(--line-yellow); }
+
+.review-modal-sign {
+  width: 160px;
+  height: 160px;
+  margin: 0 auto 18px;
+  background: var(--panel-alt);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.review-modal-sign img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.review-modal-status {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin: 0 0 14px;
+}
+
+.review-modal-answer {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.review-modal-answer-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.review-modal-answer span:last-child { color: var(--sign-green); }
+.review-modal-answer--wrong span:last-child { color: var(--sign-red); }

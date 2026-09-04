@@ -23,7 +23,7 @@
         <rect x="44" y="70" width="12" height="10" fill="currentColor"/>
       </svg>
     </span>
-    <span class="brand-name">Que signifie ces panneaux ?</span>
+    <span class="brand-name">Panneaux</span>
   </div>
   <div class="best-streak" id="bestStreakBadge" hidden>
     Record mode infini : <strong id="bestStreakValue">0</strong>
@@ -88,6 +88,10 @@
       <button class="btn-primary" id="btnRetryQcm">Refaire un QCM</button>
       <button class="btn-secondary" id="btnHomeFromQcm">Retour à l'accueil</button>
     </div>
+
+    <h2 class="review-title">Revoir mes réponses</h2>
+    <p class="review-hint">Clique sur un panneau pour voir la bonne réponse.</p>
+    <div class="review-grid" id="reviewGrid"></div>
   </section>
 
   <!-- ÉCRAN FIN INFINI -->
@@ -102,6 +106,28 @@
   </section>
 
 </main>
+
+<!-- MODALE DE RÉVISION D'UNE QUESTION -->
+<div class="review-modal" id="reviewModal" hidden>
+  <div class="review-modal-backdrop" id="reviewModalBackdrop"></div>
+  <div class="review-modal-card" role="dialog" aria-modal="true" aria-labelledby="reviewModalStatus">
+    <button class="review-modal-close" id="reviewModalClose" aria-label="Fermer">&times;</button>
+    <div class="review-modal-sign">
+      <img id="reviewModalImage" alt="Panneau à revoir">
+    </div>
+    <div class="review-modal-body">
+      <p class="review-modal-status" id="reviewModalStatus"></p>
+      <p class="review-modal-answer">
+        <span class="review-modal-answer-label">Bonne réponse</span>
+        <span id="reviewModalCorrect"></span>
+      </p>
+      <p class="review-modal-answer review-modal-answer--wrong" id="reviewModalWrongWrap" hidden>
+        <span class="review-modal-answer-label">Ta réponse</span>
+        <span id="reviewModalWrong"></span>
+      </p>
+    </div>
+  </div>
+</div>
 
 <script src="signs.js"></script>
 <script src="script.js"></script>
