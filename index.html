@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panneaux — Révise le code de la route</title>
+<meta name="description" content="Quiz gratuit pour réviser les panneaux de signalisation du code de la route : mode 20 questions ou mode infini.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="road-line" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 100 100" width="28" height="28">
+        <polygon points="50,6 94,90 6,90" fill="none" stroke="currentColor" stroke-width="9" stroke-linejoin="round"/>
+        <rect x="44" y="34" width="12" height="30" fill="currentColor"/>
+        <rect x="44" y="70" width="12" height="10" fill="currentColor"/>
+      </svg>
+    </span>
+    <span class="brand-name">Panneaux</span>
+  </div>
+  <div class="best-streak" id="bestStreakBadge" hidden>
+    Record mode infini : <strong id="bestStreakValue">0</strong>
+  </div>
+</header>
+
+<main id="app">
+
+  <!-- ÉCRAN ACCUEIL -->
+  <section class="screen" id="screen-home">
+    <h1 class="hero-title">Connais-tu vraiment tes panneaux ?</h1>
+    <p class="hero-sub">Révise la signalisation du code de la route : danger, priorité, interdiction, obligation, indication et services. Choisis ton format.</p>
+
+    <div class="mode-grid">
+      <button class="mode-card" id="btnStartQcm">
+        <span class="mode-card-icon" aria-hidden="true">20</span>
+        <span class="mode-card-title">QCM — 20 questions</span>
+        <span class="mode-card-desc">Un score final, comme un examen blanc.</span>
+      </button>
+      <button class="mode-card" id="btnStartInfinite">
+        <span class="mode-card-icon" aria-hidden="true">∞</span>
+        <span class="mode-card-title">Mode infini</span>
+        <span class="mode-card-desc">Enchaîne les panneaux jusqu'à ta première erreur.</span>
+      </button>
+    </div>
+
+    <p class="source-note">Illustrations des panneaux : Wikimedia Commons.</p>
+  </section>
+
+  <!-- ÉCRAN QUIZ -->
+  <section class="screen" id="screen-quiz" hidden>
+    <div class="quiz-head">
+      <div class="quiz-progress-track" id="progressTrack" aria-hidden="true">
+        <div class="quiz-progress-fill" id="progressFill"></div>
+      </div>
+      <div class="quiz-meta">
+        <span id="questionCounter">Question 1</span>
+        <span id="scoreCounter">Score : 0</span>
+      </div>
+    </div>
+
+    <h2 class="question-title">Que signifie ce panneau ?</h2>
+
+    <div class="sign-stage">
+      <div class="sign-frame" id="signFrame">
+        <div class="sign-loading" id="signLoading">chargement…</div>
+        <img id="signImage" alt="" hidden>
+      </div>
+    </div>
+
+    <div class="options" id="optionsList"></div>
+
+    <button class="btn-next" id="btnNext" hidden>Suivant</button>
+  </section>
+
+  <!-- ÉCRAN FIN QCM -->
+  <section class="screen" id="screen-end-qcm" hidden>
+    <h1 class="hero-title" id="qcmEndTitle">Résultat</h1>
+    <p class="end-score" id="qcmEndScore">0 / 20</p>
+    <p class="end-comment" id="qcmEndComment"></p>
+    <div class="end-actions">
+      <button class="btn-primary" id="btnRetryQcm">Refaire un QCM</button>
+      <button class="btn-secondary" id="btnHomeFromQcm">Retour à l'accueil</button>
+    </div>
+  </section>
+
+  <!-- ÉCRAN FIN INFINI -->
+  <section class="screen" id="screen-end-infinite" hidden>
+    <h1 class="hero-title">Série terminée</h1>
+    <p class="end-score" id="infiniteEndScore">0 panneau</p>
+    <p class="end-comment" id="infiniteEndComment"></p>
+    <div class="end-actions">
+      <button class="btn-primary" id="btnRetryInfinite">Retenter</button>
+      <button class="btn-secondary" id="btnHomeFromInfinite">Retour à l'accueil</button>
+    </div>
+  </section>
+
+</main>
+
+<script src="signs.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
