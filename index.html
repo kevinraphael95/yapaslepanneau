@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panneaux — Révise le code de la route</title>
-<meta name="description" content="Quiz gratuit pour réviser les panneaux de signalisation du code de la route : mode 20 questions ou mode infini.">
+<meta name="description" content="Quiz gratuit pour réviser les panneaux de signalisation du code de la route : mode 20 questions, mode infini ou mode infini inversé.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -26,7 +26,9 @@
     <span class="brand-name">Que signifie ces panneaux ?</span>
   </div>
   <div class="best-streak" id="bestStreakBadge" hidden>
-    Record mode infini : <strong id="bestStreakValue">0</strong>
+    <span>Record infini — Signification : <strong id="bestStreakMeaning">0</strong></span>
+    <span class="best-streak-sep">·</span>
+    <span>Panneau : <strong id="bestStreakSign">0</strong></span>
   </div>
 </header>
 
@@ -43,10 +45,15 @@
         <span class="mode-card-title">QCM — 20 questions</span>
         <span class="mode-card-desc">Un score final, comme un examen blanc.</span>
       </button>
-      <button class="mode-card" id="btnStartInfinite">
+      <button class="mode-card" id="btnStartInfiniteMeaning">
         <span class="mode-card-icon" aria-hidden="true">∞</span>
-        <span class="mode-card-title">Mode infini</span>
-        <span class="mode-card-desc">Enchaîne les panneaux jusqu'à ta première erreur.</span>
+        <span class="mode-card-title">Infini — Trouve la signification</span>
+        <span class="mode-card-desc">Le panneau s'affiche, devine ce qu'il veut dire.</span>
+      </button>
+      <button class="mode-card" id="btnStartInfiniteSign">
+        <span class="mode-card-icon" aria-hidden="true">∞</span>
+        <span class="mode-card-title">Infini — Trouve le panneau</span>
+        <span class="mode-card-desc">La signification s'affiche, repère le bon panneau parmi 4.</span>
       </button>
     </div>
 
@@ -65,12 +72,15 @@
       </div>
     </div>
 
-    <h2 class="question-title">Que signifie ce panneau ?</h2>
+    <h2 class="question-title" id="questionTitle">Que signifie ce panneau ?</h2>
 
     <div class="sign-stage">
       <div class="sign-frame" id="signFrame">
         <div class="sign-loading" id="signLoading">chargement…</div>
         <img id="signImage" alt="" hidden>
+      </div>
+      <div class="meaning-card" id="meaningCard" hidden>
+        <p id="meaningText"></p>
       </div>
     </div>
 

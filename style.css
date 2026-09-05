@@ -55,6 +55,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
   padding: clamp(10px, 2vh, 18px) clamp(16px, 5vw, 40px) clamp(4px, 1vh, 6px);
 }
 
@@ -78,8 +80,12 @@ body {
 .best-streak {
   font-size: 0.85rem;
   color: var(--text-muted);
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 .best-streak strong { color: var(--line-yellow); }
+.best-streak-sep { color: #454b56; }
 
 main#app {
   max-width: 640px;
@@ -108,11 +114,11 @@ main#app {
 
 .mode-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 14px;
 }
 
-@media (max-width: 520px) {
+@media (max-width: 640px) {
   .mode-grid { grid-template-columns: 1fr; }
 }
 
@@ -226,10 +232,48 @@ main#app {
   text-align: center;
 }
 
+/* Carte affichée en mode "Infini — Trouve le panneau" : montre le texte
+   de la signification à la place de l'image du panneau. */
+.meaning-card {
+  width: 100%;
+  min-height: clamp(110px, 20vh, 160px);
+  background: var(--panel);
+  border: 1px solid #2c313a;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(18px, 3vh, 28px);
+  text-align: center;
+}
+
+.meaning-card p {
+  margin: 0;
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: clamp(1.05rem, 2.6vh, 1.35rem);
+  line-height: 1.3;
+}
+
 .options {
   display: flex;
   flex-direction: column;
   gap: clamp(6px, 1.4vh, 10px);
+}
+
+/* Variante grille d'images pour le mode inversé */
+.options.options--images {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(8px, 1.6vh, 12px);
+}
+
+.options-loading {
+  grid-column: 1 / -1;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 20px 0;
 }
 
 .option-btn {
@@ -290,6 +334,48 @@ main#app {
 }
 
 .option-btn.is-muted { opacity: 0.55; }
+
+/* Boutons-image du mode inversé */
+.option-btn--image {
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px;
+  aspect-ratio: 1 / 1;
+}
+
+.option-btn--image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: var(--panel-alt);
+  border-radius: 6px;
+}
+
+.option-image-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 2px solid var(--bg);
+}
+
+.option-btn--image.is-correct .option-image-badge {
+  background: var(--sign-green);
+  color: #06210f;
+}
+
+.option-btn--image.is-wrong .option-image-badge {
+  background: var(--sign-red);
+  color: #2a0710;
+}
 
 .btn-next {
   margin-top: clamp(10px, 2vh, 20px);
