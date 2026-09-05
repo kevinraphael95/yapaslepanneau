@@ -55,6 +55,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
   padding: clamp(10px, 2vh, 18px) clamp(16px, 5vw, 40px) clamp(4px, 1vh, 6px);
 }
 
@@ -76,7 +78,10 @@ body {
 }
 
 .best-streak {
-  font-size: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-size: 0.8rem;
   color: var(--text-muted);
 }
 .best-streak strong { color: var(--line-yellow); }
@@ -108,11 +113,11 @@ main#app {
 
 .mode-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 14px;
 }
 
-@media (max-width: 520px) {
+@media (max-width: 480px) {
   .mode-grid { grid-template-columns: 1fr; }
 }
 
@@ -141,7 +146,7 @@ main#app {
 
 .mode-card-icon {
   font-family: var(--font-head);
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   color: var(--line-yellow);
 }
 
@@ -226,6 +231,30 @@ main#app {
   text-align: center;
 }
 
+/* Carte affichée en mode "Trouve le panneau" : montre le texte de la
+   signification à la place de l'image du panneau. */
+.meaning-card {
+  width: 100%;
+  min-height: clamp(110px, 20vh, 160px);
+  background: var(--panel);
+  border: 1px solid #2c313a;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(18px, 3vh, 28px);
+  text-align: center;
+}
+
+.meaning-card p {
+  margin: 0;
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: clamp(1.05rem, 2.6vh, 1.35rem);
+  line-height: 1.3;
+}
+
+/* --- Options à choix multiples (QCM + Mode infini classique) --- */
 .options {
   display: flex;
   flex-direction: column;
@@ -290,6 +319,111 @@ main#app {
 }
 
 .option-btn.is-muted { opacity: 0.55; }
+
+/* --- Recherche libre (modes "sans proposition") --- */
+.search-quiz { display: flex; flex-direction: column; gap: 10px; }
+
+.search-input {
+  width: 100%;
+  padding: clamp(10px, 2vh, 14px) 16px;
+  border-radius: 10px;
+  border: 1px solid #2c313a;
+  background: var(--panel-alt);
+  color: var(--text);
+  font-family: inherit;
+  font-size: clamp(0.9rem, 2vh, 1rem);
+}
+.search-input:focus {
+  outline: none;
+  border-color: var(--line-yellow);
+}
+.search-input:disabled { opacity: 0.6; }
+
+.search-hint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.search-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Variante image, en grille, pour le mode "Trouve le panneau" */
+.search-suggestions.search-suggestions--images {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 480px) {
+  .search-suggestions.search-suggestions--images { grid-template-columns: repeat(3, 1fr); }
+}
+
+.search-loading {
+  grid-column: 1 / -1;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin: 4px 0;
+}
+
+.option-btn--image {
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8px;
+  aspect-ratio: 1 / 1;
+}
+
+.option-btn--image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: var(--panel);
+  border-radius: 6px;
+}
+
+.btn-giveup {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.btn-giveup:hover { color: var(--line-yellow); }
+.btn-giveup:disabled { opacity: 0.4; cursor: default; text-decoration: none; }
+
+.reveal-answer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid #2c313a;
+  background: var(--panel);
+}
+
+.reveal-answer.is-correct { border-color: var(--sign-green); }
+.reveal-answer.is-wrong { border-color: var(--sign-red); }
+
+.reveal-answer img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  background: var(--panel-alt);
+  border-radius: 8px;
+  flex: none;
+}
+
+.reveal-answer-text {
+  font-size: 0.92rem;
+}
+.reveal-answer-text strong { display: block; font-family: var(--font-head); font-size: 1rem; }
 
 .btn-next {
   margin-top: clamp(10px, 2vh, 20px);
