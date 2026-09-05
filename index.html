@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panneaux — Révise le code de la route</title>
-<meta name="description" content="Quiz gratuit pour réviser les panneaux de signalisation du code de la route : mode 20 questions ou mode infini.">
+<meta name="description" content="Quiz gratuit pour réviser les panneaux de signalisation du code de la route : QCM, mode infini et modes infinis en recherche libre.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -26,7 +26,9 @@
     <span class="brand-name">Révise les panneaux</span>
   </div>
   <div class="best-streak" id="bestStreakBadge" hidden>
-    Record mode infini : <strong id="bestStreakValue">0</strong>
+    <span id="bestStreakClassicWrap" hidden>Infini : <strong id="bestStreakClassic">0</strong></span>
+    <span id="bestStreakMeaningWrap" hidden>Trouve la signif. : <strong id="bestStreakMeaning">0</strong></span>
+    <span id="bestStreakSignWrap" hidden>Trouve le panneau : <strong id="bestStreakSign">0</strong></span>
   </div>
 </header>
 
@@ -48,6 +50,16 @@
         <span class="mode-card-title">Mode infini</span>
         <span class="mode-card-desc">Enchaîne les panneaux jusqu'à ta première erreur.</span>
       </button>
+      <button class="mode-card" id="btnStartSearchMeaning">
+        <span class="mode-card-icon" aria-hidden="true">🔎</span>
+        <span class="mode-card-title">Infini — Trouve la signification</span>
+        <span class="mode-card-desc">Sans proposition : le panneau s'affiche, tape sa signification.</span>
+      </button>
+      <button class="mode-card" id="btnStartSearchSign">
+        <span class="mode-card-icon" aria-hidden="true">🔎</span>
+        <span class="mode-card-title">Infini — Trouve le panneau</span>
+        <span class="mode-card-desc">Sans proposition : la signification s'affiche, retrouve le panneau parmi tous les panneaux.</span>
+      </button>
     </div>
 
     <p class="source-note">Illustrations des panneaux : Wikimedia Commons.</p>
@@ -65,16 +77,38 @@
       </div>
     </div>
 
-    <h2 class="question-title">Que signifie ce panneau ?</h2>
+    <h2 class="question-title" id="questionTitle">Que signifie ce panneau ?</h2>
 
     <div class="sign-stage">
       <div class="sign-frame" id="signFrame">
         <div class="sign-loading" id="signLoading">chargement…</div>
         <img id="signImage" alt="" hidden>
       </div>
+      <div class="meaning-card" id="meaningCard" hidden>
+        <p id="meaningText"></p>
+      </div>
     </div>
 
+    <!-- Réponses à choix multiples (QCM + Mode infini classique) -->
     <div class="options" id="optionsList"></div>
+
+    <!-- Recherche libre avec suggestions (les 2 modes "sans proposition") -->
+    <div class="search-quiz" id="searchQuiz" hidden>
+      <input
+        type="text"
+        class="search-input"
+        id="searchInput"
+        placeholder="Tape au moins 2 lettres…"
+        autocomplete="off"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
+      >
+      <p class="search-hint" id="searchHint">Tape au moins 2 lettres pour voir des suggestions.</p>
+      <div class="search-suggestions" id="searchSuggestions"></div>
+      <button class="btn-giveup" id="btnGiveUp" type="button">Je ne trouve pas, montre-moi la réponse</button>
+      <div class="reveal-answer" id="revealAnswer" hidden></div>
+    </div>
 
     <button class="btn-next" id="btnNext" hidden>Suivant</button>
   </section>
