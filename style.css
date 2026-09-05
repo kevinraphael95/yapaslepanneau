@@ -55,7 +55,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px clamp(16px, 5vw, 40px) 6px;
+  padding: clamp(10px, 2vh, 18px) clamp(16px, 5vw, 40px) clamp(4px, 1vh, 6px);
 }
 
 .brand {
@@ -84,7 +84,7 @@ body {
 main#app {
   max-width: 640px;
   margin: 0 auto;
-  padding: clamp(20px, 5vw, 40px) 20px 60px;
+  padding: clamp(10px, 2vh, 40px) 20px clamp(24px, 4vh, 60px);
 }
 
 .screen { animation: fade-in 0.25s ease; }
@@ -163,14 +163,14 @@ main#app {
 }
 
 /* --- Quiz --- */
-.quiz-head { margin-bottom: 18px; }
+.quiz-head { margin-bottom: clamp(8px, 2vh, 18px); }
 
 .quiz-progress-track {
   height: 8px;
   border-radius: 4px;
   background: var(--panel-alt);
   overflow: hidden;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .quiz-progress-fill {
@@ -192,26 +192,26 @@ main#app {
 .question-title {
   font-family: var(--font-head);
   font-weight: 600;
-  font-size: 1.4rem;
-  margin: 6px 0 20px;
+  font-size: clamp(1.15rem, 3vh, 1.4rem);
+  margin: clamp(2px, 1vh, 6px) 0 clamp(10px, 2vh, 20px);
 }
 
 .sign-stage {
   display: flex;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: clamp(12px, 3vh, 24px);
 }
 
 .sign-frame {
-  width: 200px;
-  height: 200px;
+  width: clamp(120px, 22vh, 200px);
+  height: clamp(120px, 22vh, 200px);
   background: var(--panel);
   border: 1px solid #2c313a;
   border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: clamp(12px, 3vh, 20px);
 }
 
 .sign-frame img {
@@ -223,12 +223,13 @@ main#app {
 .sign-loading {
   color: var(--text-muted);
   font-size: 0.85rem;
+  text-align: center;
 }
 
 .options {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: clamp(6px, 1.4vh, 10px);
 }
 
 .option-btn {
@@ -237,13 +238,13 @@ main#app {
   gap: 14px;
   width: 100%;
   text-align: left;
-  padding: 14px 18px;
+  padding: clamp(10px, 2vh, 14px) 18px;
   background: var(--panel);
   border: 1px solid #2c313a;
   border-radius: 10px;
   color: var(--text);
   font-family: inherit;
-  font-size: 0.98rem;
+  font-size: clamp(0.9rem, 2vh, 0.98rem);
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
@@ -291,9 +292,10 @@ main#app {
 .option-btn.is-muted { opacity: 0.55; }
 
 .btn-next {
-  margin-top: 20px;
+  margin-top: clamp(10px, 2vh, 20px);
+  margin-bottom: 8px;
   width: 100%;
-  padding: 14px;
+  padding: clamp(10px, 2vh, 14px);
   border-radius: 10px;
   border: none;
   background: var(--line-yellow);
@@ -303,6 +305,7 @@ main#app {
   font-size: 1rem;
   letter-spacing: 0.02em;
   cursor: pointer;
+  scroll-margin-block: 16px;
 }
 .btn-next:hover { filter: brightness(1.06); }
 

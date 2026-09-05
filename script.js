@@ -11,6 +11,7 @@ const screens = {
 function showScreen(name) {
   Object.values(screens).forEach((el) => (el.hidden = true));
   screens[name].hidden = false;
+  window.scrollTo(0, 0);
 }
 
 /* ---------- Récupération des images (Wikimedia Commons API) ---------- */
@@ -70,7 +71,19 @@ const state = {
 };
 
 function getBestStreak() {
-  return Number(localStorage.getItem(BEST_STREAK_KEY) || 0);
+  try {
+    return Number(localStorage.getItem(BEST_STREAK_KEY) || 0);
+  } catch (err) {
+    return 0;
+  }
+}
+
+function setBestStreak(value) {
+  try {
+    localStorage.setItem(BEST_STREAK_KEY, String(value));
+  } catch (err) {
+    /* stockage indisponible (navigation privée…) : on ignore silencieusement */
+  }
 }
 
 function updateBestStreakBadge() {
@@ -120,7 +133,18 @@ async function nextQuestion() {
   // Pioche un panneau dont l'image charge correctement ; sinon on en essaie un autre.
   let sign = null;
   let imageUrl = null;
+  let attempts = 0;
+  const maxAttempts = SIGNS.length * 2; // garde-fou anti-boucle infinie (ex : API indisponible)
+
   while (sign === null) {
+    attempts += 1;
+    if (attempts > maxAttempts) {
+      el.signLoading.hidden = false;
+      el.signLoading.textContent =
+        "Impossible de charger les images des panneaux pour le moment. Vérifie ta connexion et réessaie.";
+      el.signImage.hidden = true;
+      return;
+    }
     if (state.queue.length === 0) {
       state.queue = shuffle(SIGNS);
     }
@@ -150,6 +174,7 @@ function renderQuestion(sign, imageUrl) {
   }
 
   // Image
+  el.signLoading.textContent = "chargement…";
   el.signImage.hidden = true;
   el.signLoading.hidden = false;
   el.signImage.src = imageUrl;
@@ -203,13 +228,24 @@ function handleAnswer(button, chosen, allOptions) {
     } else {
       el.scoreCounter.textContent = `Série : ${state.streak}`;
     }
+    revealNextButton();
   } else if (state.mode === "qcm") {
     el.btnNext.textContent = "Suivant";
     el.btnNext.hidden = false;
+    revealNextButton();
   } else {
     // mode infini : une erreur termine la partie
     setTimeout(endInfinite, 900);
   }
+}
+
+// Filet de sécurité : même avec un layout resserré, une fenêtre très basse,
+// un zoom élevé ou une barre d'outils/webcam qui déborde peuvent encore
+// masquer le bouton. On le fait défiler dans la vue dès qu'il s'affiche.
+function revealNextButton() {
+  requestAnimationFrame(() => {
+    el.btnNext.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+  });
 }
 
 el.btnNext.addEventListener("click", () => {
@@ -243,7 +279,7 @@ function endInfinite() {
   const best = getBestStreak();
   let comment;
   if (streak > best) {
-    localStorage.setItem(BEST_STREAK_KEY, String(streak));
+    setBestStreak(streak);
     comment = "Nouveau record personnel !";
   } else {
     comment = `Ton record reste à ${best}.`;
