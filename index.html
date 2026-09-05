@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panneaux — Révise le code de la route</title>
-<meta name="description" content="Quiz gratuit pour réviser les panneaux de signalisation du code de la route : QCM, mode infini et modes infinis en recherche libre.">
+<meta name="description" content="Quiz gratuit pour réviser les panneaux de signalisation du code de la route : QCM, mode infini, et modes infinis en recherche libre.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -26,9 +26,12 @@
     <span class="brand-name">Révise les panneaux</span>
   </div>
   <div class="best-streak" id="bestStreakBadge" hidden>
-    <span id="bestStreakClassicWrap" hidden>Infini : <strong id="bestStreakClassic">0</strong></span>
-    <span id="bestStreakMeaningWrap" hidden>Trouve la signif. : <strong id="bestStreakMeaning">0</strong></span>
-    <span id="bestStreakSignWrap" hidden>Trouve le panneau : <strong id="bestStreakSign">0</strong></span>
+    Record mode infini : <strong id="bestStreakValue">0</strong>
+  </div>
+  <!-- AJOUT : records des 2 nouveaux modes recherche libre, indépendant du badge ci-dessus -->
+  <div class="best-streak" id="bestStreakSearchBadge" hidden>
+    <span id="bestStreakSearchMeaningWrap" hidden>Trouve la signif. : <strong id="bestStreakSearchMeaning">0</strong></span>
+    <span id="bestStreakSearchSignWrap" hidden>Trouve le panneau : <strong id="bestStreakSearchSign">0</strong></span>
   </div>
 </header>
 
@@ -50,6 +53,7 @@
         <span class="mode-card-title">Mode infini</span>
         <span class="mode-card-desc">Enchaîne les panneaux jusqu'à ta première erreur.</span>
       </button>
+      <!-- AJOUT : 2 nouveaux modes, en recherche libre (sans proposition) -->
       <button class="mode-card" id="btnStartSearchMeaning">
         <span class="mode-card-icon" aria-hidden="true">🔎</span>
         <span class="mode-card-title">Infini — Trouve la signification</span>
@@ -77,22 +81,23 @@
       </div>
     </div>
 
-    <h2 class="question-title" id="questionTitle">Que signifie ce panneau ?</h2>
+    <h2 class="question-title">Que signifie ce panneau ?</h2>
 
     <div class="sign-stage">
       <div class="sign-frame" id="signFrame">
         <div class="sign-loading" id="signLoading">chargement…</div>
         <img id="signImage" alt="" hidden>
       </div>
+      <!-- AJOUT : affiche le texte de la signification à la place de l'image,
+           utilisé uniquement par le nouveau mode "Trouve le panneau" -->
       <div class="meaning-card" id="meaningCard" hidden>
         <p id="meaningText"></p>
       </div>
     </div>
 
-    <!-- Réponses à choix multiples (QCM + Mode infini classique) -->
     <div class="options" id="optionsList"></div>
 
-    <!-- Recherche libre avec suggestions (les 2 modes "sans proposition") -->
+    <!-- AJOUT : bloc de recherche libre utilisé uniquement par les 2 nouveaux modes -->
     <div class="search-quiz" id="searchQuiz" hidden>
       <input
         type="text"
@@ -108,6 +113,9 @@
       <div class="search-suggestions" id="searchSuggestions"></div>
       <button class="btn-giveup" id="btnGiveUp" type="button">Je ne trouve pas, montre-moi la réponse</button>
       <div class="reveal-answer" id="revealAnswer" hidden></div>
+      <!-- Bouton "suivant" séparé de #btnNext : évite d'avoir 2 écouteurs
+           sur le même bouton et tout risque de conflit avec le QCM / Mode infini -->
+      <button class="btn-next" id="btnNextSearch" type="button" hidden>Panneau suivant</button>
     </div>
 
     <button class="btn-next" id="btnNext" hidden>Suivant</button>
@@ -132,6 +140,19 @@
     <div class="end-actions">
       <button class="btn-primary" id="btnRetryInfinite">Retenter</button>
       <button class="btn-secondary" id="btnHomeFromInfinite">Retour à l'accueil</button>
+    </div>
+  </section>
+
+  <!-- AJOUT : écran de fin dédié aux 2 nouveaux modes recherche libre.
+       Volontairement séparé de "screen-end-infinite" pour ne jamais toucher
+       au bouton "Retenter" du mode infini classique. -->
+  <section class="screen" id="screen-end-search" hidden>
+    <h1 class="hero-title">Série terminée</h1>
+    <p class="end-score" id="searchEndScore">0 panneau</p>
+    <p class="end-comment" id="searchEndComment"></p>
+    <div class="end-actions">
+      <button class="btn-primary" id="btnRetrySearch">Retenter</button>
+      <button class="btn-secondary" id="btnHomeFromSearch">Retour à l'accueil</button>
     </div>
   </section>
 
