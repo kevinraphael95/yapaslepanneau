@@ -626,15 +626,15 @@ const elSignPreview = {
   img: document.getElementById("signPreviewImg"),
 };
 
-function positionSignPreview(cell) {
+function positionSignPreview() {
   if (!elSignPreview.wrap) return;
-  const cellRect = cell.getBoundingClientRect();
   const previewRect = elSignPreview.wrap.getBoundingClientRect();
   const margin = 16;
   const mainRect = document.getElementById("app").getBoundingClientRect();
 
-  // Priorité à la grande marge vide à droite (ou à gauche) de la colonne
-  // centrale du contenu : plus visible qu'un petit popup collé à la case.
+  // Position fixe, toujours la même, indépendante de la case survolée :
+  // dans la marge vide à droite de la colonne de contenu si possible,
+  // sinon à gauche, sinon centrée à l'écran (mobile, sans marge).
   const spaceRight = window.innerWidth - mainRect.right;
   const spaceLeft = mainRect.left;
 
@@ -644,37 +644,33 @@ function positionSignPreview(cell) {
   } else if (spaceLeft >= previewRect.width + margin * 2) {
     left = mainRect.left - previewRect.width - margin;
   } else {
-    // Écran trop étroit pour une marge exploitable (mobile, tablette) :
-    // on retombe à côté de la case, comme avant.
-    const spaceRightOfCell = window.innerWidth - cellRect.right;
-    if (spaceRightOfCell >= previewRect.width + margin) {
-      left = cellRect.right + margin;
-    } else {
-      left = cellRect.left - previewRect.width - margin;
-    }
+    left = window.innerWidth / 2 - previewRect.width / 2;
   }
   left = Math.max(margin, Math.min(left, window.innerWidth - previewRect.width - margin));
 
-  // Verticalement, on reste proche de la case survolée pour garder le
-  // lien visuel, sans jamais sortir du viewport.
-  let top = cellRect.top + cellRect.height / 2 - previewRect.height / 2;
-  top = Math.max(margin, Math.min(top, window.innerHeight - previewRect.height - margin));
+  const top = Math.max(margin, window.innerHeight / 2 - previewRect.height / 2);
 
   elSignPreview.wrap.style.left = `${left}px`;
   elSignPreview.wrap.style.top = `${top}px`;
 }
 
-function showSignPreview(cell, url) {
+function showSignPreview(url) {
   if (!url || !elSignPreview.wrap || !elSignPreview.img) return;
   elSignPreview.img.src = url;
   elSignPreview.wrap.hidden = false;
-  positionSignPreview(cell);
+  positionSignPreview();
 }
 
 function hideSignPreview() {
   if (!elSignPreview.wrap) return;
   elSignPreview.wrap.hidden = true;
 }
+
+// Si la fenêtre est redimensionnée pendant qu'un aperçu est affiché, on
+// recalcule sa position fixe (marge disponible qui change, etc.).
+window.addEventListener("resize", () => {
+  if (elSignPreview.wrap && !elSignPreview.wrap.hidden) positionSignPreview();
+});
 
 // Le popup doit disparaître dès qu'on scrolle la grille (sa position ne
 // suivrait plus la case survolée), et quand on quitte l'écran du mode.
@@ -711,9 +707,9 @@ async function buildSignGrid() {
       handleFindAnswer(cell, sign);
     });
     cell.addEventListener("contextmenu", (e) => e.preventDefault());
-    cell.addEventListener("mouseenter", () => showSignPreview(cell, url));
+    cell.addEventListener("mouseenter", () => showSignPreview(url));
     cell.addEventListener("mouseleave", hideSignPreview);
-    cell.addEventListener("focus", () => showSignPreview(cell, url));
+    cell.addEventListener("focus", () => showSignPreview(url));
     cell.addEventListener("blur", hideSignPreview);
     elFind.grid.appendChild(cell);
     findState.pool.push(sign);
