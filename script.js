@@ -598,10 +598,16 @@ function handleFindAnswer(cell, sign) {
   if (findState.locked) return;
   findState.locked = true;
 
-  const correctCode = findState.current.code;
+  const correctMeaning = findState.current.meaning;
+  const isCorrect = sign.meaning === correctMeaning;
+
   Array.from(elFind.grid.children).forEach((c) => {
     c.disabled = true;
-    if (c.dataset.code === correctCode) {
+    const cSign = findState.pool.find((s) => s.code === c.dataset.code);
+    if (cSign && cSign.meaning === correctMeaning) {
+      // Tout panneau qui partage la même signification (ex. vache/mouton
+      // pour "Passage d'animaux domestiques") compte comme bonne réponse,
+      // même si ce n'est pas exactement celui tiré au hasard.
       c.classList.add("is-correct");
     } else if (c === cell) {
       c.classList.add("is-wrong");
@@ -610,7 +616,7 @@ function handleFindAnswer(cell, sign) {
     }
   });
 
-  if (sign.code === correctCode) {
+  if (isCorrect) {
     findState.streak += 1;
     elFind.score.textContent = `Série : ${findState.streak}`;
     elFind.btnNext.hidden = false;
