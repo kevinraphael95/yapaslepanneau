@@ -145,6 +145,7 @@ const state = {
   qIndex: 0,
   total: 20,
   locked: false,
+  forceEnd: false,
 };
 
 function getBestStreak() {
@@ -201,6 +202,7 @@ function startGame(mode) {
 /* ---------- Question suivante ---------- */
 async function nextQuestion() {
   state.locked = false;
+  state.forceEnd = false;
   el.btnNext.hidden = true;
 
   if (state.mode === "qcm" && state.qIndex >= state.total) {
@@ -298,6 +300,7 @@ function handleAnswer(button, chosen, allOptions) {
   if (chosen.correct) {
     state.score += 1;
     state.streak += 1;
+    state.forceEnd = false;
     el.btnNext.textContent = state.mode === "qcm" ? "Suivant" : "Panneau suivant";
     el.btnNext.hidden = false;
     if (state.mode === "qcm") {
@@ -307,12 +310,17 @@ function handleAnswer(button, chosen, allOptions) {
     }
     revealNextButton();
   } else if (state.mode === "qcm") {
+    state.forceEnd = false;
     el.btnNext.textContent = "Suivant";
     el.btnNext.hidden = false;
     revealNextButton();
   } else {
-    // mode infini : une erreur termine la partie
-    setTimeout(endInfinite, 900);
+    // Mode infini : une erreur termine la partie, mais on laisse d'abord
+    // voir la bonne réponse en surbrillance avant de passer à l'écran de fin.
+    state.forceEnd = true;
+    el.btnNext.textContent = "Voir le résultat";
+    el.btnNext.hidden = false;
+    revealNextButton();
   }
 }
 
@@ -326,6 +334,10 @@ function revealNextButton() {
 }
 
 el.btnNext.addEventListener("click", () => {
+  if (state.forceEnd) {
+    endInfinite();
+    return;
+  }
   if (state.mode === "qcm" && state.qIndex >= state.total) {
     endQcm();
   } else {
@@ -392,6 +404,7 @@ const textState = {
   locked: false,
   queue: [],
   current: null,
+  forceEnd: false,
 };
 
 const elText = {
@@ -425,7 +438,9 @@ function startTextGame() {
 
 async function nextTextQuestion() {
   textState.locked = false;
+  textState.forceEnd = false;
   elText.btnNext.hidden = true;
+  elText.btnNext.textContent = "Panneau suivant";
   elText.feedback.hidden = true;
   elText.input.value = "";
   elText.input.disabled = false;
@@ -523,6 +538,7 @@ function submitTextAnswer(value) {
   elText.feedback.hidden = false;
   if (correct) {
     textState.streak += 1;
+    textState.forceEnd = false;
     elText.feedback.textContent = `Exact : ${textState.current.meaning}`;
     elText.feedback.className = "text-feedback is-correct";
     elText.score.textContent = `Série : ${textState.streak}`;
@@ -531,7 +547,10 @@ function submitTextAnswer(value) {
   } else {
     elText.feedback.textContent = `Raté. Réponse : ${textState.current.meaning}`;
     elText.feedback.className = "text-feedback is-wrong";
-    setTimeout(endInfiniteText, 1100);
+    textState.forceEnd = true;
+    elText.btnNext.textContent = "Voir le résultat";
+    elText.btnNext.hidden = false;
+    revealButtonGeneric(elText.btnNext);
   }
 }
 
@@ -562,7 +581,13 @@ function endInfiniteText() {
   showScreen("endInfiniteText");
 }
 
-elText.btnNext.addEventListener("click", () => nextTextQuestion());
+elText.btnNext.addEventListener("click", () => {
+  if (textState.forceEnd) {
+    endInfiniteText();
+    return;
+  }
+  nextTextQuestion();
+});
 
 document.getElementById("btnStartInfiniteText").addEventListener("click", () => startTextGame());
 document.getElementById("btnRetryInfiniteText").addEventListener("click", () => startTextGame());
@@ -581,6 +606,7 @@ const findState = {
   queue: [],
   current: null,
   gridBuilt: false,
+  forceEnd: false,
 };
 
 const elFind = {
@@ -648,7 +674,9 @@ async function startFindGame() {
 
 function nextFindQuestion() {
   findState.locked = false;
+  findState.forceEnd = false;
   elFind.btnNext.hidden = true;
+  elFind.btnNext.textContent = "Panneau suivant";
 
   Array.from(elFind.grid.children).forEach((cell) => {
     cell.classList.remove("is-correct", "is-wrong", "is-muted");
@@ -691,11 +719,15 @@ function handleFindAnswer(cell, sign) {
 
   if (isCorrect) {
     findState.streak += 1;
+    findState.forceEnd = false;
     elFind.score.textContent = `Série : ${findState.streak}`;
     elFind.btnNext.hidden = false;
     revealButtonGeneric(elFind.btnNext);
   } else {
-    setTimeout(endInfiniteFind, 1100);
+    findState.forceEnd = true;
+    elFind.btnNext.textContent = "Voir le résultat";
+    elFind.btnNext.hidden = false;
+    revealButtonGeneric(elFind.btnNext);
   }
 }
 
@@ -726,7 +758,13 @@ function endInfiniteFind() {
   showScreen("endInfiniteFind");
 }
 
-elFind.btnNext.addEventListener("click", () => nextFindQuestion());
+elFind.btnNext.addEventListener("click", () => {
+  if (findState.forceEnd) {
+    endInfiniteFind();
+    return;
+  }
+  nextFindQuestion();
+});
 
 document.getElementById("btnStartInfiniteFind").addEventListener("click", () => startFindGame());
 document.getElementById("btnRetryInfiniteFind").addEventListener("click", () => startFindGame());
