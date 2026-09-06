@@ -27,6 +27,37 @@ function showScreen(name) {
  */
 const imageUrlCache = new Map();
 const WIKI_BATCH_SIZE = 50;
+const IMAGE_CACHE_KEY = "panneaux-image-cache-v1";
+const IMAGE_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 jours
+
+// Réutilise les URLs déjà trouvées lors d'une visite précédente, pour ne
+// pas refaire les requêtes Wikimedia à chaque chargement de page. Retourne
+// true si un cache valide et complet a bien été chargé.
+function loadCachedImages() {
+  try {
+    const raw = localStorage.getItem(IMAGE_CACHE_KEY);
+    if (!raw) return false;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed.timestamp !== "number" || !parsed.data) return false;
+    if (Date.now() - parsed.timestamp > IMAGE_CACHE_TTL_MS) return false;
+    Object.entries(parsed.data).forEach(([code, url]) => imageUrlCache.set(code, url));
+    return SIGNS.every((s) => imageUrlCache.has(s.code));
+  } catch (err) {
+    return false;
+  }
+}
+
+function saveCachedImages() {
+  try {
+    const data = {};
+    imageUrlCache.forEach((url, code) => {
+      data[code] = url;
+    });
+    localStorage.setItem(IMAGE_CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data }));
+  } catch (err) {
+    /* stockage plein ou indisponible : on ignore, ça retentera la prochaine fois */
+  }
+}
 
 async function fetchImageBatch(signsBatch) {
   const titles = signsBatch.map((s) => `File:France road sign ${s.code}.svg`);
@@ -59,6 +90,11 @@ async function fetchImageBatch(signsBatch) {
 }
 
 async function preloadAllSignImages() {
+  // Cache valide (moins de 30 jours) et complet : on ne rappelle pas
+  // Wikimedia du tout, ça évite 5 requêtes et un chargement à chaque visite.
+  if (loadCachedImages()) return;
+
+  imageUrlCache.clear();
   for (let i = 0; i < SIGNS.length; i += WIKI_BATCH_SIZE) {
     const batch = SIGNS.slice(i, i + WIKI_BATCH_SIZE);
     await fetchImageBatch(batch);
@@ -69,6 +105,7 @@ async function preloadAllSignImages() {
   SIGNS.forEach((s) => {
     if (!imageUrlCache.has(s.code)) imageUrlCache.set(s.code, null);
   });
+  saveCachedImages();
 }
 
 // Lancé une seule fois au chargement du script ; tout le reste du jeu

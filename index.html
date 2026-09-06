@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panneaux — Révise le code de la route</title>
 <meta name="description" content="Quiz gratuit pour réviser les panneaux de signalisation du code de la route : mode 20 questions ou mode infini.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Panneaux — Révise le code de la route">
+<meta property="og:description" content="Quiz gratuit pour réviser les panneaux de signalisation du code de la route : mode 20 questions ou mode infini.">
+<meta property="og:url" content="https://kevinraphael95.github.io/yapaslepanneau">
+<meta property="og:image" content="https://kevinraphael95.github.io/yapaslepanneau/favicon.svg">
+<meta name="twitter:card" content="summary">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -92,7 +101,7 @@
   <!-- ÉCRAN FIN QCM -->
   <section class="screen" id="screen-end-qcm" hidden>
     <h1 class="hero-title" id="qcmEndTitle">Résultat</h1>
-    <p class="end-score" id="qcmEndScore">0 / 20</p>
+    <p class="end-score" id="qcmEndScore" aria-live="polite">0 / 20</p>
     <p class="end-comment" id="qcmEndComment"></p>
     <div class="end-actions">
       <button class="btn-primary" id="btnRetryQcm">Refaire un QCM</button>
@@ -103,7 +112,7 @@
   <!-- ÉCRAN FIN INFINI -->
   <section class="screen" id="screen-end-infinite" hidden>
     <h1 class="hero-title">Série terminée</h1>
-    <p class="end-score" id="infiniteEndScore">0 panneau</p>
+    <p class="end-score" id="infiniteEndScore" aria-live="polite">0 panneau</p>
     <p class="end-comment" id="infiniteEndComment"></p>
     <div class="end-actions">
       <button class="btn-primary" id="btnRetryInfinite">Retenter</button>
@@ -132,7 +141,7 @@
       <div class="text-suggestions" id="textSuggestions" hidden></div>
     </div>
 
-    <p class="text-feedback" id="textFeedback" hidden></p>
+    <p class="text-feedback" id="textFeedback" hidden aria-live="polite"></p>
 
     <button class="btn-next" id="btnTextNext" hidden>Panneau suivant</button>
   </section>
@@ -140,7 +149,7 @@
   <!-- ÉCRAN FIN INFINI TEXTE -->
   <section class="screen" id="screen-end-infinite-text" hidden>
     <h1 class="hero-title">Série terminée</h1>
-    <p class="end-score" id="textEndScore">0 panneau</p>
+    <p class="end-score" id="textEndScore" aria-live="polite">0 panneau</p>
     <p class="end-comment" id="textEndComment"></p>
     <div class="end-actions">
       <button class="btn-primary" id="btnRetryInfiniteText">Retenter</button>
@@ -155,7 +164,7 @@
       <span id="findScoreCounter">Série : 0</span>
     </div>
 
-    <h2 class="question-title" id="findPrompt">Retrouve le panneau…</h2>
+    <h2 class="question-title" id="findPrompt" aria-live="polite">Retrouve le panneau…</h2>
 
     <div class="sign-grid-wrap" id="findGridWrap">
       <p class="sign-loading" id="findGridLoading">Chargement des panneaux…</p>
@@ -168,7 +177,7 @@
   <!-- ÉCRAN FIN INFINI IMAGE -->
   <section class="screen" id="screen-end-infinite-find" hidden>
     <h1 class="hero-title">Série terminée</h1>
-    <p class="end-score" id="findEndScore">0 panneau</p>
+    <p class="end-score" id="findEndScore" aria-live="polite">0 panneau</p>
     <p class="end-comment" id="findEndComment"></p>
     <div class="end-actions">
       <button class="btn-primary" id="btnRetryInfiniteFind">Retenter</button>
