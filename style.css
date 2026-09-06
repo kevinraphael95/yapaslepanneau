@@ -467,6 +467,29 @@ main#app {
 }
 .sign-grid-item.is-muted { opacity: 0.4; }
 
+/* Aperçu agrandi au survol d'une case de la grille (mode "trouve le
+   panneau"). Position fixed + JS : évite le clipping par overflow-y:auto
+   de .sign-grid et reste dans le viewport quel que soit le scroll. */
+.sign-preview {
+  position: fixed;
+  z-index: 60;
+  width: clamp(160px, 40vw, 220px);
+  height: clamp(160px, 40vw, 220px);
+  background: var(--panel);
+  border: 2px solid var(--line-yellow);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+  animation: fade-in 0.12s ease;
+}
+
+.sign-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 /* --- Cours : tous les panneaux --- */
 .course-header {
   display: flex;

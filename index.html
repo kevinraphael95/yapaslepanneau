@@ -212,5 +212,11 @@
 
 <script src="signs.js"></script>
 <script src="script.js"></script>
+
+<!-- Aperçu agrandi au survol (mode "trouve le panneau") : un seul élément
+     réutilisé et repositionné en JS, pour ne pas cloner un popup par case. -->
+<div class="sign-preview" id="signPreview" hidden aria-hidden="true">
+  <img id="signPreviewImg" alt="">
+</div>
 </body>
 </html>

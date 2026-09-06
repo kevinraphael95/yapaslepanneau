@@ -620,6 +620,46 @@ const elFind = {
   btnNext: document.getElementById("btnFindNext"),
 };
 
+/* ---------- Aperçu agrandi au survol d'une case de la grille ---------- */
+const elSignPreview = {
+  wrap: document.getElementById("signPreview"),
+  img: document.getElementById("signPreviewImg"),
+};
+
+function positionSignPreview(cell) {
+  const cellRect = cell.getBoundingClientRect();
+  const previewRect = elSignPreview.wrap.getBoundingClientRect();
+  const margin = 10;
+
+  let left = cellRect.left + cellRect.width / 2 - previewRect.width / 2;
+  left = Math.max(margin, Math.min(left, window.innerWidth - previewRect.width - margin));
+
+  // Au-dessus de la case par défaut ; en dessous si ça déborderait en haut
+  // de l'écran (première rangée de la grille, ou grille peu scrollée).
+  let top = cellRect.top - previewRect.height - margin;
+  if (top < margin) {
+    top = cellRect.bottom + margin;
+  }
+
+  elSignPreview.wrap.style.left = `${left}px`;
+  elSignPreview.wrap.style.top = `${top}px`;
+}
+
+function showSignPreview(cell, url) {
+  if (!url) return;
+  elSignPreview.img.src = url;
+  elSignPreview.wrap.hidden = false;
+  positionSignPreview(cell);
+}
+
+function hideSignPreview() {
+  elSignPreview.wrap.hidden = true;
+}
+
+// Le popup doit disparaître dès qu'on scrolle la grille (sa position ne
+// suivrait plus la case survolée), et quand on quitte l'écran du mode.
+elFind.grid.addEventListener("scroll", hideSignPreview);
+
 // Construit une seule fois la grille avec l'image de chaque panneau
 // (dans l'ordre où ils sont définis dans signs.js) ; les panneaux dont
 // l'image est introuvable sur Wikimedia Commons sont simplement absents
@@ -645,7 +685,14 @@ async function buildSignGrid() {
     img.alt = sign.code;
     img.loading = "lazy";
     cell.appendChild(img);
-    cell.addEventListener("click", () => handleFindAnswer(cell, sign));
+    cell.addEventListener("click", () => {
+      hideSignPreview();
+      handleFindAnswer(cell, sign);
+    });
+    cell.addEventListener("mouseenter", () => showSignPreview(cell, url));
+    cell.addEventListener("mouseleave", hideSignPreview);
+    cell.addEventListener("focus", () => showSignPreview(cell, url));
+    cell.addEventListener("blur", hideSignPreview);
     elFind.grid.appendChild(cell);
     findState.pool.push(sign);
   });
@@ -676,6 +723,7 @@ async function startFindGame() {
 function nextFindQuestion() {
   findState.locked = false;
   findState.forceEnd = false;
+  hideSignPreview();
   elFind.btnNext.hidden = true;
   elFind.btnNext.textContent = "Panneau suivant";
 
