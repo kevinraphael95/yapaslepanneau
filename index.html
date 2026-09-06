@@ -67,6 +67,11 @@
         <span class="mode-card-title">Infini — trouve le panneau</span>
         <span class="mode-card-desc">La signification s'affiche, retrouve le bon panneau parmi tous les autres.</span>
       </button>
+      <button class="mode-card" id="btnStartCourse">
+        <span class="mode-card-icon" aria-hidden="true">📖</span>
+        <span class="mode-card-title">Cours — tous les panneaux</span>
+        <span class="mode-card-desc">Parcours tous les panneaux et leur signification, par catégorie ou par recherche.</span>
+      </button>
     </div>
 
     <p class="source-note">Illustrations des panneaux : Wikimedia Commons.</p>
@@ -183,6 +188,24 @@
       <button class="btn-primary" id="btnRetryInfiniteFind">Retenter</button>
       <button class="btn-secondary" id="btnHomeFromInfiniteFind">Retour à l'accueil</button>
     </div>
+  </section>
+
+  <!-- ÉCRAN COURS : TOUS LES PANNEAUX -->
+  <section class="screen" id="screen-course" hidden>
+    <div class="course-header">
+      <button class="btn-secondary btn-back" id="btnHomeFromCourse">← Accueil</button>
+    </div>
+    <h1 class="hero-title course-title">Tous les panneaux</h1>
+    <p class="hero-sub">Parcours les <strong id="courseCount">0</strong> panneaux illustrés, filtre par catégorie ou cherche une signification.</p>
+
+    <div class="course-controls">
+      <input type="text" id="courseSearch" class="text-answer-input" placeholder="Rechercher une signification ou un code…" autocomplete="off">
+      <div class="course-filters" id="courseFilters"></div>
+    </div>
+
+    <p class="sign-loading" id="courseLoading">Chargement des panneaux…</p>
+    <div class="course-list" id="courseList" hidden></div>
+    <p class="course-empty" id="courseEmpty" hidden>Aucun panneau ne correspond à ta recherche.</p>
   </section>
 
 </main>

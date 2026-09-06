@@ -10,6 +10,7 @@ const screens = {
   endInfiniteText: document.getElementById("screen-end-infinite-text"),
   quizFind: document.getElementById("screen-quiz-find"),
   endInfiniteFind: document.getElementById("screen-end-infinite-find"),
+  course: document.getElementById("screen-course"),
 };
 
 function showScreen(name) {
@@ -769,3 +770,167 @@ elFind.btnNext.addEventListener("click", () => {
 document.getElementById("btnStartInfiniteFind").addEventListener("click", () => startFindGame());
 document.getElementById("btnRetryInfiniteFind").addEventListener("click", () => startFindGame());
 document.getElementById("btnHomeFromInfiniteFind").addEventListener("click", () => showScreen("home"));
+
+/* =====================================================================
+ * COURS — TOUS LES PANNEAUX (consultation libre, groupée par catégorie,
+ * filtrable et cherchable ; ne fait pas partie d'un quiz)
+ * ===================================================================== */
+
+const CAT_ORDER = ["danger", "priorite", "interdiction", "obligation", "fin", "zone", "indication", "service"];
+const CAT_LABELS = {
+  danger: "Danger",
+  priorite: "Intersections et priorité",
+  interdiction: "Interdiction",
+  obligation: "Obligation",
+  fin: "Fin d'interdiction ou d'obligation",
+  zone: "Prescription zonale",
+  indication: "Indication",
+  service: "Service",
+};
+
+const courseState = {
+  built: false,
+  items: [], // { sign, url }
+  activeCat: "all",
+  query: "",
+};
+
+const elCourse = {
+  loading: document.getElementById("courseLoading"),
+  list: document.getElementById("courseList"),
+  empty: document.getElementById("courseEmpty"),
+  search: document.getElementById("courseSearch"),
+  filters: document.getElementById("courseFilters"),
+  count: document.getElementById("courseCount"),
+};
+
+// Construit une seule fois la liste complète (image + signification) à
+// partir du même cache d'images que les autres modes ; les panneaux sans
+// image disponible sur Wikimedia Commons sont simplement absents.
+async function buildCourseView() {
+  if (courseState.built) return;
+  elCourse.loading.hidden = false;
+  elCourse.list.hidden = true;
+  elCourse.empty.hidden = true;
+
+  const urls = await Promise.all(SIGNS.map((s) => fetchSignImageUrl(s.code)));
+  courseState.items = [];
+  SIGNS.forEach((sign, i) => {
+    if (urls[i]) courseState.items.push({ sign, url: urls[i] });
+  });
+
+  elCourse.count.textContent = courseState.items.length;
+
+  if (courseState.items.length === 0) {
+    elCourse.loading.textContent =
+      "Impossible de charger les panneaux pour le moment. Vérifie ta connexion et réessaie.";
+    return;
+  }
+
+  buildCourseFilters();
+  renderCourseList();
+
+  elCourse.loading.hidden = true;
+  elCourse.list.hidden = false;
+  courseState.built = true;
+}
+
+function buildCourseFilters() {
+  const presentCats = CAT_ORDER.filter((cat) => courseState.items.some((it) => it.sign.cat === cat));
+  elCourse.filters.innerHTML = "";
+
+  function makeChip(value, label) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "filter-chip" + (courseState.activeCat === value ? " is-active" : "");
+    btn.textContent = label;
+    btn.addEventListener("click", () => {
+      courseState.activeCat = value;
+      Array.from(elCourse.filters.children).forEach((c) => c.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      renderCourseList();
+    });
+    elCourse.filters.appendChild(btn);
+  }
+
+  makeChip("all", "Tous");
+  presentCats.forEach((cat) => makeChip(cat, CAT_LABELS[cat] || cat));
+}
+
+function renderCourseList() {
+  const query = courseState.query.trim().toLowerCase();
+
+  const filtered = courseState.items.filter(({ sign }) => {
+    if (courseState.activeCat !== "all" && sign.cat !== courseState.activeCat) return false;
+    if (query && !sign.meaning.toLowerCase().includes(query) && !sign.code.toLowerCase().includes(query)) {
+      return false;
+    }
+    return true;
+  });
+
+  elCourse.list.innerHTML = "";
+
+  if (filtered.length === 0) {
+    elCourse.empty.hidden = false;
+    elCourse.list.hidden = true;
+    return;
+  }
+  elCourse.empty.hidden = true;
+  elCourse.list.hidden = false;
+
+  const groups = new Map();
+  filtered.forEach((item) => {
+    const cat = item.sign.cat;
+    if (!groups.has(cat)) groups.set(cat, []);
+    groups.get(cat).push(item);
+  });
+
+  CAT_ORDER.filter((cat) => groups.has(cat)).forEach((cat) => {
+    const section = document.createElement("div");
+    section.className = "course-group";
+
+    const title = document.createElement("h3");
+    title.className = "course-group-title";
+    title.textContent = `${CAT_LABELS[cat] || cat} (${groups.get(cat).length})`;
+    section.appendChild(title);
+
+    const grid = document.createElement("div");
+    grid.className = "course-grid";
+    groups.get(cat).forEach(({ sign, url }) => {
+      const cell = document.createElement("div");
+      cell.className = "course-item";
+
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = sign.meaning;
+      img.loading = "lazy";
+
+      const meaning = document.createElement("span");
+      meaning.className = "course-item-meaning";
+      meaning.textContent = sign.meaning;
+
+      const code = document.createElement("span");
+      code.className = "course-item-code";
+      code.textContent = sign.code;
+
+      cell.appendChild(img);
+      cell.appendChild(meaning);
+      cell.appendChild(code);
+      grid.appendChild(cell);
+    });
+
+    section.appendChild(grid);
+    elCourse.list.appendChild(section);
+  });
+}
+
+elCourse.search.addEventListener("input", () => {
+  courseState.query = elCourse.search.value;
+  renderCourseList();
+});
+
+document.getElementById("btnStartCourse").addEventListener("click", async () => {
+  showScreen("course");
+  await buildCourseView();
+});
+document.getElementById("btnHomeFromCourse").addEventListener("click", () => showScreen("home"));
