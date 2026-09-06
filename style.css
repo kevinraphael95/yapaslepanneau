@@ -225,6 +225,18 @@ main#app {
   object-fit: contain;
 }
 
+/* Empêche le menu natif "Enregistrer l'image" / callout iOS au appui
+   long sur mobile, sur toutes les images de panneaux de l'appli. */
+.sign-frame img,
+.sign-grid-item img,
+.course-item img,
+.sign-preview img {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
 .sign-loading {
   color: var(--text-muted);
   font-size: 0.85rem;

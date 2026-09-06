@@ -630,17 +630,23 @@ function positionSignPreview(cell) {
   if (!elSignPreview.wrap) return;
   const cellRect = cell.getBoundingClientRect();
   const previewRect = elSignPreview.wrap.getBoundingClientRect();
-  const margin = 10;
+  const margin = 14;
 
-  let left = cellRect.left + cellRect.width / 2 - previewRect.width / 2;
+  // À droite de la case par défaut ; à gauche si pas assez de place à
+  // droite (case dans la dernière colonne de la grille par exemple).
+  const spaceRight = window.innerWidth - cellRect.right;
+  const spaceLeft = cellRect.left;
+  let left;
+  if (spaceRight >= previewRect.width + margin || spaceRight >= spaceLeft) {
+    left = cellRect.right + margin;
+  } else {
+    left = cellRect.left - previewRect.width - margin;
+  }
   left = Math.max(margin, Math.min(left, window.innerWidth - previewRect.width - margin));
 
-  // Au-dessus de la case par défaut ; en dessous si ça déborderait en haut
-  // de l'écran (première rangée de la grille, ou grille peu scrollée).
-  let top = cellRect.top - previewRect.height - margin;
-  if (top < margin) {
-    top = cellRect.bottom + margin;
-  }
+  // Centré verticalement sur la case, sans sortir du viewport.
+  let top = cellRect.top + cellRect.height / 2 - previewRect.height / 2;
+  top = Math.max(margin, Math.min(top, window.innerHeight - previewRect.height - margin));
 
   elSignPreview.wrap.style.left = `${left}px`;
   elSignPreview.wrap.style.top = `${top}px`;
@@ -686,11 +692,13 @@ async function buildSignGrid() {
     img.src = url;
     img.alt = sign.code;
     img.loading = "lazy";
+    img.draggable = false;
     cell.appendChild(img);
     cell.addEventListener("click", () => {
       hideSignPreview();
       handleFindAnswer(cell, sign);
     });
+    cell.addEventListener("contextmenu", (e) => e.preventDefault());
     cell.addEventListener("mouseenter", () => showSignPreview(cell, url));
     cell.addEventListener("mouseleave", hideSignPreview);
     cell.addEventListener("focus", () => showSignPreview(cell, url));
@@ -954,6 +962,7 @@ function renderCourseList() {
       img.src = url;
       img.alt = sign.meaning;
       img.loading = "lazy";
+      img.draggable = false;
 
       const meaning = document.createElement("span");
       meaning.className = "course-item-meaning";

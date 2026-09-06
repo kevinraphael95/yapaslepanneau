@@ -94,7 +94,7 @@
     <div class="sign-stage">
       <div class="sign-frame" id="signFrame">
         <div class="sign-loading" id="signLoading">chargement…</div>
-        <img id="signImage" alt="" hidden>
+        <img id="signImage" alt="" hidden draggable="false">
       </div>
     </div>
 
@@ -137,7 +137,7 @@
     <div class="sign-stage">
       <div class="sign-frame" id="textSignFrame">
         <div class="sign-loading" id="textSignLoading">chargement…</div>
-        <img id="textSignImage" alt="Panneau à identifier" hidden>
+        <img id="textSignImage" alt="Panneau à identifier" hidden draggable="false">
       </div>
     </div>
 
@@ -216,7 +216,7 @@
      (un <script> sans defer bloque le parsing et tourne immédiatement :
      tout ce qui est plus bas dans le HTML n'existe pas encore). -->
 <div class="sign-preview" id="signPreview" hidden aria-hidden="true">
-  <img id="signPreviewImg" alt="">
+  <img id="signPreviewImg" alt="" draggable="false">
 </div>
 
 <script src="signs.js"></script>
