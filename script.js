@@ -6,6 +6,10 @@ const screens = {
   quiz: document.getElementById("screen-quiz"),
   endQcm: document.getElementById("screen-end-qcm"),
   endInfinite: document.getElementById("screen-end-infinite"),
+  quizText: document.getElementById("screen-quiz-text"),
+  endInfiniteText: document.getElementById("screen-end-infinite-text"),
+  quizFind: document.getElementById("screen-quiz-find"),
+  endInfiniteFind: document.getElementById("screen-end-infinite-find"),
 };
 
 function showScreen(name) {
@@ -302,3 +306,349 @@ document.getElementById("btnHomeFromInfinite").addEventListener("click", () => s
 /* ---------- Init ---------- */
 updateBestStreakBadge();
 showScreen("home");
+
+/* =====================================================================
+ * MODE INFINI — TROUVE LE NOM (panneau affiché -> signification tapée)
+ * ===================================================================== */
+
+const ALL_MEANINGS = Array.from(new Set(SIGNS.map((s) => s.meaning)));
+
+const textState = {
+  streak: 0,
+  qIndex: 0,
+  locked: false,
+  queue: [],
+  current: null,
+};
+
+const elText = {
+  frame: document.getElementById("textSignFrame"),
+  loading: document.getElementById("textSignLoading"),
+  image: document.getElementById("textSignImage"),
+  counter: document.getElementById("textQuestionCounter"),
+  score: document.getElementById("textScoreCounter"),
+  input: document.getElementById("textAnswerInput"),
+  suggestions: document.getElementById("textSuggestions"),
+  feedback: document.getElementById("textFeedback"),
+  btnNext: document.getElementById("btnTextNext"),
+};
+
+// Filet de sécurité générique pour scroller un bouton "suivant" dans la vue,
+// réutilisable par les nouveaux modes sans toucher à revealNextButton().
+function revealButtonGeneric(btn) {
+  requestAnimationFrame(() => {
+    btn.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
+  });
+}
+
+function startTextGame() {
+  textState.streak = 0;
+  textState.qIndex = 0;
+  textState.locked = false;
+  textState.queue = shuffle(SIGNS);
+  showScreen("quizText");
+  nextTextQuestion();
+}
+
+async function nextTextQuestion() {
+  textState.locked = false;
+  elText.btnNext.hidden = true;
+  elText.feedback.hidden = true;
+  elText.input.value = "";
+  elText.input.disabled = false;
+  elText.suggestions.hidden = true;
+  elText.suggestions.innerHTML = "";
+
+  let sign = null;
+  let imageUrl = null;
+  let attempts = 0;
+  const maxAttempts = SIGNS.length * 2;
+
+  while (sign === null) {
+    attempts += 1;
+    if (attempts > maxAttempts) {
+      elText.loading.hidden = false;
+      elText.loading.textContent =
+        "Impossible de charger les images des panneaux pour le moment. Vérifie ta connexion et réessaie.";
+      elText.image.hidden = true;
+      return;
+    }
+    if (textState.queue.length === 0) {
+      textState.queue = shuffle(SIGNS);
+    }
+    const candidate = textState.queue.shift();
+    const url = await fetchSignImageUrl(candidate.code);
+    if (url) {
+      sign = candidate;
+      imageUrl = url;
+    }
+  }
+
+  textState.current = sign;
+  textState.qIndex += 1;
+  elText.counter.textContent = `Panneau ${textState.qIndex}`;
+  elText.score.textContent = `Série : ${textState.streak}`;
+
+  elText.loading.textContent = "chargement…";
+  elText.image.hidden = true;
+  elText.loading.hidden = false;
+  elText.image.src = imageUrl;
+  elText.image.alt = "Panneau à identifier";
+  elText.image.onload = () => {
+    elText.loading.hidden = true;
+    elText.image.hidden = false;
+  };
+
+  elText.input.focus();
+}
+
+elText.input.addEventListener("input", () => {
+  const query = elText.input.value.trim().toLowerCase();
+  if (query.length < 3) {
+    elText.suggestions.hidden = true;
+    elText.suggestions.innerHTML = "";
+    return;
+  }
+  const matches = ALL_MEANINGS.filter((m) => m.toLowerCase().includes(query)).slice(0, 6);
+  elText.suggestions.innerHTML = "";
+  if (matches.length === 0) {
+    elText.suggestions.hidden = true;
+    return;
+  }
+  matches.forEach((m) => {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "text-suggestion-item";
+    item.textContent = m;
+    item.addEventListener("click", () => {
+      elText.input.value = m;
+      elText.suggestions.hidden = true;
+      elText.suggestions.innerHTML = "";
+      submitTextAnswer(m);
+    });
+    elText.suggestions.appendChild(item);
+  });
+  elText.suggestions.hidden = false;
+});
+
+elText.input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    submitTextAnswer(elText.input.value);
+  }
+});
+
+function submitTextAnswer(value) {
+  if (textState.locked || !textState.current) return;
+  textState.locked = true;
+  elText.suggestions.hidden = true;
+  elText.input.disabled = true;
+
+  const normalized = value.trim().toLowerCase();
+  const correct = normalized === textState.current.meaning.toLowerCase();
+
+  elText.feedback.hidden = false;
+  if (correct) {
+    textState.streak += 1;
+    elText.feedback.textContent = `Exact : ${textState.current.meaning}`;
+    elText.feedback.className = "text-feedback is-correct";
+    elText.score.textContent = `Série : ${textState.streak}`;
+    elText.btnNext.hidden = false;
+    revealButtonGeneric(elText.btnNext);
+  } else {
+    elText.feedback.textContent = `Raté. Réponse : ${textState.current.meaning}`;
+    elText.feedback.className = "text-feedback is-wrong";
+    setTimeout(endInfiniteText, 1100);
+  }
+}
+
+function endInfiniteText() {
+  const streak = textState.streak;
+  document.getElementById("textEndScore").textContent =
+    streak <= 1 ? `${streak} panneau identifié` : `${streak} panneaux identifiés`;
+
+  const key = "panneaux-quiz-best-streak-text";
+  let best = 0;
+  try {
+    best = Number(localStorage.getItem(key) || 0);
+  } catch (err) {
+    best = 0;
+  }
+  let comment;
+  if (streak > best) {
+    try {
+      localStorage.setItem(key, String(streak));
+    } catch (err) {
+      /* stockage indisponible : on ignore silencieusement */
+    }
+    comment = "Nouveau record personnel !";
+  } else {
+    comment = `Ton record reste à ${best}.`;
+  }
+  document.getElementById("textEndComment").textContent = comment;
+  showScreen("endInfiniteText");
+}
+
+elText.btnNext.addEventListener("click", () => nextTextQuestion());
+
+document.getElementById("btnStartInfiniteText").addEventListener("click", () => startTextGame());
+document.getElementById("btnRetryInfiniteText").addEventListener("click", () => startTextGame());
+document.getElementById("btnHomeFromInfiniteText").addEventListener("click", () => showScreen("home"));
+
+/* =====================================================================
+ * MODE INFINI — TROUVE LE PANNEAU (signification affichée -> panneau
+ * à retrouver parmi tous les panneaux, organisés dans l'ordre de SIGNS)
+ * ===================================================================== */
+
+const findState = {
+  streak: 0,
+  qIndex: 0,
+  locked: false,
+  pool: [],
+  queue: [],
+  current: null,
+  gridBuilt: false,
+};
+
+const elFind = {
+  wrap: document.getElementById("findGridWrap"),
+  loading: document.getElementById("findGridLoading"),
+  grid: document.getElementById("signGrid"),
+  prompt: document.getElementById("findPrompt"),
+  counter: document.getElementById("findQuestionCounter"),
+  score: document.getElementById("findScoreCounter"),
+  btnNext: document.getElementById("btnFindNext"),
+};
+
+// Construit une seule fois la grille avec l'image de chaque panneau
+// (dans l'ordre où ils sont définis dans signs.js) ; les panneaux dont
+// l'image est introuvable sur Wikimedia Commons sont simplement absents
+// de la grille et ne pourront jamais être tirés comme question.
+async function buildSignGrid() {
+  if (findState.gridBuilt) return;
+  elFind.loading.hidden = false;
+  elFind.grid.hidden = true;
+  elFind.grid.innerHTML = "";
+  findState.pool = [];
+
+  const urls = await Promise.all(SIGNS.map((s) => fetchSignImageUrl(s.code)));
+
+  SIGNS.forEach((sign, i) => {
+    const url = urls[i];
+    if (!url) return;
+    const cell = document.createElement("button");
+    cell.type = "button";
+    cell.className = "sign-grid-item";
+    cell.dataset.code = sign.code;
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = sign.code;
+    img.loading = "lazy";
+    cell.appendChild(img);
+    cell.addEventListener("click", () => handleFindAnswer(cell, sign));
+    elFind.grid.appendChild(cell);
+    findState.pool.push(sign);
+  });
+
+  elFind.loading.hidden = true;
+  elFind.grid.hidden = false;
+  findState.gridBuilt = true;
+}
+
+async function startFindGame() {
+  findState.streak = 0;
+  findState.qIndex = 0;
+  findState.locked = false;
+  showScreen("quizFind");
+  elFind.prompt.textContent = "Chargement des panneaux…";
+  await buildSignGrid();
+
+  if (findState.pool.length === 0) {
+    elFind.prompt.textContent =
+      "Impossible de charger les panneaux pour le moment. Vérifie ta connexion et réessaie.";
+    return;
+  }
+
+  findState.queue = shuffle(findState.pool);
+  nextFindQuestion();
+}
+
+function nextFindQuestion() {
+  findState.locked = false;
+  elFind.btnNext.hidden = true;
+
+  Array.from(elFind.grid.children).forEach((cell) => {
+    cell.classList.remove("is-correct", "is-wrong", "is-muted");
+    cell.disabled = false;
+  });
+
+  if (findState.queue.length === 0) {
+    findState.queue = shuffle(findState.pool);
+  }
+  const sign = findState.queue.shift();
+  findState.current = sign;
+  findState.qIndex += 1;
+
+  elFind.counter.textContent = `Panneau ${findState.qIndex}`;
+  elFind.score.textContent = `Série : ${findState.streak}`;
+  elFind.prompt.textContent = `Retrouve le panneau : ${sign.meaning}`;
+}
+
+function handleFindAnswer(cell, sign) {
+  if (findState.locked) return;
+  findState.locked = true;
+
+  const correctCode = findState.current.code;
+  Array.from(elFind.grid.children).forEach((c) => {
+    c.disabled = true;
+    if (c.dataset.code === correctCode) {
+      c.classList.add("is-correct");
+    } else if (c === cell) {
+      c.classList.add("is-wrong");
+    } else {
+      c.classList.add("is-muted");
+    }
+  });
+
+  if (sign.code === correctCode) {
+    findState.streak += 1;
+    elFind.score.textContent = `Série : ${findState.streak}`;
+    elFind.btnNext.hidden = false;
+    revealButtonGeneric(elFind.btnNext);
+  } else {
+    setTimeout(endInfiniteFind, 1100);
+  }
+}
+
+function endInfiniteFind() {
+  const streak = findState.streak;
+  document.getElementById("findEndScore").textContent =
+    streak <= 1 ? `${streak} panneau identifié` : `${streak} panneaux identifiés`;
+
+  const key = "panneaux-quiz-best-streak-find";
+  let best = 0;
+  try {
+    best = Number(localStorage.getItem(key) || 0);
+  } catch (err) {
+    best = 0;
+  }
+  let comment;
+  if (streak > best) {
+    try {
+      localStorage.setItem(key, String(streak));
+    } catch (err) {
+      /* stockage indisponible : on ignore silencieusement */
+    }
+    comment = "Nouveau record personnel !";
+  } else {
+    comment = `Ton record reste à ${best}.`;
+  }
+  document.getElementById("findEndComment").textContent = comment;
+  showScreen("endInfiniteFind");
+}
+
+elFind.btnNext.addEventListener("click", () => nextFindQuestion());
+
+document.getElementById("btnStartInfiniteFind").addEventListener("click", () => startFindGame());
+document.getElementById("btnRetryInfiniteFind").addEventListener("click", () => startFindGame());
+document.getElementById("btnHomeFromInfiniteFind").addEventListener("click", () => showScreen("home"));

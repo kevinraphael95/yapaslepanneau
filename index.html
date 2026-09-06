@@ -48,6 +48,16 @@
         <span class="mode-card-title">Mode infini</span>
         <span class="mode-card-desc">Enchaîne les panneaux jusqu'à ta première erreur.</span>
       </button>
+      <button class="mode-card" id="btnStartInfiniteText">
+        <span class="mode-card-icon" aria-hidden="true">Aa</span>
+        <span class="mode-card-title">Infini — trouve le nom</span>
+        <span class="mode-card-desc">Le panneau s'affiche, tape sa signification (autocomplétion dès 3 lettres).</span>
+      </button>
+      <button class="mode-card" id="btnStartInfiniteFind">
+        <span class="mode-card-icon" aria-hidden="true">▦</span>
+        <span class="mode-card-title">Infini — trouve le panneau</span>
+        <span class="mode-card-desc">La signification s'affiche, retrouve le bon panneau parmi tous les autres.</span>
+      </button>
     </div>
 
     <p class="source-note">Illustrations des panneaux : Wikimedia Commons.</p>
@@ -98,6 +108,71 @@
     <div class="end-actions">
       <button class="btn-primary" id="btnRetryInfinite">Retenter</button>
       <button class="btn-secondary" id="btnHomeFromInfinite">Retour à l'accueil</button>
+    </div>
+  </section>
+
+  <!-- ÉCRAN QUIZ INFINI TEXTE (panneau -> nom) -->
+  <section class="screen" id="screen-quiz-text" hidden>
+    <div class="quiz-meta">
+      <span id="textQuestionCounter">Panneau 1</span>
+      <span id="textScoreCounter">Série : 0</span>
+    </div>
+
+    <h2 class="question-title">Quelle est la signification de ce panneau ?</h2>
+
+    <div class="sign-stage">
+      <div class="sign-frame" id="textSignFrame">
+        <div class="sign-loading" id="textSignLoading">chargement…</div>
+        <img id="textSignImage" alt="Panneau à identifier" hidden>
+      </div>
+    </div>
+
+    <div class="text-answer">
+      <input type="text" id="textAnswerInput" class="text-answer-input" placeholder="Tape la signification…" autocomplete="off">
+      <div class="text-suggestions" id="textSuggestions" hidden></div>
+    </div>
+
+    <p class="text-feedback" id="textFeedback" hidden></p>
+
+    <button class="btn-next" id="btnTextNext" hidden>Panneau suivant</button>
+  </section>
+
+  <!-- ÉCRAN FIN INFINI TEXTE -->
+  <section class="screen" id="screen-end-infinite-text" hidden>
+    <h1 class="hero-title">Série terminée</h1>
+    <p class="end-score" id="textEndScore">0 panneau</p>
+    <p class="end-comment" id="textEndComment"></p>
+    <div class="end-actions">
+      <button class="btn-primary" id="btnRetryInfiniteText">Retenter</button>
+      <button class="btn-secondary" id="btnHomeFromInfiniteText">Retour à l'accueil</button>
+    </div>
+  </section>
+
+  <!-- ÉCRAN QUIZ INFINI IMAGE (nom -> panneau) -->
+  <section class="screen" id="screen-quiz-find" hidden>
+    <div class="quiz-meta">
+      <span id="findQuestionCounter">Panneau 1</span>
+      <span id="findScoreCounter">Série : 0</span>
+    </div>
+
+    <h2 class="question-title" id="findPrompt">Retrouve le panneau…</h2>
+
+    <div class="sign-grid-wrap" id="findGridWrap">
+      <p class="sign-loading" id="findGridLoading">Chargement des panneaux…</p>
+      <div class="sign-grid" id="signGrid" hidden></div>
+    </div>
+
+    <button class="btn-next" id="btnFindNext" hidden>Panneau suivant</button>
+  </section>
+
+  <!-- ÉCRAN FIN INFINI IMAGE -->
+  <section class="screen" id="screen-end-infinite-find" hidden>
+    <h1 class="hero-title">Série terminée</h1>
+    <p class="end-score" id="findEndScore">0 panneau</p>
+    <p class="end-comment" id="findEndComment"></p>
+    <div class="end-actions">
+      <button class="btn-primary" id="btnRetryInfiniteFind">Retenter</button>
+      <button class="btn-secondary" id="btnHomeFromInfiniteFind">Retour à l'accueil</button>
     </div>
   </section>
 

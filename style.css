@@ -358,3 +358,111 @@ main#app {
   border-color: #2c313a;
 }
 .btn-secondary:hover { border-color: var(--line-yellow); }
+
+/* --- Mode infini : trouve le nom (saisie + autocomplétion) --- */
+.text-answer {
+  position: relative;
+  margin-bottom: clamp(8px, 2vh, 16px);
+}
+
+.text-answer-input {
+  width: 100%;
+  padding: clamp(10px, 2vh, 14px) 16px;
+  background: var(--panel);
+  border: 1px solid #2c313a;
+  border-radius: 10px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: clamp(0.9rem, 2vh, 0.98rem);
+}
+.text-answer-input:focus {
+  outline: none;
+  border-color: var(--line-yellow);
+}
+.text-answer-input:disabled { opacity: 0.7; }
+
+.text-suggestions {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--panel-alt);
+  border: 1px solid #2c313a;
+  border-radius: 10px;
+  overflow-y: auto;
+  max-height: 260px;
+}
+
+.text-suggestion-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #2c313a;
+  color: var(--text);
+  font-family: inherit;
+  font-size: clamp(0.82rem, 2vh, 0.88rem);
+  cursor: pointer;
+}
+.text-suggestion-item:last-child { border-bottom: none; }
+.text-suggestion-item:hover,
+.text-suggestion-item:focus-visible {
+  background: var(--panel);
+  outline: none;
+}
+
+.text-feedback {
+  font-size: clamp(0.85rem, 2vh, 0.92rem);
+  margin: 0 0 8px;
+}
+.text-feedback.is-correct { color: var(--sign-green); }
+.text-feedback.is-wrong { color: var(--sign-red); }
+
+/* --- Mode infini : trouve le panneau (grille de tous les panneaux) --- */
+.sign-grid-wrap { margin-bottom: clamp(8px, 2vh, 16px); }
+
+.sign-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 8px;
+  max-height: 54vh;
+  overflow-y: auto;
+  padding: 8px;
+  background: var(--panel);
+  border: 1px solid #2c313a;
+  border-radius: var(--radius);
+}
+
+.sign-grid-item {
+  aspect-ratio: 1;
+  background: var(--panel-alt);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s ease, opacity 0.15s ease;
+}
+.sign-grid-item img { width: 100%; height: 100%; object-fit: contain; }
+
+.sign-grid-item:hover:not(:disabled),
+.sign-grid-item:focus-visible {
+  border-color: var(--line-yellow);
+  outline: none;
+}
+.sign-grid-item:disabled { cursor: default; }
+
+.sign-grid-item.is-correct {
+  border-color: var(--sign-green);
+  background: color-mix(in srgb, var(--sign-green) 25%, var(--panel-alt));
+}
+.sign-grid-item.is-wrong {
+  border-color: var(--sign-red);
+  background: color-mix(in srgb, var(--sign-red) 25%, var(--panel-alt));
+}
+.sign-grid-item.is-muted { opacity: 0.4; }
