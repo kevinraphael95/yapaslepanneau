@@ -630,21 +630,33 @@ function positionSignPreview(cell) {
   if (!elSignPreview.wrap) return;
   const cellRect = cell.getBoundingClientRect();
   const previewRect = elSignPreview.wrap.getBoundingClientRect();
-  const margin = 14;
+  const margin = 16;
+  const mainRect = document.getElementById("app").getBoundingClientRect();
 
-  // À droite de la case par défaut ; à gauche si pas assez de place à
-  // droite (case dans la dernière colonne de la grille par exemple).
-  const spaceRight = window.innerWidth - cellRect.right;
-  const spaceLeft = cellRect.left;
+  // Priorité à la grande marge vide à droite (ou à gauche) de la colonne
+  // centrale du contenu : plus visible qu'un petit popup collé à la case.
+  const spaceRight = window.innerWidth - mainRect.right;
+  const spaceLeft = mainRect.left;
+
   let left;
-  if (spaceRight >= previewRect.width + margin || spaceRight >= spaceLeft) {
-    left = cellRect.right + margin;
+  if (spaceRight >= previewRect.width + margin * 2) {
+    left = mainRect.right + margin;
+  } else if (spaceLeft >= previewRect.width + margin * 2) {
+    left = mainRect.left - previewRect.width - margin;
   } else {
-    left = cellRect.left - previewRect.width - margin;
+    // Écran trop étroit pour une marge exploitable (mobile, tablette) :
+    // on retombe à côté de la case, comme avant.
+    const spaceRightOfCell = window.innerWidth - cellRect.right;
+    if (spaceRightOfCell >= previewRect.width + margin) {
+      left = cellRect.right + margin;
+    } else {
+      left = cellRect.left - previewRect.width - margin;
+    }
   }
   left = Math.max(margin, Math.min(left, window.innerWidth - previewRect.width - margin));
 
-  // Centré verticalement sur la case, sans sortir du viewport.
+  // Verticalement, on reste proche de la case survolée pour garder le
+  // lien visuel, sans jamais sortir du viewport.
   let top = cellRect.top + cellRect.height / 2 - previewRect.height / 2;
   top = Math.max(margin, Math.min(top, window.innerHeight - previewRect.height - margin));
 
