@@ -175,7 +175,7 @@ const SIGNS = [
 
   // ---------- C — Panneaux d'indication ----------
   { code: "C1a", cat: "indication", meaning: "Lieu aménagé pour le stationnement" },
-  { code: "C1b", cat: "indication", meaning: "Lieu aménagé pour le stationnement gratuit à durée limitée" },
+  { code: "C1b", cat: "indication", meaning: "Lieu aménagé pour le stationnement gratuit à durée limitée avec contrôle par disque" },
   { code: "C1c", cat: "indication", meaning: "Lieu aménagé pour le stationnement payant" },
   { code: "C3", cat: "indication", meaning: "Risque d'incendie" },
   { code: "C4a", cat: "indication", meaning: "Vitesse conseillée" },
@@ -253,11 +253,11 @@ const SIGNS = [
   { code: "CE52", cat: "service", meaning: "Lieu aménagé pour la pratique du covoiturage" },
 
   // ---------- AK — Panneaux de danger temporaire (chantiers, accidents) ----------
-  { code: "AK2", cat: "temporaire", meaning: "Cassis ou dos-d'âne" },
-  { code: "AK3", cat: "temporaire", meaning: "Chaussée rétrécie" },
-  { code: "AK4", cat: "temporaire", meaning: "Chaussée glissante" },
+  { code: "AK2", cat: "temporaire", meaning: "Cassis ou dos-d'âne (temporaire)" },
+  { code: "AK3", cat: "temporaire", meaning: "Chaussée rétrécie (temporaire)" },
+  { code: "AK4", cat: "temporaire", meaning: "Chaussée glissante (temporaire)" },
   { code: "AK5", cat: "temporaire", meaning: "Travaux" },
-  { code: "AK14", cat: "temporaire", meaning: "Autres dangers" },
+  { code: "AK14", cat: "temporaire", meaning: "Autres dangers (temporaire)" },
   { code: "AK17", cat: "temporaire", meaning: "Annonce de feux tricolores réglant la circulation" },
   { code: "AK22", cat: "temporaire", meaning: "Projection de gravillons" },
   { code: "AK30", cat: "temporaire", meaning: "Bouchon" },
