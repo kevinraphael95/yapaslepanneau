@@ -11,6 +11,16 @@
  * disponible sur Wikimedia Commons : le jeu les ignore alors automatiquement
  * (fetchSignImageUrl renvoie null et un autre panneau est tiré à la place).
  *
+ * Plusieurs codes peuvent légitimement partager le même "meaning" (ex. le
+ * pictogramme vache/mouton pour "Passage d'animaux domestiques", ou le
+ * panneau danger vs le panneau indication pour "Passage pour piétons").
+ * Le jeu gère ça lui-même : en mode "trouve le panneau", n'importe quel
+ * panneau ayant la même signification que celle affichée est accepté comme
+ * bonne réponse (voir handleFindAnswer dans script.js). En revanche, dans
+ * le QCM, pickDistractors() exclut les panneaux de même "meaning" de la
+ * liste des mauvaises réponses, pour ne jamais afficher deux boutons avec
+ * exactement le même texte.
+ *
  * cat: "danger" | "priorite" | "interdiction" | "obligation" | "fin" | "zone" | "indication" | "service"
  * Le champ "cat" est utilisé par pickDistractors() dans script.js pour
  * proposer des mauvaises réponses cohérentes (même famille de panneau).
