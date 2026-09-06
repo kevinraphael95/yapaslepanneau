@@ -139,8 +139,8 @@ const SIGNS = [
   // ---------- B — Fin d'interdiction / fin d'obligation (13) ----------
   { code: "B31", cat: "fin", meaning: "Fin de toutes les interdictions précédemment signalées" },
   { code: "B33", cat: "fin", meaning: "Fin de limitation de vitesse" },
-  { code: "B34", cat: "fin", meaning: "Fin d'interdiction de dépasser (panneau B3)" },
-  { code: "B34a", cat: "fin", meaning: "Fin d'interdiction de dépasser (panneau B3a)" },
+  { code: "B34", cat: "fin", meaning: "Fin d'interdiction de dépasser" },
+  { code: "B34a", cat: "fin", meaning: "Fin d'interdiction de dépasser pour les véhicules de transport de marchandises de plus de 3,5 tonnes" },
   { code: "B35", cat: "fin", meaning: "Fin d'interdiction de l'usage de l'avertisseur sonore" },
   { code: "B39", cat: "fin", meaning: "Fin d'une interdiction précisée par une inscription sur le panneau" },
   { code: "B40", cat: "fin", meaning: "Fin de piste ou bande obligatoire pour cycles" },
