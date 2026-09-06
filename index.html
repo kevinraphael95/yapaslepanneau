@@ -28,11 +28,6 @@
   <div class="best-streak" id="bestStreakBadge" hidden>
     Record mode infini : <strong id="bestStreakValue">0</strong>
   </div>
-  <!-- AJOUT : records des 2 nouveaux modes recherche libre, indépendant du badge ci-dessus -->
-  <div class="best-streak" id="bestStreakSearchBadge" hidden>
-    <span id="bestStreakSearchMeaningWrap" hidden>Trouve la signif. : <strong id="bestStreakSearchMeaning">0</strong></span>
-    <span id="bestStreakSearchSignWrap" hidden>Trouve le panneau : <strong id="bestStreakSearchSign">0</strong></span>
-  </div>
 </header>
 
 <main id="app">
@@ -52,17 +47,6 @@
         <span class="mode-card-icon" aria-hidden="true">∞</span>
         <span class="mode-card-title">Mode infini</span>
         <span class="mode-card-desc">Enchaîne les panneaux jusqu'à ta première erreur.</span>
-      </button>
-      <!-- AJOUT : 2 nouveaux modes, en recherche libre (sans proposition) -->
-      <button class="mode-card" id="btnStartSearchMeaning">
-        <span class="mode-card-icon" aria-hidden="true">🔎</span>
-        <span class="mode-card-title">Infini — Trouve la signification</span>
-        <span class="mode-card-desc">Sans proposition : le panneau s'affiche, tape sa signification.</span>
-      </button>
-      <button class="mode-card" id="btnStartSearchSign">
-        <span class="mode-card-icon" aria-hidden="true">🔎</span>
-        <span class="mode-card-title">Infini — Trouve le panneau</span>
-        <span class="mode-card-desc">Sans proposition : la signification s'affiche, retrouve le panneau parmi tous les panneaux.</span>
       </button>
     </div>
 
@@ -88,35 +72,9 @@
         <div class="sign-loading" id="signLoading">chargement…</div>
         <img id="signImage" alt="" hidden>
       </div>
-      <!-- AJOUT : affiche le texte de la signification à la place de l'image,
-           utilisé uniquement par le nouveau mode "Trouve le panneau" -->
-      <div class="meaning-card" id="meaningCard" hidden>
-        <p id="meaningText"></p>
-      </div>
     </div>
 
     <div class="options" id="optionsList"></div>
-
-    <!-- AJOUT : bloc de recherche libre utilisé uniquement par les 2 nouveaux modes -->
-    <div class="search-quiz" id="searchQuiz" hidden>
-      <input
-        type="text"
-        class="search-input"
-        id="searchInput"
-        placeholder="Tape au moins 2 lettres…"
-        autocomplete="off"
-        autocapitalize="off"
-        autocorrect="off"
-        spellcheck="false"
-      >
-      <p class="search-hint" id="searchHint">Tape au moins 2 lettres pour voir des suggestions.</p>
-      <div class="search-suggestions" id="searchSuggestions"></div>
-      <button class="btn-giveup" id="btnGiveUp" type="button">Je ne trouve pas, montre-moi la réponse</button>
-      <div class="reveal-answer" id="revealAnswer" hidden></div>
-      <!-- Bouton "suivant" séparé de #btnNext : évite d'avoir 2 écouteurs
-           sur le même bouton et tout risque de conflit avec le QCM / Mode infini -->
-      <button class="btn-next" id="btnNextSearch" type="button" hidden>Panneau suivant</button>
-    </div>
 
     <button class="btn-next" id="btnNext" hidden>Suivant</button>
   </section>
@@ -140,19 +98,6 @@
     <div class="end-actions">
       <button class="btn-primary" id="btnRetryInfinite">Retenter</button>
       <button class="btn-secondary" id="btnHomeFromInfinite">Retour à l'accueil</button>
-    </div>
-  </section>
-
-  <!-- AJOUT : écran de fin dédié aux 2 nouveaux modes recherche libre.
-       Volontairement séparé de "screen-end-infinite" pour ne jamais toucher
-       au bouton "Retenter" du mode infini classique. -->
-  <section class="screen" id="screen-end-search" hidden>
-    <h1 class="hero-title">Série terminée</h1>
-    <p class="end-score" id="searchEndScore">0 panneau</p>
-    <p class="end-comment" id="searchEndComment"></p>
-    <div class="end-actions">
-      <button class="btn-primary" id="btnRetrySearch">Retenter</button>
-      <button class="btn-secondary" id="btnHomeFromSearch">Retour à l'accueil</button>
     </div>
   </section>
 
