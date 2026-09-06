@@ -44,7 +44,7 @@ const SIGNS = [
   { code: "A9a", cat: "danger", meaning: "Traversée de voie de véhicules de transport en commun" },
   { code: "A9b", cat: "danger", meaning: "Traversée de voies de tramway" },
   { code: "A13a", cat: "danger", meaning: "Endroit fréquenté par les enfants" },
-  { code: "A13b", cat: "danger", meaning: "Annonce de passage(s) pour piétons" },
+  { code: "A13b", cat: "danger", meaning: "Annonce de passage pour piétons" },
   { code: "A14", cat: "danger", meaning: "Autres dangers" },
   { code: "A15a1", cat: "danger", meaning: "Passage d'animaux domestiques" },
   { code: "A15a2", cat: "danger", meaning: "Passage d'animaux domestiques" },
