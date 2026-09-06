@@ -627,6 +627,7 @@ const elSignPreview = {
 };
 
 function positionSignPreview(cell) {
+  if (!elSignPreview.wrap) return;
   const cellRect = cell.getBoundingClientRect();
   const previewRect = elSignPreview.wrap.getBoundingClientRect();
   const margin = 10;
@@ -646,13 +647,14 @@ function positionSignPreview(cell) {
 }
 
 function showSignPreview(cell, url) {
-  if (!url) return;
+  if (!url || !elSignPreview.wrap || !elSignPreview.img) return;
   elSignPreview.img.src = url;
   elSignPreview.wrap.hidden = false;
   positionSignPreview(cell);
 }
 
 function hideSignPreview() {
+  if (!elSignPreview.wrap) return;
   elSignPreview.wrap.hidden = true;
 }
 

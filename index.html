@@ -210,13 +210,16 @@
 
 </main>
 
-<script src="signs.js"></script>
-<script src="script.js"></script>
-
 <!-- Aperçu agrandi au survol (mode "trouve le panneau") : un seul élément
-     réutilisé et repositionné en JS, pour ne pas cloner un popup par case. -->
+     réutilisé et repositionné en JS. Placé AVANT les scripts pour que
+     l'élément existe déjà dans le DOM quand script.js s'exécute
+     (un <script> sans defer bloque le parsing et tourne immédiatement :
+     tout ce qui est plus bas dans le HTML n'existe pas encore). -->
 <div class="sign-preview" id="signPreview" hidden aria-hidden="true">
   <img id="signPreviewImg" alt="">
 </div>
+
+<script src="signs.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
