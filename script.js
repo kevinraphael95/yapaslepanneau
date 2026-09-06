@@ -842,7 +842,7 @@ document.getElementById("btnHomeFromInfiniteFind").addEventListener("click", () 
  * filtrable et cherchable ; ne fait pas partie d'un quiz)
  * ===================================================================== */
 
-const CAT_ORDER = ["danger", "priorite", "interdiction", "obligation", "fin", "zone", "indication", "service"];
+const CAT_ORDER = ["danger", "priorite", "interdiction", "obligation", "fin", "zone", "indication", "service", "temporaire"];
 const CAT_LABELS = {
   danger: "Danger",
   priorite: "Intersections et priorité",
@@ -852,6 +852,7 @@ const CAT_LABELS = {
   zone: "Prescription zonale",
   indication: "Indication",
   service: "Service",
+  temporaire: "Signalisation temporaire (chantiers, accidents)",
 };
 
 const courseState = {

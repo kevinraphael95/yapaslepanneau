@@ -21,9 +21,12 @@
  * liste des mauvaises réponses, pour ne jamais afficher deux boutons avec
  * exactement le même texte.
  *
- * cat: "danger" | "priorite" | "interdiction" | "obligation" | "fin" | "zone" | "indication" | "service"
+ * cat: "danger" | "priorite" | "interdiction" | "obligation" | "fin" | "zone" | "indication" | "service" | "temporaire"
  * Le champ "cat" est utilisé par pickDistractors() dans script.js pour
  * proposer des mauvaises réponses cohérentes (même famille de panneau).
+ * "temporaire" regroupe les panneaux de danger temporaire (type AK, fond
+ * jaune fluo) et de prescription temporaire (type KC), utilisés pour les
+ * chantiers, accidents et autres dangers ponctuels sur la chaussée.
  */
 
 const SIGNS = [
@@ -44,7 +47,7 @@ const SIGNS = [
   { code: "A9a", cat: "danger", meaning: "Traversée de voie de véhicules de transport en commun" },
   { code: "A9b", cat: "danger", meaning: "Traversée de voies de tramway" },
   { code: "A13a", cat: "danger", meaning: "Endroit fréquenté par les enfants" },
-  { code: "A13b", cat: "danger", meaning: "Passage pour piétons (danger)" },
+  { code: "A13b", cat: "danger", meaning: "Annonce de passage(s) pour piétons" },
   { code: "A14", cat: "danger", meaning: "Autres dangers" },
   { code: "A15a1", cat: "danger", meaning: "Passage d'animaux domestiques" },
   { code: "A15a2", cat: "danger", meaning: "Passage d'animaux domestiques" },
@@ -78,11 +81,11 @@ const SIGNS = [
   { code: "B2b", cat: "interdiction", meaning: "Interdiction de tourner à droite à la prochaine intersection" },
   { code: "B2c", cat: "interdiction", meaning: "Interdiction de faire demi-tour" },
   { code: "B3", cat: "interdiction", meaning: "Interdiction de dépasser tous les véhicules à moteur (sauf deux-roues)" },
-  { code: "B3a", cat: "interdiction", meaning: "L'interdiction de dépasser concerne seulement les transports de marchandises de plus de 3,5 tonnes" },
-  { code: "B4", cat: "interdiction", meaning: "Arrêt obligatoire au poste de douane" },
-  { code: "B5a", cat: "interdiction", meaning: "Arrêt obligatoire au poste de gendarmerie" },
-  { code: "B5b", cat: "interdiction", meaning: "Arrêt obligatoire au poste de police" },
-  { code: "B5c", cat: "interdiction", meaning: "Arrêt obligatoire au poste de péage" },
+  { code: "B3a", cat: "interdiction", meaning: "Interdiction de dépasser pour les véhicules de plus de 3,5 tonnes" },
+  { code: "B4", cat: "interdiction", meaning: "Arrêt au poste de douane" },
+  { code: "B5a", cat: "interdiction", meaning: "Arrêt au poste de gendarmerie" },
+  { code: "B5b", cat: "interdiction", meaning: "Arrêt au poste de police" },
+  { code: "B5c", cat: "interdiction", meaning: "Arrêt au poste de péage" },
   { code: "B6a1", cat: "interdiction", meaning: "Stationnement interdit" },
   { code: "B6a2", cat: "interdiction", meaning: "Stationnement interdit du 1er au 15 du mois" },
   { code: "B6a3", cat: "interdiction", meaning: "Stationnement interdit du 16 à la fin du mois" },
@@ -95,7 +98,7 @@ const SIGNS = [
   { code: "B9c", cat: "interdiction", meaning: "Accès interdit aux véhicules à traction animale" },
   { code: "B9d", cat: "interdiction", meaning: "Accès interdit aux véhicules agricoles à moteur" },
   { code: "B9e", cat: "interdiction", meaning: "Accès interdit aux voitures à bras" },
-  { code: "B9f", cat: "interdiction", meaning: "Accès interdit aux véhicules de transport en commun" },
+  { code: "B9f", cat: "interdiction", meaning: "Accès interdit aux véhicules de transport en commun de personnes" },
   { code: "B9g", cat: "interdiction", meaning: "Accès interdit aux cyclomoteurs" },
   { code: "B9h", cat: "interdiction", meaning: "Accès interdit aux motocyclettes et motocyclettes légères" },
   { code: "B9i", cat: "interdiction", meaning: "Accès interdit aux véhicules tractant une caravane ou remorque de plus de 250 kg" },
@@ -136,8 +139,8 @@ const SIGNS = [
   // ---------- B — Fin d'interdiction / fin d'obligation (13) ----------
   { code: "B31", cat: "fin", meaning: "Fin de toutes les interdictions précédemment signalées" },
   { code: "B33", cat: "fin", meaning: "Fin de limitation de vitesse" },
-  { code: "B34", cat: "fin", meaning: "Fin d'interdiction de dépasser" },
-  { code: "B34a", cat: "fin", meaning: "Fin d'interdiction de dépasser pour les véhicules de transport de marchandises dont le PTAC est > à 3,5 tonnes" },
+  { code: "B34", cat: "fin", meaning: "Fin d'interdiction de dépasser (panneau B3)" },
+  { code: "B34a", cat: "fin", meaning: "Fin d'interdiction de dépasser (panneau B3a)" },
   { code: "B35", cat: "fin", meaning: "Fin d'interdiction de l'usage de l'avertisseur sonore" },
   { code: "B39", cat: "fin", meaning: "Fin d'une interdiction précisée par une inscription sur le panneau" },
   { code: "B40", cat: "fin", meaning: "Fin de piste ou bande obligatoire pour cycles" },
@@ -187,7 +190,7 @@ const SIGNS = [
   { code: "C13c", cat: "indication", meaning: "Impasse avec issue pour piétons" },
   { code: "C13d", cat: "indication", meaning: "Impasse avec issue pour piétons et cyclistes" },
   { code: "C18", cat: "indication", meaning: "Priorité par rapport à la circulation venant en sens inverse" },
-  { code: "C20a", cat: "indication", meaning: "Passage pour piétons (information)" },
+  { code: "C20a", cat: "indication", meaning: "Indication d'un passage pour piétons" },
   { code: "C20b", cat: "indication", meaning: "Traversée de voie de transport en commun" },
   { code: "C20c", cat: "indication", meaning: "Traversée de voies de tramway" },
   { code: "C23", cat: "indication", meaning: "Stationnement réglementé pour caravanes et autocaravanes" },
@@ -248,4 +251,19 @@ const SIGNS = [
   { code: "CE30a", cat: "service", meaning: "Issue de secours vers la droite" },
   { code: "CE30b", cat: "service", meaning: "Issue de secours vers la gauche" },
   { code: "CE52", cat: "service", meaning: "Lieu aménagé pour la pratique du covoiturage" },
+
+  // ---------- AK — Panneaux de danger temporaire (chantiers, accidents) ----------
+  { code: "AK2", cat: "temporaire", meaning: "Cassis ou dos-d'âne" },
+  { code: "AK3", cat: "temporaire", meaning: "Chaussée rétrécie" },
+  { code: "AK4", cat: "temporaire", meaning: "Chaussée glissante" },
+  { code: "AK5", cat: "temporaire", meaning: "Travaux" },
+  { code: "AK14", cat: "temporaire", meaning: "Autres dangers" },
+  { code: "AK17", cat: "temporaire", meaning: "Annonce de feux tricolores réglant la circulation" },
+  { code: "AK22", cat: "temporaire", meaning: "Projection de gravillons" },
+  { code: "AK30", cat: "temporaire", meaning: "Bouchon" },
+  { code: "AK31", cat: "temporaire", meaning: "Accident" },
+  { code: "AK32", cat: "temporaire", meaning: "Nappes de brouillard ou de fumées épaisses" },
+
+  // ---------- KC — Panneaux de prescription temporaire (chantiers) ----------
+  { code: "KC1", cat: "temporaire", meaning: "Route barrée" },
 ];
