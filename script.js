@@ -18,31 +18,67 @@ function showScreen(name) {
   window.scrollTo(0, 0);
 }
 
-/* ---------- Récupération des images (Wikimedia Commons API) ---------- */
+/* ---------- Récupération des images (Wikimedia Commons API) ----------
+ * On ne fait plus une requête par panneau (206 requêtes simultanées =
+ * rate limit 429 côté Wikimedia, qui se manifeste dans la console comme
+ * une erreur CORS trompeuse). À la place, on précharge TOUTES les images
+ * en quelques requêtes groupées (l'API accepte jusqu'à 50 titres par
+ * appel, séparés par "|"). 206 panneaux -> 5 requêtes au lieu de 206.
+ */
 const imageUrlCache = new Map();
+const WIKI_BATCH_SIZE = 50;
 
-async function fetchSignImageUrl(code) {
-  if (imageUrlCache.has(code)) return imageUrlCache.get(code);
-  const title = `File:France road sign ${code}.svg`;
+async function fetchImageBatch(signsBatch) {
+  const titles = signsBatch.map((s) => `File:France road sign ${s.code}.svg`);
   const endpoint =
     "https://commons.wikimedia.org/w/api.php?action=query&titles=" +
-    encodeURIComponent(title) +
+    encodeURIComponent(titles.join("|")) +
     "&prop=imageinfo&iiprop=url&format=json&origin=*";
+
   try {
     const res = await fetch(endpoint);
     const data = await res.json();
     const pages = data.query && data.query.pages;
-    const page = pages && Object.values(pages)[0];
-    if (!page || "missing" in page || !page.imageinfo) {
-      throw new Error("image introuvable pour " + code);
-    }
-    const url = page.imageinfo[0].url;
-    imageUrlCache.set(code, url);
-    return url;
+    if (!pages) return;
+
+    Object.values(pages).forEach((page) => {
+      const match = typeof page.title === "string" && page.title.match(/^File:France road sign (.+)\.svg$/);
+      if (!match) return;
+      const code = match[1];
+      if ("missing" in page || !page.imageinfo || !page.imageinfo[0]) {
+        imageUrlCache.set(code, null);
+      } else {
+        imageUrlCache.set(code, page.imageinfo[0].url);
+      }
+    });
   } catch (err) {
-    imageUrlCache.set(code, null);
-    return null;
+    // La requête groupée a échoué (réseau, etc.) : on laisse ce batch
+    // sans entrée dans le cache, il sera marqué "null" par le nettoyage
+    // final ci-dessous plutôt que retenté indéfiniment.
   }
+}
+
+async function preloadAllSignImages() {
+  for (let i = 0; i < SIGNS.length; i += WIKI_BATCH_SIZE) {
+    const batch = SIGNS.slice(i, i + WIKI_BATCH_SIZE);
+    await fetchImageBatch(batch);
+  }
+  // Tout code qui n'a pas été résolu par l'API (réponse manquante, titre
+  // introuvable, batch en échec) est explicitement marqué comme absent,
+  // pour ne jamais le retenter en boucle.
+  SIGNS.forEach((s) => {
+    if (!imageUrlCache.has(s.code)) imageUrlCache.set(s.code, null);
+  });
+}
+
+// Lancé une seule fois au chargement du script ; tout le reste du jeu
+// attend cette promesse avant de piocher des panneaux.
+const preloadPromise = preloadAllSignImages();
+
+async function fetchSignImageUrl(code) {
+  if (imageUrlCache.has(code)) return imageUrlCache.get(code);
+  await preloadPromise;
+  return imageUrlCache.get(code) || null;
 }
 
 /* ---------- Utilitaires ---------- */
