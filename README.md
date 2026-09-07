@@ -8,8 +8,8 @@ Petit quiz gratuit, en HTML/CSS/JS pour réviser les panneaux de signalisation d
 
 - **QCM — 20 questions** : un panneau, 4 propositions, un score final sur 20.
 - **Mode infini** : même principe en QCM, mais on enchaîne jusqu'à la première erreur (record de série sauvegardé).
-- **Infini — trouve le nom** : le panneau s'affiche, il faut taper sa signification (autocomplétion à partir de 3 lettres).
-- **Infini — trouve le panneau** : la signification s'affiche, il faut retrouver le bon panneau dans une grille contenant tous les panneaux du jeu. Survoler une case affiche un aperçu agrandi dans la marge de l'écran.
+- **Hard — trouve le nom (infini)** : le panneau s'affiche, il faut taper sa signification (autocomplétion à partir de 3 lettres). A l'infini jusqu'à faire une erreur.
+- **Hard — trouve le panneau (infini)** : la signification s'affiche, il faut retrouver le bon panneau dans une grille contenant tous les panneaux du jeu. Survoler une case affiche un aperçu agrandi dans la marge de l'écran. A l'infini jusqu'à faire une erreur.
 - **Cours — tous les panneaux** : consultation libre de tous les panneaux avec leur signification, groupés par catégorie, filtrables et cherchables.
 
 ## Structure du projet
