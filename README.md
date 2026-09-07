@@ -22,8 +22,6 @@ script.js         Logique des 5 modes de jeu + gestion des écrans
 favicon.svg       Icône du site
 ```
 
-Aucun framework, aucune étape de build : on peut ouvrir `index.html` directement dans un navigateur (ou servir le dossier avec n'importe quel serveur statique) pour développer en local.
-
 ## Données et images
 
 - Les significations des panneaux (`signs.js`) sont sourcées sur l'annexe de l'arrêté du 24 novembre 1967 relatif à la signalisation des routes et autoroutes (version consolidée CEREMA) et les listes officielles Wikipédia (types A, AB, B, C, CE, AK, KC).
