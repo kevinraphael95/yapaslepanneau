@@ -16,7 +16,7 @@ Petit quiz gratuit, en HTML/CSS/JS pour réviser les panneaux de signalisation d
 
 ```
 index.html        Structure de la page (tous les écrans)
-style.css         Mise en page et thème (mode sombre, ligne jaune animée)
+style.css         Mise en page
 signs.js          Base de données des panneaux (code, catégorie, signification)
 script.js         Logique des 5 modes de jeu + gestion des écrans
 favicon.svg       Icône du site
