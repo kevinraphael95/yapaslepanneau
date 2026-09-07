@@ -258,7 +258,7 @@ const SIGNS = [
   { code: "AK4", cat: "temporaire", meaning: "Chaussée glissante (temporaire)" },
   { code: "AK5", cat: "temporaire", meaning: "Travaux" },
   { code: "AK14", cat: "temporaire", meaning: "Autres dangers (temporaire)" },
-  { code: "AK17", cat: "temporaire", meaning: "Annonce de feux tricolores réglant la circulation" },
+  { code: "AK17", cat: "temporaire", meaning: "Annonce de feux tricolores (temporaire)" },
   { code: "AK22", cat: "temporaire", meaning: "Projection de gravillons" },
   { code: "AK30", cat: "temporaire", meaning: "Bouchon" },
   { code: "AK31", cat: "temporaire", meaning: "Accident" },
