@@ -98,7 +98,7 @@ const SIGNS = [
   { code: "B9c", cat: "interdiction", meaning: "Accès interdit aux véhicules à traction animale" },
   { code: "B9d", cat: "interdiction", meaning: "Accès interdit aux véhicules agricoles à moteur" },
   { code: "B9e", cat: "interdiction", meaning: "Accès interdit aux voitures à bras" },
-  { code: "B9f", cat: "interdiction", meaning: "Accès interdit aux véhicules de transport en commun de personnes" },
+  { code: "B9f", cat: "interdiction", meaning: "Accès interdit aux véhicules de transport en commun" },
   { code: "B9g", cat: "interdiction", meaning: "Accès interdit aux cyclomoteurs" },
   { code: "B9h", cat: "interdiction", meaning: "Accès interdit aux motocyclettes et motocyclettes légères" },
   { code: "B9i", cat: "interdiction", meaning: "Accès interdit aux véhicules tractant une caravane ou remorque de plus de 250 kg" },
