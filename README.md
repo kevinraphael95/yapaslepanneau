@@ -1,6 +1,6 @@
 # 🚸 Révise les panneaux
 
-Petit quiz gratuit, en HTML/CSS/JS pur (aucune dépendance, aucun build), pour réviser les panneaux de signalisation du code de la route français.
+Petit quiz gratuit, en HTML/CSS/JS pour réviser les panneaux de signalisation du code de la route français.
 
 **👉 Jouer en ligne :** https://kevinraphael95.github.io/yapaslepanneau/
 
