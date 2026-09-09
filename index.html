@@ -16,7 +16,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -26,10 +26,10 @@
 <header class="topbar">
   <div class="brand">
     <span class="brand-mark" aria-hidden="true">
-      <svg viewBox="0 0 100 100" width="30" height="30">
-        <polygon points="50,8 93,86 7,86" fill="#f3efe4" stroke="#c81e2c" stroke-width="10" stroke-linejoin="round"/>
-        <rect x="45" y="34" width="10" height="26" fill="#1b1b1a"/>
-        <rect x="45" y="68" width="10" height="9" fill="#1b1b1a"/>
+      <svg viewBox="0 0 100 100" width="28" height="28">
+        <polygon points="50,6 94,90 6,90" fill="none" stroke="currentColor" stroke-width="9" stroke-linejoin="round"/>
+        <rect x="44" y="34" width="12" height="30" fill="currentColor"/>
+        <rect x="44" y="70" width="12" height="10" fill="currentColor"/>
       </svg>
     </span>
     <span class="brand-name">Révise les panneaux</span>
@@ -48,37 +48,27 @@
 
     <div class="mode-grid">
       <button class="mode-card" id="btnStartQcm">
-        <span class="mode-card-icon" aria-hidden="true">
-          <svg viewBox="0 0 48 48"><rect x="4" y="12" width="40" height="24" rx="3" fill="#0b4c8c"/><text x="24" y="29" text-anchor="middle" font-family="Oswald, sans-serif" font-weight="600" font-size="15" fill="#f3efe4">20</text></svg>
-        </span>
+        <span class="mode-card-icon" aria-hidden="true">20</span>
         <span class="mode-card-title">QCM - 20 questions</span>
         <span class="mode-card-desc">Un score final, comme un examen blanc.</span>
       </button>
       <button class="mode-card" id="btnStartInfinite">
-        <span class="mode-card-icon" aria-hidden="true">
-          <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#0b4c8c"/><text x="24" y="30" text-anchor="middle" font-family="Oswald, sans-serif" font-weight="600" font-size="17" fill="#f3efe4">&#8734;</text></svg>
-        </span>
+        <span class="mode-card-icon" aria-hidden="true">∞</span>
         <span class="mode-card-title">QCM - Mode infini</span>
         <span class="mode-card-desc">Enchaîne les panneaux jusqu'à ta première erreur.</span>
       </button>
       <button class="mode-card" id="btnStartInfiniteText">
-        <span class="mode-card-icon" aria-hidden="true">
-          <svg viewBox="0 0 48 48"><rect x="4" y="12" width="40" height="24" rx="3" fill="#1c6b3f"/><text x="24" y="29" text-anchor="middle" font-family="Oswald, sans-serif" font-weight="600" font-size="15" fill="#f3efe4">Aa</text></svg>
-        </span>
+        <span class="mode-card-icon" aria-hidden="true">Aa</span>
         <span class="mode-card-title">Hard - trouve le nom (infini)</span>
         <span class="mode-card-desc">Le panneau s'affiche, tape sa signification (autocomplétion dès 3 lettres).</span>
       </button>
       <button class="mode-card" id="btnStartInfiniteFind">
-        <span class="mode-card-icon" aria-hidden="true">
-          <svg viewBox="0 0 48 48"><polygon points="24,5 44,41 4,41" fill="#f3efe4" stroke="#c81e2c" stroke-width="4.5" stroke-linejoin="round"/><circle cx="17" cy="27" r="5" fill="none" stroke="#1b1b1a" stroke-width="2.6"/><line x1="21" y1="31" x2="27" y2="37" stroke="#1b1b1a" stroke-width="2.6" stroke-linecap="round"/></svg>
-        </span>
-        <span class="mode-card-title">Hard - trouve le panneau (infini)</span>
+        <span class="mode-card-icon" aria-hidden="true">▦</span>
+        <span class="mode-card-title">Hard - trouve le panneau (inifni)</span>
         <span class="mode-card-desc">La signification s'affiche, retrouve le bon panneau parmi tous les autres.</span>
       </button>
       <button class="mode-card" id="btnStartCourse">
-        <span class="mode-card-icon" aria-hidden="true">
-          <svg viewBox="0 0 48 48"><rect x="4" y="8" width="40" height="32" rx="3" fill="#1c6b3f"/><rect x="10" y="16" width="28" height="3.5" fill="#f3efe4"/><rect x="10" y="23" width="20" height="3.5" fill="#f3efe4"/><rect x="10" y="30" width="24" height="3.5" fill="#f3efe4"/></svg>
-        </span>
+        <span class="mode-card-icon" aria-hidden="true">📖</span>
         <span class="mode-card-title">Cours - tous les panneaux</span>
         <span class="mode-card-desc">Parcours tous les panneaux et leur signification, par catégorie ou par recherche.</span>
       </button>

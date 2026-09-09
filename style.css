@@ -1,33 +1,16 @@
 :root {
-  /* Chaussée : gris-brun chaud, pas le bleu-gris "dark mode" par défaut */
-  --asphalt: #201e1c;
-  --asphalt-raised: #2a2724;
-  --asphalt-line: #3a3632;
-
-  /* Panneau : blanc de signalisation légèrement vieilli, jamais blanc pur */
-  --panel: #f3efe4;
-  --panel-dim: #e8e2d2;
-  --ink: #1b1b1a;
-  --ink-soft: #55524a;
-
-  /* Texte sur chaussée */
-  --text: #ece7d9;
-  --text-muted: #a39d8f;
-
-  /* Couleurs normalisées de la signalisation française (approx. RAL) */
-  --route-red: #c81e2c;
-  --route-red-dark: #8f1220;
-  /* Le rouge officiel ci-dessus n'a pas assez de contraste utilisé comme
-     texte directement sur la chaussée sombre (~2.9:1) ; cette variante
-     plus claire sert uniquement quand le rouge est du texte sur --asphalt. */
-  --route-red-text: #ff5a5f;
-  --route-blue: #0b4c8c;
-  --route-green: #1c6b3f;
-
-  --radius-panel: 8px;
-  --radius-round: 999px;
+  --bg: #14161a;
+  --panel: #1e2228;
+  --panel-alt: #262b33;
+  --line-yellow: #f4c430;
+  --sign-blue: #1a5fb4;
+  --sign-red: #d7263d;
+  --sign-green: #2f9e44;
+  --text: #f4f2ea;
+  --text-muted: #9aa1ac;
+  --radius: 14px;
   --font-head: "Oswald", sans-serif;
-  --font-body: "Public Sans", sans-serif;
+  --font-body: "Inter", sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -42,39 +25,35 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--asphalt);
-  background-image: radial-gradient(circle at 15% 0%, var(--asphalt-raised), transparent 60%);
+  background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
   line-height: 1.5;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .road-line { animation: dash-move 2s linear infinite; }
+  .road-line { animation: dash-move 1.6s linear infinite; }
 }
 
-/* Marquage au sol : ligne blanche discontinue, comme une route française
-   (le jaune est réservé aux marquages temporaires/chantier chez nous,
-   pas au marquage axial permanent). Ratio peint/vide proche du réel. */
+/* Ligne de marquage au sol : élément décoratif unique et signifiant */
 .road-line {
   position: sticky;
   top: 0;
   z-index: 20;
-  height: 5px;
+  height: 6px;
   width: 100%;
   background: repeating-linear-gradient(
     90deg,
-    var(--panel-dim) 0px,
-    var(--panel-dim) 20px,
-    transparent 20px,
-    transparent 80px
+    var(--line-yellow) 0px,
+    var(--line-yellow) 28px,
+    transparent 28px,
+    transparent 52px
   );
-  opacity: 0.55;
 }
 
 @keyframes dash-move {
   from { background-position-x: 0; }
-  to { background-position-x: -80px; }
+  to { background-position-x: -52px; }
 }
 
 .topbar {
@@ -87,16 +66,17 @@ body {
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  color: var(--line-yellow);
 }
 
-.brand-mark { display: flex; flex: none; }
+.brand-mark { display: flex; }
 
 .brand-name {
   font-family: var(--font-head);
   font-weight: 600;
   font-size: clamp(1rem, 3.5vw, 1.15rem);
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
   color: var(--text);
 }
 
@@ -104,7 +84,7 @@ body {
   font-size: clamp(0.75rem, 2.5vw, 0.85rem);
   color: var(--text-muted);
 }
-.best-streak strong { color: var(--route-red-text); font-weight: 700; }
+.best-streak strong { color: var(--line-yellow); }
 
 main#app {
   max-width: 640px;
@@ -122,7 +102,6 @@ main#app {
   font-size: clamp(1.8rem, 5vw, 2.6rem);
   line-height: 1.15;
   margin: 12px 0 10px;
-  color: var(--text);
 }
 
 .hero-sub {
@@ -142,47 +121,34 @@ main#app {
   .mode-grid { grid-template-columns: 1fr; }
 }
 
-/* Chaque carte de mode est traitée comme une plaque de panneau réelle :
-   fond crème, liseré noir, accent de catégorie sur le bord supérieur.
-   Pas de radius uniforme + ombre + lift au survol partout : l'accent de
-   catégorie qui se réveille au focus/hover fait le travail. */
 .mode-card {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  gap: 8px;
   text-align: left;
   background: var(--panel);
-  border: 1px solid var(--ink);
-  border-top: 4px solid var(--cat-color, var(--route-blue));
-  border-radius: var(--radius-panel);
-  padding: 20px 18px;
-  color: var(--ink);
+  border: 1px solid #2c313a;
+  border-radius: var(--radius);
+  padding: 22px 20px;
+  color: var(--text);
   cursor: pointer;
   font-family: inherit;
-  transition: border-top-color 0.15s ease;
+  transition: border-color 0.15s ease, transform 0.15s ease;
 }
 
 .mode-card:hover,
 .mode-card:focus-visible {
-  border-top-width: 7px;
+  border-color: var(--line-yellow);
+  transform: translateY(-2px);
   outline: none;
 }
 
-#btnStartQcm { --cat-color: var(--route-blue); }
-#btnStartInfinite { --cat-color: var(--route-blue); }
-#btnStartInfiniteText { --cat-color: var(--route-green); }
-#btnStartInfiniteFind { --cat-color: var(--route-red); }
-#btnStartCourse { --cat-color: var(--route-green); }
-
 .mode-card-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
+  font-family: var(--font-head);
+  font-size: 1.6rem;
+  color: var(--line-yellow);
 }
-.mode-card-icon svg { width: 100%; height: 100%; }
 
 .mode-card-title {
   font-family: var(--font-head);
@@ -191,24 +157,23 @@ main#app {
 }
 
 .mode-card-desc {
-  color: var(--ink-soft);
+  color: var(--text-muted);
   font-size: 0.88rem;
 }
 
 .source-note {
   margin-top: 30px;
   font-size: clamp(0.72rem, 2.2vw, 0.78rem);
-  color: var(--text-muted);
-  opacity: 0.7;
+  color: #5c6270;
 }
 
 /* --- Quiz --- */
 .quiz-head { margin-bottom: clamp(8px, 2vh, 18px); }
 
 .quiz-progress-track {
-  height: 6px;
-  border-radius: var(--radius-round);
-  background: var(--asphalt-line);
+  height: 8px;
+  border-radius: 4px;
+  background: var(--panel-alt);
   overflow: hidden;
   margin-bottom: 8px;
 }
@@ -216,8 +181,8 @@ main#app {
 .quiz-progress-fill {
   height: 100%;
   width: 5%;
-  background: var(--route-red);
-  border-radius: var(--radius-round);
+  background: var(--line-yellow);
+  border-radius: 4px;
   transition: width 0.25s ease;
 }
 
@@ -234,7 +199,6 @@ main#app {
   font-weight: 600;
   font-size: clamp(1.15rem, 3vh, 1.4rem);
   margin: clamp(2px, 1vh, 6px) 0 clamp(10px, 2vh, 20px);
-  color: var(--text);
 }
 
 .sign-stage {
@@ -243,19 +207,16 @@ main#app {
   margin-bottom: clamp(12px, 3vh, 24px);
 }
 
-/* Le panneau est le seul élément "lumineux" de l'écran : crème sur
-   fond de chaussée sombre, comme éclairé par des phares la nuit. */
 .sign-frame {
   width: clamp(120px, 22dvh, 200px);
   height: clamp(120px, 22dvh, 200px);
   background: var(--panel);
-  border: 2px solid var(--ink);
-  border-radius: var(--radius-panel);
+  border: 1px solid #2c313a;
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: clamp(12px, 3vh, 20px);
-  box-shadow: 0 0 40px rgba(243, 239, 228, 0.08);
 }
 
 .sign-frame img {
@@ -296,9 +257,9 @@ main#app {
   text-align: left;
   padding: clamp(10px, 2vh, 14px) 18px;
   background: var(--panel);
-  border: 1px solid var(--ink);
-  border-radius: var(--radius-panel);
-  color: var(--ink);
+  border: 1px solid #2c313a;
+  border-radius: 10px;
+  color: var(--text);
   font-family: inherit;
   font-size: clamp(0.9rem, 2vh, 0.98rem);
   cursor: pointer;
@@ -307,7 +268,7 @@ main#app {
 
 .option-btn:hover:not(:disabled),
 .option-btn:focus-visible {
-  border-color: var(--route-blue);
+  border-color: var(--line-yellow);
   outline: none;
 }
 
@@ -316,8 +277,7 @@ main#app {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: var(--panel-dim);
-  border: 1px solid var(--ink);
+  background: var(--panel-alt);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -329,51 +289,49 @@ main#app {
 .option-btn:disabled { cursor: default; }
 
 .option-btn.is-correct {
-  background: color-mix(in srgb, var(--route-green) 16%, var(--panel));
-  border-color: var(--route-green);
+  background: color-mix(in srgb, var(--sign-green) 22%, var(--panel));
+  border-color: var(--sign-green);
 }
 .option-btn.is-correct .option-letter {
-  background: var(--route-green);
-  border-color: var(--route-green);
-  color: var(--panel);
+  background: var(--sign-green);
+  color: #06210f;
 }
 
 .option-btn.is-wrong {
-  background: color-mix(in srgb, var(--route-red) 16%, var(--panel));
-  border-color: var(--route-red);
+  background: color-mix(in srgb, var(--sign-red) 22%, var(--panel));
+  border-color: var(--sign-red);
 }
 .option-btn.is-wrong .option-letter {
-  background: var(--route-red);
-  border-color: var(--route-red);
-  color: var(--panel);
+  background: var(--sign-red);
+  color: #2a0710;
 }
 
-.option-btn.is-muted { opacity: 0.5; }
+.option-btn.is-muted { opacity: 0.55; }
 
 .btn-next {
   margin-top: clamp(10px, 2vh, 20px);
   margin-bottom: 8px;
   width: 100%;
   padding: clamp(10px, 2vh, 14px);
-  border-radius: var(--radius-panel);
+  border-radius: 10px;
   border: none;
-  background: var(--route-red);
-  color: var(--panel);
+  background: var(--line-yellow);
+  color: #201a00;
   font-family: var(--font-head);
   font-weight: 600;
   font-size: 1rem;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
   cursor: pointer;
   scroll-margin-block: 16px;
 }
-.btn-next:hover { background: var(--route-red-dark); }
+.btn-next:hover { filter: brightness(1.06); }
 
 /* --- Fin --- */
 .end-score {
   font-family: var(--font-head);
   font-size: clamp(2.4rem, 10vw, 3.4rem);
   font-weight: 700;
-  color: var(--route-red-text);
+  color: var(--line-yellow);
   margin: 0 0 6px;
 }
 
@@ -391,7 +349,7 @@ main#app {
 .btn-primary,
 .btn-secondary {
   padding: clamp(11px, 3vw, 13px) clamp(16px, 5vw, 22px);
-  border-radius: var(--radius-panel);
+  border-radius: 10px;
   font-family: var(--font-head);
   font-weight: 600;
   font-size: clamp(0.88rem, 3vw, 0.95rem);
@@ -400,18 +358,18 @@ main#app {
 }
 
 .btn-primary {
-  background: var(--route-red);
-  color: var(--panel);
+  background: var(--line-yellow);
+  color: #201a00;
   border: none;
 }
-.btn-primary:hover { background: var(--route-red-dark); }
+.btn-primary:hover { filter: brightness(1.06); }
 
 .btn-secondary {
   background: transparent;
   color: var(--text);
-  border-color: var(--asphalt-line);
+  border-color: #2c313a;
 }
-.btn-secondary:hover { border-color: var(--route-blue); color: var(--text); }
+.btn-secondary:hover { border-color: var(--line-yellow); }
 
 /* --- Mode infini : trouve le nom (saisie + autocomplétion) --- */
 .text-answer {
@@ -423,16 +381,15 @@ main#app {
   width: 100%;
   padding: clamp(10px, 2vh, 14px) 16px;
   background: var(--panel);
-  border: 1px solid var(--ink);
-  border-radius: var(--radius-panel);
-  color: var(--ink);
+  border: 1px solid #2c313a;
+  border-radius: 10px;
+  color: var(--text);
   font-family: inherit;
   font-size: clamp(0.9rem, 2vh, 0.98rem);
 }
-.text-answer-input::placeholder { color: var(--ink-soft); }
 .text-answer-input:focus {
   outline: none;
-  border-color: var(--route-blue);
+  border-color: var(--line-yellow);
 }
 .text-answer-input:disabled { opacity: 0.7; }
 
@@ -442,9 +399,9 @@ main#app {
   top: calc(100% + 6px);
   left: 0;
   right: 0;
-  background: var(--panel);
-  border: 1px solid var(--ink);
-  border-radius: var(--radius-panel);
+  background: var(--panel-alt);
+  border: 1px solid #2c313a;
+  border-radius: 10px;
   overflow-y: auto;
   max-height: 260px;
 }
@@ -456,8 +413,8 @@ main#app {
   padding: 10px 14px;
   background: transparent;
   border: none;
-  border-bottom: 1px solid var(--panel-dim);
-  color: var(--ink);
+  border-bottom: 1px solid #2c313a;
+  color: var(--text);
   font-family: inherit;
   font-size: clamp(0.82rem, 2vh, 0.88rem);
   cursor: pointer;
@@ -465,7 +422,7 @@ main#app {
 .text-suggestion-item:last-child { border-bottom: none; }
 .text-suggestion-item:hover,
 .text-suggestion-item:focus-visible {
-  background: var(--panel-dim);
+  background: var(--panel);
   outline: none;
 }
 
@@ -473,8 +430,8 @@ main#app {
   font-size: clamp(0.85rem, 2vh, 0.92rem);
   margin: 0 0 8px;
 }
-.text-feedback.is-correct { color: var(--route-green); }
-.text-feedback.is-wrong { color: var(--route-red-text); }
+.text-feedback.is-correct { color: var(--sign-green); }
+.text-feedback.is-wrong { color: var(--sign-red); }
 
 /* --- Mode infini : trouve le panneau (grille de tous les panneaux) --- */
 .sign-grid-wrap { margin-bottom: clamp(8px, 2vh, 16px); }
@@ -486,16 +443,16 @@ main#app {
   max-height: 54vh;
   overflow-y: auto;
   padding: 8px;
-  background: var(--asphalt-raised);
-  border: 1px solid var(--asphalt-line);
-  border-radius: var(--radius-panel);
+  background: var(--panel);
+  border: 1px solid #2c313a;
+  border-radius: var(--radius);
 }
 
 .sign-grid-item {
   aspect-ratio: 1;
-  background: var(--panel);
-  border: 2px solid var(--ink);
-  border-radius: 6px;
+  background: var(--panel-alt);
+  border: 2px solid transparent;
+  border-radius: 8px;
   padding: 6px;
   cursor: pointer;
   display: flex;
@@ -507,20 +464,20 @@ main#app {
 
 .sign-grid-item:hover:not(:disabled),
 .sign-grid-item:focus-visible {
-  border-color: var(--route-blue);
+  border-color: var(--line-yellow);
   outline: none;
 }
 .sign-grid-item:disabled { cursor: default; }
 
 .sign-grid-item.is-correct {
-  border-color: var(--route-green);
-  background: color-mix(in srgb, var(--route-green) 22%, var(--panel));
+  border-color: var(--sign-green);
+  background: color-mix(in srgb, var(--sign-green) 25%, var(--panel-alt));
 }
 .sign-grid-item.is-wrong {
-  border-color: var(--route-red);
-  background: color-mix(in srgb, var(--route-red) 22%, var(--panel));
+  border-color: var(--sign-red);
+  background: color-mix(in srgb, var(--sign-red) 25%, var(--panel-alt));
 }
-.sign-grid-item.is-muted { opacity: 0.35; }
+.sign-grid-item.is-muted { opacity: 0.4; }
 
 /* Aperçu agrandi au survol d'une case de la grille (mode "trouve le
    panneau"). Position fixed + JS : évite le clipping par overflow-y:auto
@@ -531,8 +488,8 @@ main#app {
   width: clamp(160px, 40vw, 220px);
   height: clamp(160px, 40vw, 220px);
   background: var(--panel);
-  border: 2px solid var(--route-red);
-  border-radius: var(--radius-panel);
+  border: 2px solid var(--line-yellow);
+  border-radius: var(--radius);
   padding: 14px;
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
   pointer-events: none;
@@ -582,9 +539,9 @@ main#app {
 
 .filter-chip {
   padding: 6px 14px;
-  border-radius: var(--radius-round);
-  border: 1px solid var(--asphalt-line);
-  background: transparent;
+  border-radius: 999px;
+  border: 1px solid #2c313a;
+  background: var(--panel);
   color: var(--text-muted);
   font-family: var(--font-body);
   font-size: 0.82rem;
@@ -592,12 +549,12 @@ main#app {
   transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
-.filter-chip:hover:not(.is-active) { border-color: var(--route-blue); color: var(--text); }
+.filter-chip:hover:not(.is-active) { border-color: var(--line-yellow); }
 
 .filter-chip.is-active {
-  background: var(--route-red);
-  color: var(--panel);
-  border-color: var(--route-red);
+  background: var(--line-yellow);
+  color: #201a00;
+  border-color: var(--line-yellow);
   font-weight: 600;
 }
 
@@ -607,10 +564,8 @@ main#app {
   font-family: var(--font-head);
   font-size: 1.05rem;
   font-weight: 600;
-  color: var(--text);
-  border-bottom: 2px solid var(--asphalt-line);
-  padding-bottom: 8px;
-  margin: 0 0 14px;
+  color: var(--line-yellow);
+  margin: 0 0 12px;
 }
 
 .course-grid {
@@ -621,15 +576,14 @@ main#app {
 
 .course-item {
   background: var(--panel);
-  border: 1px solid var(--ink);
-  border-radius: var(--radius-panel);
+  border: 1px solid #2c313a;
+  border-radius: 10px;
   padding: 12px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
   text-align: center;
-  color: var(--ink);
 }
 
 .course-item img {
@@ -645,7 +599,7 @@ main#app {
 
 .course-item-code {
   font-size: 0.7rem;
-  color: var(--ink-soft);
+  color: var(--text-muted);
   font-variant-numeric: tabular-nums;
 }
 
