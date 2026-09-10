@@ -83,6 +83,14 @@ const WIKI_BATCH_SIZE = 50;
 const IMAGE_CACHE_KEY = "panneaux-image-cache-v2";
 const IMAGE_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 jours
 
+
+function computeSignsSignature() {
+  // Toute modification de signs.js (nouveau code, changement de "file")
+  // change cette signature et invalide le cache existant automatiquement,
+  // sans jamais avoir besoin de vider le localStorage à la main après un fix.
+  return SIGNS.map((s) => `${s.code}:${s.file || ""}`).join("|");
+}
+
 // Réutilise les URLs déjà trouvées lors d'une visite précédente, pour ne
 // pas refaire les requêtes Wikimedia à chaque chargement de page. Retourne
 // true si un cache valide et complet a bien été chargé.
@@ -93,6 +101,7 @@ function loadCachedImages() {
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed.timestamp !== "number" || !parsed.data) return false;
     if (Date.now() - parsed.timestamp > IMAGE_CACHE_TTL_MS) return false;
+    if (parsed.signature !== computeSignsSignature()) return false; // signs.js a changé depuis ce cache
     Object.entries(parsed.data).forEach(([code, url]) => imageUrlCache.set(code, url));
     return SIGNS.every((s) => imageUrlCache.has(s.code));
   } catch (err) {
@@ -106,7 +115,10 @@ function saveCachedImages() {
     imageUrlCache.forEach((url, code) => {
       data[code] = url;
     });
-    localStorage.setItem(IMAGE_CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data }));
+    localStorage.setItem(
+      IMAGE_CACHE_KEY,
+      JSON.stringify({ timestamp: Date.now(), signature: computeSignsSignature(), data })
+    );
   } catch (err) {
     /* stockage plein ou indisponible : on ignore, ça retentera la prochaine fois */
   }
