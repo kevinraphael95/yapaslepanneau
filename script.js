@@ -80,7 +80,7 @@ initTheme();
  */
 const imageUrlCache = new Map();
 const WIKI_BATCH_SIZE = 50;
-const IMAGE_CACHE_KEY = "panneaux-image-cache-v1";
+const IMAGE_CACHE_KEY = "panneaux-image-cache-v2";
 const IMAGE_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 jours
 
 // Réutilise les URLs déjà trouvées lors d'une visite précédente, pour ne
@@ -113,7 +113,7 @@ function saveCachedImages() {
 }
 
 async function fetchImageBatch(signsBatch) {
-  const titles = signsBatch.map((s) => `File:France road sign ${s.code}.svg`);
+  const titles = signsBatch.map((s) => `File:${s.file || ("France road sign " + s.code + ".svg")}`);
   const endpoint =
     "https://commons.wikimedia.org/w/api.php?action=query&titles=" +
     encodeURIComponent(titles.join("|")) +
@@ -126,19 +126,23 @@ async function fetchImageBatch(signsBatch) {
     if (!pages) return;
 
     Object.values(pages).forEach((page) => {
-      const match = typeof page.title === "string" && page.title.match(/^File:France road sign (.+)\.svg$/);
-      if (!match) return;
-      const code = match[1];
+      if (typeof page.title !== "string") return;
+
+      const sign = signsBatch.find((s) => {
+        const expectedFile = s.file || ("France road sign " + s.code + ".svg");
+        return page.title.replace(/_/g, " ") === ("File:" + expectedFile).replace(/_/g, " ");
+      });
+
+      if (!sign) return;
+
       if ("missing" in page || !page.imageinfo || !page.imageinfo[0]) {
-        imageUrlCache.set(code, null);
+        imageUrlCache.set(sign.code, null);
       } else {
-        imageUrlCache.set(code, page.imageinfo[0].url);
+        imageUrlCache.set(sign.code, page.imageinfo[0].url);
       }
     });
   } catch (err) {
-    // La requête groupée a échoué (réseau, etc.) : on laisse ce batch
-    // sans entrée dans le cache, il sera marqué "null" par le nettoyage
-    // final ci-dessous plutôt que retenté indéfiniment.
+    // Erreur réseau
   }
 }
 
