@@ -19,6 +19,41 @@ function showScreen(name) {
   window.scrollTo(0, 0);
 }
 
+// Retour à l'accueil depuis n'importe quel écran de jeu (pas seulement
+// les écrans de fin) : aucun nettoyage d'état nécessaire, chaque mode
+// réinitialise son propre state au prochain démarrage.
+["btnHomeFromQuiz", "btnHomeFromQuizText", "btnHomeFromQuizFind"].forEach((id) => {
+  const btn = document.getElementById(id);
+  if (btn) btn.addEventListener("click", () => showScreen("home"));
+});
+
+/* ---------- Thème clair / sombre ---------- */
+const THEME_KEY = "panneaux-theme";
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  const toggle = document.getElementById("themeToggle");
+  if (toggle) {
+    toggle.setAttribute("aria-pressed", String(theme === "dark"));
+    toggle.querySelector(".icon-sun").hidden = theme === "dark";
+    toggle.querySelector(".icon-moon").hidden = theme !== "dark";
+  }
+}
+
+function initTheme() {
+  const stored = localStorage.getItem(THEME_KEY);
+  const preferred = stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  applyTheme(preferred);
+}
+
+document.getElementById("themeToggle").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  localStorage.setItem(THEME_KEY, next);
+  applyTheme(next);
+});
+
+initTheme();
+
 /* ---------- Récupération des images (Wikimedia Commons API) ----------
  * On ne fait plus une requête par panneau (206 requêtes simultanées =
  * rate limit 429 côté Wikimedia, qui se manifeste dans la console comme
