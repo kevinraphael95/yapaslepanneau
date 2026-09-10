@@ -44,8 +44,8 @@ const SIGNS = [
   { code: "A6", cat: "danger", meaning: "Pont mobile" },
   { code: "A7", cat: "danger", meaning: "Passage à niveau muni de barrières ou demi-barrières automatiques" },
   { code: "A8", cat: "danger", meaning: "Passage à niveau sans barrières ni demi-barrières" },
-  { code: "A9a", cat: "danger", meaning: "Traversée de voie de véhicules de transport en commun", file: "France road sign A9a.svg" },
-  { code: "A9b", cat: "danger", meaning: "Traversée de voies de tramway", file: "France road sign A9b.svg" },
+  { code: "A9a", cat: "danger", meaning: "Traversée de voie de véhicules de transport en commun", file: "France Road Sign A9a.png" },
+  { code: "A9b", cat: "danger", meaning: "Traversée de voies de tramway", file: "France road sign A9.svg" },
   { code: "A13a", cat: "danger", meaning: "Endroit fréquenté par les enfants" },
   { code: "A13b", cat: "danger", meaning: "Passage pour piétons (danger)" },
   { code: "A14", cat: "danger", meaning: "Autres dangers" },
@@ -148,7 +148,7 @@ const SIGNS = [
   { code: "B42", cat: "fin", meaning: "Fin de chemin obligatoire pour cavaliers" },
   { code: "B43", cat: "fin", meaning: "Fin de vitesse minimale obligatoire", file: "France road sign B43 (30).svg" },
   { code: "B44", cat: "fin", meaning: "Fin d'obligation de l'usage des chaînes à neige" },
-  { code: "B45", cat: "fin", meaning: "Fin de voie réservée aux transports en commun", file: "France road sign B45 (2008).svg" },
+  { code: "B45", cat: "fin", meaning: "Fin de voie réservée aux transports en commun", file: "France road sign B45a.svg" },
   { code: "B49", cat: "fin", meaning: "Fin d'une obligation précisée par une inscription sur le panneau" },
 
   // ---------- B — Prescription zonale (19) ----------
@@ -178,7 +178,7 @@ const SIGNS = [
   { code: "C1b", cat: "indication", meaning: "Lieu aménagé pour le stationnement gratuit à durée limitée avec contrôle par disque" },
   { code: "C1c", cat: "indication", meaning: "Lieu aménagé pour le stationnement payant" },
   { code: "C3", cat: "indication", meaning: "Risque d'incendie" },
-  { code: "C4a", cat: "indication", meaning: "Vitesse conseillée", file: "France road sign C4a (30).svg" },
+  { code: "C4a", cat: "indication", meaning: "Vitesse conseillée", file: "France road sign C4a (50).svg" },
   { code: "C4b", cat: "indication", meaning: "Fin de vitesse conseillée" },
   { code: "C5", cat: "indication", meaning: "Station de taxis" },
   { code: "C6", cat: "indication", meaning: "Arrêt d'autobus" },
@@ -265,5 +265,5 @@ const SIGNS = [
   { code: "AK32", cat: "temporaire", meaning: "Nappes de brouillard ou de fumées épaisses" },
 
   // ---------- KC — Panneaux de prescription temporaire (1) ----------
-  { code: "KC1", cat: "temporaire", meaning: "Route barrée" },
+  { code: "KC1", cat: "temporaire", meaning: "Route barrée", file: "KC1 route barrée.svg" },
 ];
