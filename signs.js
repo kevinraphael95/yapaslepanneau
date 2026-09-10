@@ -1,5 +1,3 @@
-// Remplace ton tableau SIGNS par celui-ci (avec les bons noms de fichiers rajoutés) :
-
 const SIGNS = [
   // ---------- A — Panneaux de danger ----------
   { code: "A1a", cat: "danger", meaning: "Virage à droite" },
@@ -16,7 +14,7 @@ const SIGNS = [
   { code: "A7", cat: "danger", meaning: "Passage à niveau muni de barrières ou demi-barrières automatiques" },
   { code: "A8", cat: "danger", meaning: "Passage à niveau sans barrières ni demi-barrières" },
   { code: "A9a", cat: "danger", meaning: "Traversée de voie de véhicules de transport en commun", file: "France Road Sign A9a.png" },
-  { code: "A9b", cat: "danger", meaning: "Traversée de voies de tramway" },
+  { code: "A9b", cat: "danger", meaning: "Traversée de voies de tramway", file: "France road sign A9b.svg" },
   { code: "A13a", cat: "danger", meaning: "Endroit fréquenté par les enfants" },
   { code: "A13b", cat: "danger", meaning: "Passage pour piétons (danger)" },
   { code: "A14", cat: "danger", meaning: "Autres dangers" },
@@ -224,17 +222,17 @@ const SIGNS = [
   { code: "CE52", cat: "service", meaning: "Lieu aménagé pour la pratique du covoiturage" },
 
   // ---------- AK — Panneaux de danger temporaire ----------
-  { code: "AK2", cat: "temporaire", meaning: "Cassis ou dos-d'âne (temporaire)", file: "Panneau AK2.svg" },
-  { code: "AK3", cat: "temporaire", meaning: "Chaussée rétrécie (temporaire)", file: "Panneau AK3.svg" },
-  { code: "AK4", cat: "temporaire", meaning: "Chaussée glissante (temporaire)", file: "Panneau AK4.svg" },
-  { code: "AK5", cat: "temporaire", meaning: "Travaux", file: "Panneau AK5.svg" },
-  { code: "AK14", cat: "temporaire", meaning: "Autres dangers (temporaire)", file: "Panneau AK14.svg" },
-  { code: "AK17", cat: "temporaire", meaning: "Annonce de feux tricolores (temporaire)", file: "Panneau AK17.svg" },
-  { code: "AK22", cat: "temporaire", meaning: "Projection de gravillons", file: "Panneau AK22.svg" },
-  { code: "AK30", cat: "temporaire", meaning: "Bouchon", file: "Panneau AK30.svg" },
-  { code: "AK31", cat: "temporaire", meaning: "Accident", file: "Panneau AK31.svg" },
-  { code: "AK32", cat: "temporaire", meaning: "Nappes de brouillard ou de fumées épaisses", file: "Panneau AK32.svg" },
+  { code: "AK2", cat: "temporaire", meaning: "Cassis ou dos-d'âne (temporaire)", file: "France road sign AK2.svg" },
+  { code: "AK3", cat: "temporaire", meaning: "Chaussée rétrécie (temporaire)", file: "France road sign AK3.svg" },
+  { code: "AK4", cat: "temporaire", meaning: "Chaussée glissante (temporaire)", file: "France road sign AK4.svg" },
+  { code: "AK5", cat: "temporaire", meaning: "Travaux", file: "France road sign AK5.svg" },
+  { code: "AK14", cat: "temporaire", meaning: "Autres dangers (temporaire)", file: "France road sign AK14.svg" },
+  { code: "AK17", cat: "temporaire", meaning: "Annonce de feux tricolores (temporaire)", file: "France road sign AK17.svg" },
+  { code: "AK22", cat: "temporaire", meaning: "Projection de gravillons", file: "France road sign AK22.svg" },
+  { code: "AK30", cat: "temporaire", meaning: "Bouchon", file: "France road sign AK30.svg" },
+  { code: "AK31", cat: "temporaire", meaning: "Accident", file: "France road sign AK31.svg" },
+  { code: "AK32", cat: "temporaire", meaning: "Nappes de brouillard ou de fumées épaisses", file: "France road sign AK32.svg" },
 
   // ---------- KC — Panneaux de prescription temporaire ----------
-  { code: "KC1", cat: "temporaire", meaning: "Route barrée", file: "KC1 route barrée 100m.svg" },
+  { code: "KC1", cat: "temporaire", meaning: "Route barrée", file: "KC1 route barrée.svg" },
 ];
