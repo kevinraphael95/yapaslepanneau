@@ -934,7 +934,7 @@ async function buildCourseView() {
     if (urls[i]) courseState.items.push({ sign, url: urls[i] });
   });
 
-  elCourse.count?.textContent = courseState.items.length;
+  elCourse.count.textContent = courseState.items.length;
 
   if (courseState.items.length === 0) {
     elCourse.loading.textContent =
