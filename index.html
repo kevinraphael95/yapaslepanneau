@@ -78,13 +78,11 @@
 
   <!-- ÉCRAN QUIZ -->
   <section class="screen" id="screen-quiz" hidden>
-    <div class="quiz-header">
-      <button class="btn btn-color-2 btn-back" id="btnHomeFromQuiz">← Accueil</button>
-    </div>
     <div class="quiz-card">
       <div class="quiz-meta">
+        <button class="quiz-back" id="btnHomeFromQuiz" aria-label="Retour à l'accueil">‹</button>
         <span id="questionCounter">Question 1</span>
-        <span id="scoreCounter">Score : 0</span>
+        <span class="quiz-score" id="scoreCounter">Score : 0</span>
       </div>
       <div class="quiz-progress-track" id="progressTrack" aria-hidden="true">
         <div class="quiz-progress-fill" id="progressFill"></div>
@@ -133,13 +131,11 @@
 
   <!-- ÉCRAN QUIZ INFINI TEXTE (panneau -> nom) -->
   <section class="screen" id="screen-quiz-text" hidden>
-    <div class="quiz-header">
-      <button class="btn btn-color-2 btn-back" id="btnHomeFromQuizText">← Accueil</button>
-    </div>
     <div class="quiz-card">
       <div class="quiz-meta">
+        <button class="quiz-back" id="btnHomeFromQuizText" aria-label="Retour à l'accueil">‹</button>
         <span id="textQuestionCounter">Panneau 1</span>
-        <span id="textScoreCounter">Série : 0</span>
+        <span class="quiz-score" id="textScoreCounter">Série : 0</span>
       </div>
 
       <h2 class="question-title">Quelle est la signification de ce panneau ?</h2>
@@ -177,13 +173,11 @@
 
   <!-- ÉCRAN QUIZ INFINI IMAGE (nom -> panneau) -->
   <section class="screen" id="screen-quiz-find" hidden>
-    <div class="quiz-header">
-      <button class="btn btn-color-2 btn-back" id="btnHomeFromQuizFind">← Accueil</button>
-    </div>
     <div class="quiz-card">
       <div class="quiz-meta">
+        <button class="quiz-back" id="btnHomeFromQuizFind" aria-label="Retour à l'accueil">‹</button>
         <span id="findQuestionCounter">Panneau 1</span>
-        <span id="findScoreCounter">Série : 0</span>
+        <span class="quiz-score" id="findScoreCounter">Série : 0</span>
       </div>
 
       <h2 class="question-title" id="findPrompt" aria-live="polite">Retrouve le panneau…</h2>
