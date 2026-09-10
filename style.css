@@ -174,7 +174,6 @@ main#app {
 .btn-color-2 { background: none; color: var(--dark); }
 .btn-color-2:hover { background: var(--dark); color: var(--btn-fill-text); }
 
-.btn-back { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
 
 /* --- Grille de modes, façon .details-container / cartes projets --- */
 .mode-grid {
