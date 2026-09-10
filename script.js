@@ -59,10 +59,14 @@ function initTheme() {
   applyTheme(preferred);
 }
 
-document.getElementById("themeToggle").addEventListener("click", () => {
+document.getElementById("themeToggle").addEventListener("click", (event) => {
   const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
   localStorage.setItem(THEME_KEY, next);
   applyTheme(next);
+  // Retire le focus après l'activation : sinon le bouton le garde et un
+  // Entrée/Espace ultérieur (même destiné à autre chose, comme faire
+  // défiler la page avec Espace) le rebascule par accident.
+  event.currentTarget.blur();
 });
 
 initTheme();
