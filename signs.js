@@ -210,7 +210,7 @@ const SIGNS = [
   { code: "C114", cat: "indication", meaning: "Fin de piste ou bande cyclable conseillée" },
   { code: "C115", cat: "indication", meaning: "Voie verte, réservée aux piétons et véhicules non motorisés" },
   { code: "C116", cat: "indication", meaning: "Fin de voie verte" },
-  { code: "C207", cat: "indication", meaning: "Début d'une section d me autoroute" },
+  { code: "C207", cat: "indication", meaning: "Début d'une section d'autoroute" },
   { code: "C208", cat: "indication", meaning: "Fin d'une section d'autoroute" },
 
   // ---------- CE — Panneaux de service (37) ----------
