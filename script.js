@@ -80,7 +80,7 @@ initTheme();
  */
 const imageUrlCache = new Map();
 const WIKI_BATCH_SIZE = 50;
-const IMAGE_CACHE_KEY = "panneaux-image-cache-v2";
+const IMAGE_CACHE_KEY = "panneaux-image-cache-v3";
 const IMAGE_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 jours
 
 // Réutilise les URLs déjà trouvées lors d'une visite précédente, pour ne
