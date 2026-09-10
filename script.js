@@ -27,16 +27,29 @@ function showScreen(name) {
   if (btn) btn.addEventListener("click", () => showScreen("home"));
 });
 
-/* ---------- Thème clair / sombre ---------- */
+/* ---------- Thème clair / sombre ----------
+ * Un seul <svg>, dont on remplace le contenu : jamais deux symboles
+ * affichés en même temps (pas de sun+moon superposés/togglés en hidden).
+ */
 const THEME_KEY = "panneaux-theme";
+
+const SUN_ICON =
+  '<circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/>' +
+  '<g stroke="currentColor" stroke-width="2" stroke-linecap="round">' +
+  '<line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>' +
+  '<line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="18.4" y1="18.4" x2="19.8" y2="19.8"/>' +
+  '<line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>' +
+  '<line x1="4.2" y1="19.8" x2="5.6" y2="18.4"/><line x1="18.4" y1="5.6" x2="19.8" y2="4.2"/></g>';
+
+const MOON_ICON = '<path fill="currentColor" d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z"/>';
 
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
   const toggle = document.getElementById("themeToggle");
-  if (toggle) {
+  const icon = document.getElementById("themeIcon");
+  if (toggle && icon) {
     toggle.setAttribute("aria-pressed", String(theme === "dark"));
-    toggle.querySelector(".icon-sun").hidden = theme === "dark";
-    toggle.querySelector(".icon-moon").hidden = theme !== "dark";
+    icon.innerHTML = theme === "dark" ? MOON_ICON : SUN_ICON;
   }
 }
 

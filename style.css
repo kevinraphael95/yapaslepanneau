@@ -75,7 +75,7 @@ a, .btn { transition: all 300ms ease; }
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: clamp(16px, 3vh, 24px) clamp(20px, 6vw, 48px);
+  padding: clamp(10px, 2vh, 16px) clamp(20px, 6vw, 48px);
 }
 
 .logo { font-size: clamp(1.05rem, 3.5vw, 1.3rem); font-weight: 600; color: var(--text); }
@@ -106,39 +106,18 @@ a, .btn { transition: all 300ms ease; }
 main#app {
   max-width: 720px;
   margin: 0 auto;
-  padding: 0 clamp(20px, 6vw, 48px) clamp(40px, 6vh, 70px);
+  padding: 0 clamp(20px, 6vw, 48px) clamp(24px, 4vh, 48px);
 }
 
 .screen { animation: fade-in 0.2s ease; }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 
 /* --- Titres, façon sections du template --- */
-.title { font-size: clamp(1.7rem, 5vw, 2.4rem); text-align: center; color: var(--text); }
+.title { font-size: clamp(1.5rem, 4.5vw, 2.1rem); text-align: center; color: var(--text); margin-top: clamp(12px, 2.5vh, 20px); }
 .section-title { margin-bottom: 1.5rem; }
 .eyebrow { text-align: center; font-weight: 600; color: var(--text-muted); margin-bottom: 0.4rem; }
 .section-eyebrow { margin-top: 3rem; }
-.subtitle { text-align: center; max-width: 46ch; margin: 0.8rem auto 0; }
-
-/* --- Hero, façon section#profile --- */
-.hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding-top: clamp(24px, 5vh, 48px);
-}
-
-.hero-pic {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--bg-alt);
-  margin-bottom: 1.2rem;
-}
+.subtitle { text-align: center; max-width: 46ch; margin: 0.6rem auto 1.6rem; font-size: 0.92rem; }
 
 .btn-container {
   display: flex;
@@ -147,6 +126,39 @@ main#app {
   gap: 1rem;
   margin-top: 1.6rem;
 }
+
+/* --- Catégories de modes : QCM d'un côté, modes difficiles de l'autre,
+   au lieu d'une seule grille indifférenciée. Compact pour éviter d'avoir
+   à faire défiler l'accueil. --- */
+.mode-category { margin-bottom: 1.4rem; }
+
+.category-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 0.6rem;
+}
+
+.course-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.9rem 1.1rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  margin-top: 0.4rem;
+}
+.course-link:hover, .course-link:focus-visible { border-color: var(--dark); outline: none; }
+.course-link-arrow { font-size: 1.3rem; color: var(--text-muted); }
 
 /* --- Boutons pilule, comme .btn-color-1 / .btn-color-2 du template --- */
 .btn {
@@ -169,23 +181,20 @@ main#app {
 
 /* --- Grille de modes, façon .details-container / cartes projets --- */
 .mode-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.4rem;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
 }
 
 .mode-card {
-  flex: 1 1 220px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.6rem;
-  text-align: center;
+  gap: 0.3rem;
+  text-align: left;
   background: var(--bg-alt);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.6rem 1.4rem;
+  border-radius: var(--radius-md);
+  padding: 0.9rem 1rem;
   cursor: pointer;
   font-family: inherit;
 }
@@ -195,24 +204,12 @@ main#app {
   outline: none;
 }
 
-.mode-card-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 32px;
-}
-.mode-card-icon--text {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--dark);
-}
-
-.mode-card h3 { font-size: 1.05rem; font-weight: 600; color: var(--text); }
-.mode-card p { font-size: 0.85rem; }
+.mode-card h3 { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+.mode-card p { font-size: 0.78rem; line-height: 1.35; }
 
 .source-note {
-  margin-top: 2.4rem;
-  font-size: 0.75rem;
+  margin-top: 1.4rem;
+  font-size: 0.7rem;
   text-align: center;
 }
 
