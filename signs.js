@@ -1,5 +1,36 @@
+"use strict";
+
+/*
+ * Base de panneaux du code de la route français.
+ * Chaque "code" correspond exactement au fichier Wikimedia Commons
+ * "File:France road sign {code}.svg" (vérifié pour plusieurs entrées,
+ * ex. A1a, C24a, C111...).
+ * Sources : annexe de l'arrêté du 24 novembre 1967 (version consolidée
+ * mars 2024, CEREMA), Wikipédia FR (listes officielles par type A / AB / B / C / CE).
+ * Certains codes récents ou peu illustrés peuvent ne pas avoir d'image
+ * disponible sur Wikimedia Commons : le jeu les ignore alors automatiquement
+ * (fetchSignImageUrl renvoie null et un autre panneau est tiré à la place).
+ *
+ * Plusieurs codes peuvent légitimement partager le même "meaning" (ex. le
+ * pictogramme vache/mouton pour "Passage d'animaux domestiques", ou le
+ * panneau danger vs le panneau indication pour "Passage pour piétons").
+ * Le jeu gère ça lui-même : en mode "trouve le panneau", n'importe quel
+ * panneau ayant la même signification que celle affichée est accepté comme
+ * bonne réponse (voir handleFindAnswer dans script.js). En revanche, dans
+ * le QCM, pickDistractors() exclut les panneaux de même "meaning" de la
+ * liste des mauvaises réponses, pour ne jamais afficher deux boutons avec
+ * exactement le même texte.
+ *
+ * cat: "danger" | "priorite" | "interdiction" | "obligation" | "fin" | "zone" | "indication" | "service" | "temporaire"
+ * Le champ "cat" est utilisé par pickDistractors() dans script.js pour
+ * proposer des mauvaises réponses cohérentes (même famille de panneau).
+ * "temporaire" regroupe les panneaux de danger temporaire (type AK, fond
+ * jaune fluo) et de prescription temporaire (type KC), utilisés pour les
+ * chantiers, accidents et autres dangers ponctuels sur la chaussée.
+ */
+
 const SIGNS = [
-  // ---------- A — Panneaux de danger ----------
+  // ---------- A — Panneaux de danger (30) ----------
   { code: "A1a", cat: "danger", meaning: "Virage à droite" },
   { code: "A1b", cat: "danger", meaning: "Virage à gauche" },
   { code: "A1c", cat: "danger", meaning: "Succession de virages dont le premier est à droite" },
@@ -13,7 +44,7 @@ const SIGNS = [
   { code: "A6", cat: "danger", meaning: "Pont mobile" },
   { code: "A7", cat: "danger", meaning: "Passage à niveau muni de barrières ou demi-barrières automatiques" },
   { code: "A8", cat: "danger", meaning: "Passage à niveau sans barrières ni demi-barrières" },
-  { code: "A9a", cat: "danger", meaning: "Traversée de voie de véhicules de transport en commun", file: "France Road Sign A9a.png" },
+  { code: "A9a", cat: "danger", meaning: "Traversée de voie de véhicules de transport en commun", file: "France road sign A9a.svg" },
   { code: "A9b", cat: "danger", meaning: "Traversée de voies de tramway", file: "France road sign A9b.svg" },
   { code: "A13a", cat: "danger", meaning: "Endroit fréquenté par les enfants" },
   { code: "A13b", cat: "danger", meaning: "Passage pour piétons (danger)" },
@@ -31,7 +62,7 @@ const SIGNS = [
   { code: "A23", cat: "danger", meaning: "Traversée d'une aire de danger aérien" },
   { code: "A24", cat: "danger", meaning: "Vent latéral" },
 
-  // ---------- AB — Intersections et priorité ----------
+  // ---------- AB — Intersections et priorité (9) ----------
   { code: "AB1", cat: "priorite", meaning: "Priorité à droite" },
   { code: "AB2", cat: "priorite", meaning: "Priorité ponctuelle à la prochaine intersection" },
   { code: "AB3a", cat: "priorite", meaning: "Cédez le passage" },
@@ -42,7 +73,7 @@ const SIGNS = [
   { code: "AB7", cat: "priorite", meaning: "Fin de route à caractère prioritaire" },
   { code: "AB25", cat: "priorite", meaning: "Carrefour à sens giratoire" },
 
-  // ---------- B — Panneaux d'interdiction ----------
+  // ---------- B — Panneaux d'interdiction (41) ----------
   { code: "B0", cat: "interdiction", meaning: "Circulation interdite à tout véhicule dans les deux sens" },
   { code: "B1", cat: "interdiction", meaning: "Sens interdit à tout véhicule" },
   { code: "B1j", cat: "interdiction", meaning: "Interdiction d'accès à contresens de bretelle de sortie" },
@@ -76,7 +107,7 @@ const SIGNS = [
   { code: "B12", cat: "interdiction", meaning: "Accès interdit aux véhicules dont la hauteur dépasse le nombre indiqué" },
   { code: "B13", cat: "interdiction", meaning: "Accès interdit aux véhicules dont le poids total dépasse le nombre indiqué" },
   { code: "B13a", cat: "interdiction", meaning: "Accès interdit aux véhicules dont le poids par essieu dépasse le nombre indiqué" },
-  { code: "B14", cat: "interdiction", meaning: "Limitation de vitesse", file: "France road sign B14 (50).svg" },
+  { code: "B14", cat: "interdiction", meaning: "Limitation de vitesse" },
   { code: "B15", cat: "interdiction", meaning: "Cédez le passage à la circulation venant en sens inverse" },
   { code: "B16", cat: "interdiction", meaning: "Signaux sonores interdits" },
   { code: "B17", cat: "interdiction", meaning: "Interdiction de circuler sans maintenir un intervalle minimal entre véhicules" },
@@ -85,7 +116,7 @@ const SIGNS = [
   { code: "B18c", cat: "interdiction", meaning: "Accès interdit aux véhicules transportant des matières dangereuses" },
   { code: "B19", cat: "interdiction", meaning: "Autre interdiction précisée par une inscription sur le panneau" },
 
-  // ---------- B — Panneaux d'obligation ----------
+  // ---------- B — Panneaux d'obligation (18) ----------
   { code: "B21-1", cat: "obligation", meaning: "Obligation de tourner à droite avant le panneau" },
   { code: "B21-2", cat: "obligation", meaning: "Obligation de tourner à gauche avant le panneau" },
   { code: "B21a1", cat: "obligation", meaning: "Contournement obligatoire par la droite" },
@@ -105,7 +136,7 @@ const SIGNS = [
   { code: "B27b", cat: "obligation", meaning: "Voie réservée aux tramways" },
   { code: "B29", cat: "obligation", meaning: "Autre obligation précisée par une inscription sur le panneau" },
 
-  // ---------- B — Fin d'interdiction / fin d'obligation ----------
+  // ---------- B — Fin d'interdiction / fin d'obligation (12) ----------
   { code: "B31", cat: "fin", meaning: "Fin de toutes les interdictions précédemment signalées" },
   { code: "B33", cat: "fin", meaning: "Fin de limitation de vitesse", file: "France road sign B33 (50).svg" },
   { code: "B34", cat: "fin", meaning: "Fin d'interdiction de dépasser" },
@@ -120,7 +151,7 @@ const SIGNS = [
   { code: "B45", cat: "fin", meaning: "Fin de voie réservée aux transports en commun", file: "France road sign B45 (2008).svg" },
   { code: "B49", cat: "fin", meaning: "Fin d'une obligation précisée par une inscription sur le panneau" },
 
-  // ---------- B — Prescription zonale ----------
+  // ---------- B — Prescription zonale (19) ----------
   { code: "B6b1", cat: "zone", meaning: "Entrée d'une zone à stationnement interdit" },
   { code: "B6b2", cat: "zone", meaning: "Entrée d'une zone à stationnement unilatéral à alternance semi-mensuelle" },
   { code: "B6b3", cat: "zone", meaning: "Entrée d'une zone à stationnement de durée limitée avec disque" },
@@ -142,7 +173,7 @@ const SIGNS = [
   { code: "B58", cat: "zone", meaning: "Entrée de zone d'obligation d'équipements en période hivernale" },
   { code: "B59", cat: "zone", meaning: "Sortie de zone d'obligation d'équipements en période hivernale" },
 
-  // ---------- C — Panneaux d'indication ----------
+  // ---------- C — Panneaux d'indication (38) ----------
   { code: "C1a", cat: "indication", meaning: "Lieu aménagé pour le stationnement" },
   { code: "C1b", cat: "indication", meaning: "Lieu aménagé pour le stationnement gratuit à durée limitée avec contrôle par disque" },
   { code: "C1c", cat: "indication", meaning: "Lieu aménagé pour le stationnement payant" },
@@ -179,10 +210,10 @@ const SIGNS = [
   { code: "C114", cat: "indication", meaning: "Fin de piste ou bande cyclable conseillée" },
   { code: "C115", cat: "indication", meaning: "Voie verte, réservée aux piétons et véhicules non motorisés" },
   { code: "C116", cat: "indication", meaning: "Fin de voie verte" },
-  { code: "C207", cat: "indication", meaning: "Début d'une section d d'autoroute" },
+  { code: "C207", cat: "indication", meaning: "Début d'une section d me autoroute" },
   { code: "C208", cat: "indication", meaning: "Fin d'une section d'autoroute" },
 
-  // ---------- CE — Panneaux de service ----------
+  // ---------- CE — Panneaux de service (37) ----------
   { code: "CE1", cat: "service", meaning: "Poste de secours" },
   { code: "CE2a", cat: "service", meaning: "Poste d'appel d'urgence" },
   { code: "CE2b", cat: "service", meaning: "Cabine téléphonique publique" },
@@ -221,18 +252,18 @@ const SIGNS = [
   { code: "CE30b", cat: "service", meaning: "Issue de secours vers la gauche" },
   { code: "CE52", cat: "service", meaning: "Lieu aménagé pour la pratique du covoiturage" },
 
-  // ---------- AK — Panneaux de danger temporaire ----------
-  { code: "AK2", cat: "temporaire", meaning: "Cassis ou dos-d'âne (temporaire)", file: "France road sign AK2.svg" },
-  { code: "AK3", cat: "temporaire", meaning: "Chaussée rétrécie (temporaire)", file: "France road sign AK3.svg" },
-  { code: "AK4", cat: "temporaire", meaning: "Chaussée glissante (temporaire)", file: "France road sign AK4.svg" },
-  { code: "AK5", cat: "temporaire", meaning: "Travaux", file: "France road sign AK5.svg" },
-  { code: "AK14", cat: "temporaire", meaning: "Autres dangers (temporaire)", file: "France road sign AK14.svg" },
-  { code: "AK17", cat: "temporaire", meaning: "Annonce de feux tricolores (temporaire)", file: "France road sign AK17.svg" },
-  { code: "AK22", cat: "temporaire", meaning: "Projection de gravillons", file: "France road sign AK22.svg" },
-  { code: "AK30", cat: "temporaire", meaning: "Bouchon", file: "France road sign AK30.svg" },
-  { code: "AK31", cat: "temporaire", meaning: "Accident", file: "France road sign AK31.svg" },
-  { code: "AK32", cat: "temporaire", meaning: "Nappes de brouillard ou de fumées épaisses", file: "France road sign AK32.svg" },
+  // ---------- AK — Panneaux de danger temporaire (10) ----------
+  { code: "AK2", cat: "temporaire", meaning: "Cassis ou dos-d'âne (temporaire)" },
+  { code: "AK3", cat: "temporaire", meaning: "Chaussée rétrécie (temporaire)" },
+  { code: "AK4", cat: "temporaire", meaning: "Chaussée glissante (temporaire)" },
+  { code: "AK5", cat: "temporaire", meaning: "Travaux" },
+  { code: "AK14", cat: "temporaire", meaning: "Autres dangers (temporaire)" },
+  { code: "AK17", cat: "temporaire", meaning: "Annonce de feux tricolores (temporaire)" },
+  { code: "AK22", cat: "temporaire", meaning: "Projection de gravillons" },
+  { code: "AK30", cat: "temporaire", meaning: "Bouchon" },
+  { code: "AK31", cat: "temporaire", meaning: "Accident" },
+  { code: "AK32", cat: "temporaire", meaning: "Nappes de brouillard ou de fumées épaisses" },
 
-  // ---------- KC — Panneaux de prescription temporaire ----------
-  { code: "KC1", cat: "temporaire", meaning: "Route barrée", file: "KC1 route barrée.svg" },
+  // ---------- KC — Panneaux de prescription temporaire (1) ----------
+  { code: "KC1", cat: "temporaire", meaning: "Route barrée" },
 ];
