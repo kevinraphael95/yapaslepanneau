@@ -2,6 +2,18 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<script>
+  // Applique le thème avant le premier rendu pour éviter un flash blanc
+  // au chargement quand le thème sombre est actif (sinon la page peint en
+  // clair par défaut le temps que script.js s'exécute en fin de page).
+  (function () {
+    try {
+      var stored = localStorage.getItem("panneaux-theme");
+      var theme = stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+    } catch (e) {}
+  })();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panneaux - Révise le code de la route</title>
 <meta name="description" content="Quiz gratuit pour réviser les panneaux de signalisation du code de la route : mode 20 questions ou mode infini.">
@@ -38,7 +50,7 @@
   <!-- ÉCRAN ACCUEIL -->
   <section class="screen" id="screen-home">
     <h1 class="title">Connais-tu vraiment tes panneaux ?</h1>
-    <p class="subtitle">Révise la signalisation du code de la route.</p>
+    <p class="subtitle">Révise la signalisation du code de la route. Choisis un format.</p>
 
     <div class="mode-category">
       <h2 class="category-title">QCM</h2>
@@ -207,7 +219,7 @@
   <!-- ÉCRAN COURS : TOUS LES PANNEAUX -->
   <section class="screen" id="screen-course" hidden>
     <div class="course-header">
-      <button class="btn btn-color-2 btn-back" id="btnHomeFromCourse">← Accueil</button>
+      <button class="quiz-back" id="btnHomeFromCourse">‹ Retour</button>
     </div>
     <h1 class="title course-title">Tous les panneaux</h1>
     <p class="subtitle">Parcours les <strong id="courseCount">0</strong> panneaux illustrés, filtre par catégorie ou cherche une signification.</p>
