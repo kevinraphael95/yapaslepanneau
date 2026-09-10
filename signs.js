@@ -137,7 +137,6 @@ const SIGNS = [
   { code: "B29", cat: "obligation", meaning: "Autre obligation précisée par une inscription sur le panneau" },
 
   // ---------- B — Fin d'interdiction / fin d'obligation (13) ----------
-  { code: "B30", cat: "zone", meaning: "Entrée d'une zone à vitesse limitée à 30 km/h", file: "France road sign B30 (30).svg" },
   { code: "B31", cat: "fin", meaning: "Fin de toutes les interdictions précédemment signalées" },
   { code: "B33", cat: "fin", meaning: "Fin de limitation de vitesse", file: "France road sign B33 (50).svg" },
   { code: "B34", cat: "fin", meaning: "Fin d'interdiction de dépasser" },
@@ -158,7 +157,7 @@ const SIGNS = [
   { code: "B6b3", cat: "zone", meaning: "Entrée d'une zone à stationnement de durée limitée avec disque" },
   { code: "B6b4", cat: "zone", meaning: "Entrée d'une zone à stationnement payant" },
   { code: "B6b5", cat: "zone", meaning: "Entrée d'une zone à stationnement alterné et limité, avec disque" },
-  { code: "B30", cat: "zone", meaning: "Entrée d'une zone à vitesse limitée à 30 km/h" },
+  { code: "B30", cat: "zone", meaning: "Entrée d'une zone à vitesse limitée à 30 km/h", file: "France road sign B30 (30).svg" },
   { code: "B50a", cat: "zone", meaning: "Sortie de zone à stationnement interdit" },
   { code: "B50b", cat: "zone", meaning: "Sortie de zone à stationnement unilatéral à alternance semi-mensuelle" },
   { code: "B50c", cat: "zone", meaning: "Sortie d'une zone à stationnement de durée limitée avec disque" },
