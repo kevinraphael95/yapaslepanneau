@@ -233,14 +233,17 @@ main#app {
 
 .quiz-back {
   flex: none;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 5px 12px 5px 8px;
+  border-radius: var(--radius-pill);
   border: 1px solid var(--border);
   background: var(--card-surface);
   color: var(--text);
-  font-size: 1.1rem;
-  line-height: 1;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
 }
 .quiz-back:hover, .quiz-back:focus-visible { border-color: var(--dark); outline: none; }
