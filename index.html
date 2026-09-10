@@ -16,61 +16,62 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="road-line" aria-hidden="true"></div>
-
-<header class="topbar">
-  <div class="brand">
-    <span class="brand-mark" aria-hidden="true">
-      <svg viewBox="0 0 100 100" width="28" height="28">
-        <polygon points="50,6 94,90 6,90" fill="none" stroke="currentColor" stroke-width="9" stroke-linejoin="round"/>
-        <rect x="44" y="34" width="12" height="30" fill="currentColor"/>
-        <rect x="44" y="70" width="12" height="10" fill="currentColor"/>
-      </svg>
-    </span>
-    <span class="brand-name">Révise les panneaux</span>
-  </div>
-  <div class="best-streak" id="bestStreakBadge" hidden>
+<nav id="topbar">
+  <span class="logo">Révise les panneaux</span>
+  <span class="best-streak" id="bestStreakBadge" hidden>
     Record mode infini : <strong id="bestStreakValue">0</strong>
-  </div>
-</header>
+  </span>
+</nav>
 
 <main id="app">
 
   <!-- ÉCRAN ACCUEIL -->
   <section class="screen" id="screen-home">
-    <h1 class="hero-title">Connais-tu vraiment tes panneaux ?</h1>
-    <p class="hero-sub">Révise la signalisation du code de la route : danger, priorité, interdiction, obligation, indication et services. Choisis ton format.</p>
+
+    <div class="hero">
+      <div class="hero-pic">
+        <svg viewBox="0 0 100 100" width="56" height="56">
+          <polygon points="50,12 88,84 12,84" fill="none" stroke="#353535" stroke-width="7" stroke-linejoin="round"/>
+          <rect x="45" y="36" width="10" height="26" fill="#353535"/>
+          <rect x="45" y="68" width="10" height="8" fill="#353535"/>
+        </svg>
+      </div>
+      <p class="eyebrow">Entraînement gratuit</p>
+      <h1 class="title">Connais-tu vraiment tes panneaux ?</h1>
+      <p class="subtitle">Révise la signalisation du code de la route : danger, priorité, interdiction, obligation, indication et services.</p>
+      <div class="btn-container">
+        <button class="btn btn-color-1" id="btnStartQcm">Faire un QCM</button>
+        <button class="btn btn-color-2" id="btnStartCourse">Voir tous les panneaux</button>
+      </div>
+    </div>
+
+    <p class="eyebrow section-eyebrow">Pour aller plus loin</p>
+    <h2 class="title section-title">Les entraînements</h2>
 
     <div class="mode-grid">
-      <button class="mode-card" id="btnStartQcm">
-        <span class="mode-card-icon" aria-hidden="true">20</span>
-        <span class="mode-card-title">QCM - 20 questions</span>
-        <span class="mode-card-desc">Un score final, comme un examen blanc.</span>
-      </button>
       <button class="mode-card" id="btnStartInfinite">
-        <span class="mode-card-icon" aria-hidden="true">∞</span>
-        <span class="mode-card-title">QCM - Mode infini</span>
-        <span class="mode-card-desc">Enchaîne les panneaux jusqu'à ta première erreur.</span>
+        <span class="mode-card-icon" aria-hidden="true">
+          <svg viewBox="0 0 32 16" width="32" height="16"><path d="M8 2c3 0 5 12 8 12s5-12 8-12-5 12-8 12-5-12-8-12z" fill="none" stroke="#353535" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <h3>Mode infini</h3>
+        <p>Enchaîne les panneaux jusqu'à ta première erreur.</p>
       </button>
       <button class="mode-card" id="btnStartInfiniteText">
-        <span class="mode-card-icon" aria-hidden="true">Aa</span>
-        <span class="mode-card-title">Hard - trouve le nom (infini)</span>
-        <span class="mode-card-desc">Le panneau s'affiche, tape sa signification (autocomplétion dès 3 lettres).</span>
+        <span class="mode-card-icon mode-card-icon--text" aria-hidden="true">Aa</span>
+        <h3>Trouve le nom</h3>
+        <p>Le panneau s'affiche, tape sa signification (autocomplétion dès 3 lettres).</p>
       </button>
       <button class="mode-card" id="btnStartInfiniteFind">
-        <span class="mode-card-icon" aria-hidden="true">▦</span>
-        <span class="mode-card-title">Hard - trouve le panneau (inifni)</span>
-        <span class="mode-card-desc">La signification s'affiche, retrouve le bon panneau parmi tous les autres.</span>
-      </button>
-      <button class="mode-card" id="btnStartCourse">
-        <span class="mode-card-icon" aria-hidden="true">📖</span>
-        <span class="mode-card-title">Cours - tous les panneaux</span>
-        <span class="mode-card-desc">Parcours tous les panneaux et leur signification, par catégorie ou par recherche.</span>
+        <span class="mode-card-icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="28" height="28"><circle cx="14" cy="14" r="9" fill="none" stroke="#353535" stroke-width="2.4"/><line x1="20.5" y1="20.5" x2="28" y2="28" stroke="#353535" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </span>
+        <h3>Trouve le panneau</h3>
+        <p>La signification s'affiche, retrouve le bon panneau parmi tous les autres.</p>
       </button>
     </div>
 
@@ -79,124 +80,136 @@
 
   <!-- ÉCRAN QUIZ -->
   <section class="screen" id="screen-quiz" hidden>
-    <div class="quiz-head">
-      <div class="quiz-progress-track" id="progressTrack" aria-hidden="true">
-        <div class="quiz-progress-fill" id="progressFill"></div>
-      </div>
+    <div class="quiz-card">
       <div class="quiz-meta">
         <span id="questionCounter">Question 1</span>
         <span id="scoreCounter">Score : 0</span>
       </div>
-    </div>
-
-    <h2 class="question-title">Que signifie ce panneau ?</h2>
-
-    <div class="sign-stage">
-      <div class="sign-frame" id="signFrame">
-        <div class="sign-loading" id="signLoading">chargement…</div>
-        <img id="signImage" alt="" hidden draggable="false">
+      <div class="quiz-progress-track" id="progressTrack" aria-hidden="true">
+        <div class="quiz-progress-fill" id="progressFill"></div>
       </div>
+
+      <h2 class="question-title">Que signifie ce panneau ?</h2>
+
+      <div class="sign-stage">
+        <div class="sign-frame" id="signFrame">
+          <div class="sign-loading" id="signLoading">chargement…</div>
+          <img id="signImage" alt="" hidden draggable="false">
+        </div>
+      </div>
+
+      <div class="options" id="optionsList"></div>
     </div>
 
-    <div class="options" id="optionsList"></div>
-
-    <button class="btn-next" id="btnNext" hidden>Suivant</button>
+    <button class="btn btn-color-1 btn-next" id="btnNext" hidden>Suivant</button>
   </section>
 
   <!-- ÉCRAN FIN QCM -->
   <section class="screen" id="screen-end-qcm" hidden>
-    <h1 class="hero-title" id="qcmEndTitle">Résultat</h1>
-    <p class="end-score" id="qcmEndScore" aria-live="polite">0 / 20</p>
-    <p class="end-comment" id="qcmEndComment"></p>
-    <div class="end-actions">
-      <button class="btn-primary" id="btnRetryQcm">Refaire un QCM</button>
-      <button class="btn-secondary" id="btnHomeFromQcm">Retour à l'accueil</button>
+    <div class="result-card">
+      <h1 class="title" id="qcmEndTitle">Résultat</h1>
+      <p class="end-score" id="qcmEndScore" aria-live="polite">0 / 20</p>
+      <p class="subtitle" id="qcmEndComment"></p>
+      <div class="btn-container">
+        <button class="btn btn-color-1" id="btnRetryQcm">Refaire un QCM</button>
+        <button class="btn btn-color-2" id="btnHomeFromQcm">Retour à l'accueil</button>
+      </div>
     </div>
   </section>
 
   <!-- ÉCRAN FIN INFINI -->
   <section class="screen" id="screen-end-infinite" hidden>
-    <h1 class="hero-title">Série terminée</h1>
-    <p class="end-score" id="infiniteEndScore" aria-live="polite">0 panneau</p>
-    <p class="end-comment" id="infiniteEndComment"></p>
-    <div class="end-actions">
-      <button class="btn-primary" id="btnRetryInfinite">Retenter</button>
-      <button class="btn-secondary" id="btnHomeFromInfinite">Retour à l'accueil</button>
+    <div class="result-card">
+      <h1 class="title">Série terminée</h1>
+      <p class="end-score" id="infiniteEndScore" aria-live="polite">0 panneau</p>
+      <p class="subtitle" id="infiniteEndComment"></p>
+      <div class="btn-container">
+        <button class="btn btn-color-1" id="btnRetryInfinite">Retenter</button>
+        <button class="btn btn-color-2" id="btnHomeFromInfinite">Retour à l'accueil</button>
+      </div>
     </div>
   </section>
 
   <!-- ÉCRAN QUIZ INFINI TEXTE (panneau -> nom) -->
   <section class="screen" id="screen-quiz-text" hidden>
-    <div class="quiz-meta">
-      <span id="textQuestionCounter">Panneau 1</span>
-      <span id="textScoreCounter">Série : 0</span>
-    </div>
-
-    <h2 class="question-title">Quelle est la signification de ce panneau ?</h2>
-
-    <div class="sign-stage">
-      <div class="sign-frame" id="textSignFrame">
-        <div class="sign-loading" id="textSignLoading">chargement…</div>
-        <img id="textSignImage" alt="Panneau à identifier" hidden draggable="false">
+    <div class="quiz-card">
+      <div class="quiz-meta">
+        <span id="textQuestionCounter">Panneau 1</span>
+        <span id="textScoreCounter">Série : 0</span>
       </div>
+
+      <h2 class="question-title">Quelle est la signification de ce panneau ?</h2>
+
+      <div class="sign-stage">
+        <div class="sign-frame" id="textSignFrame">
+          <div class="sign-loading" id="textSignLoading">chargement…</div>
+          <img id="textSignImage" alt="Panneau à identifier" hidden draggable="false">
+        </div>
+      </div>
+
+      <div class="text-answer">
+        <input type="text" id="textAnswerInput" class="text-answer-input" placeholder="Tape la signification…" autocomplete="off">
+        <div class="text-suggestions" id="textSuggestions" hidden></div>
+      </div>
+
+      <p class="text-feedback" id="textFeedback" hidden aria-live="polite"></p>
     </div>
 
-    <div class="text-answer">
-      <input type="text" id="textAnswerInput" class="text-answer-input" placeholder="Tape la signification…" autocomplete="off">
-      <div class="text-suggestions" id="textSuggestions" hidden></div>
-    </div>
-
-    <p class="text-feedback" id="textFeedback" hidden aria-live="polite"></p>
-
-    <button class="btn-next" id="btnTextNext" hidden>Panneau suivant</button>
+    <button class="btn btn-color-1 btn-next" id="btnTextNext" hidden>Panneau suivant</button>
   </section>
 
   <!-- ÉCRAN FIN INFINI TEXTE -->
   <section class="screen" id="screen-end-infinite-text" hidden>
-    <h1 class="hero-title">Série terminée</h1>
-    <p class="end-score" id="textEndScore" aria-live="polite">0 panneau</p>
-    <p class="end-comment" id="textEndComment"></p>
-    <div class="end-actions">
-      <button class="btn-primary" id="btnRetryInfiniteText">Retenter</button>
-      <button class="btn-secondary" id="btnHomeFromInfiniteText">Retour à l'accueil</button>
+    <div class="result-card">
+      <h1 class="title">Série terminée</h1>
+      <p class="end-score" id="textEndScore" aria-live="polite">0 panneau</p>
+      <p class="subtitle" id="textEndComment"></p>
+      <div class="btn-container">
+        <button class="btn btn-color-1" id="btnRetryInfiniteText">Retenter</button>
+        <button class="btn btn-color-2" id="btnHomeFromInfiniteText">Retour à l'accueil</button>
+      </div>
     </div>
   </section>
 
   <!-- ÉCRAN QUIZ INFINI IMAGE (nom -> panneau) -->
   <section class="screen" id="screen-quiz-find" hidden>
-    <div class="quiz-meta">
-      <span id="findQuestionCounter">Panneau 1</span>
-      <span id="findScoreCounter">Série : 0</span>
+    <div class="quiz-card">
+      <div class="quiz-meta">
+        <span id="findQuestionCounter">Panneau 1</span>
+        <span id="findScoreCounter">Série : 0</span>
+      </div>
+
+      <h2 class="question-title" id="findPrompt" aria-live="polite">Retrouve le panneau…</h2>
+
+      <div class="sign-grid-wrap" id="findGridWrap">
+        <p class="sign-loading" id="findGridLoading">Chargement des panneaux…</p>
+        <div class="sign-grid" id="signGrid" hidden></div>
+      </div>
     </div>
 
-    <h2 class="question-title" id="findPrompt" aria-live="polite">Retrouve le panneau…</h2>
-
-    <div class="sign-grid-wrap" id="findGridWrap">
-      <p class="sign-loading" id="findGridLoading">Chargement des panneaux…</p>
-      <div class="sign-grid" id="signGrid" hidden></div>
-    </div>
-
-    <button class="btn-next" id="btnFindNext" hidden>Panneau suivant</button>
+    <button class="btn btn-color-1 btn-next" id="btnFindNext" hidden>Panneau suivant</button>
   </section>
 
   <!-- ÉCRAN FIN INFINI IMAGE -->
   <section class="screen" id="screen-end-infinite-find" hidden>
-    <h1 class="hero-title">Série terminée</h1>
-    <p class="end-score" id="findEndScore" aria-live="polite">0 panneau</p>
-    <p class="end-comment" id="findEndComment"></p>
-    <div class="end-actions">
-      <button class="btn-primary" id="btnRetryInfiniteFind">Retenter</button>
-      <button class="btn-secondary" id="btnHomeFromInfiniteFind">Retour à l'accueil</button>
+    <div class="result-card">
+      <h1 class="title">Série terminée</h1>
+      <p class="end-score" id="findEndScore" aria-live="polite">0 panneau</p>
+      <p class="subtitle" id="findEndComment"></p>
+      <div class="btn-container">
+        <button class="btn btn-color-1" id="btnRetryInfiniteFind">Retenter</button>
+        <button class="btn btn-color-2" id="btnHomeFromInfiniteFind">Retour à l'accueil</button>
+      </div>
     </div>
   </section>
 
   <!-- ÉCRAN COURS : TOUS LES PANNEAUX -->
   <section class="screen" id="screen-course" hidden>
     <div class="course-header">
-      <button class="btn-secondary btn-back" id="btnHomeFromCourse">← Accueil</button>
+      <button class="btn btn-color-2 btn-back" id="btnHomeFromCourse">← Accueil</button>
     </div>
-    <h1 class="hero-title course-title">Tous les panneaux</h1>
-    <p class="hero-sub">Parcours les <strong id="courseCount">0</strong> panneaux illustrés, filtre par catégorie ou cherche une signification.</p>
+    <h1 class="title course-title">Tous les panneaux</h1>
+    <p class="subtitle">Parcours les <strong id="courseCount">0</strong> panneaux illustrés, filtre par catégorie ou cherche une signification.</p>
 
     <div class="course-controls">
       <input type="text" id="courseSearch" class="text-answer-input" placeholder="Rechercher une signification ou un code…" autocomplete="off">

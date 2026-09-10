@@ -1,352 +1,232 @@
-/* Palette et conventions inspirées du DSFR (Système de Design de l'État
-   français, utilisé sur service-public.fr / ants.gouv.fr) : thème clair,
-   bleu France réservé à l'action, rouge réservé aux erreurs, vert aux
-   succès, cases carrées façon formulaire. Un seul repère décoratif (le
-   bandeau tricolore), pas de dégradés ni de radius uniforme partout. */
+/* Langage visuel repris de ton template de portfolio (learning_test) :
+   Poppins, fond blanc, cartes gris clair très arrondies (2rem), bordures
+   fines grises, boutons pleins/contour en pilule, transitions sobres sur
+   la couleur uniquement (jamais de transform/lift). Le rouge/bleu/vert
+   des panneaux ne sert qu'au contenu réel (images, retours bonne/mauvaise
+   réponse), jamais à l'habillage de l'interface. */
 :root {
-  --blue-france: #000091;
-  --blue-france-hover: #1212c9;
-  --blue-light: #e3e3fd;
-  --error-red: #ce0500;
-  --error-red-light: #fdeaea;
-  --success-green: #18753c;
-  --success-green-light: #e5f3e8;
-  --amber: #b45309;
-  --amber-light: #fff4e5;
+  --dark: #353535;
+  --darker: #000000;
+  --border: #a3a3a3;
+  --bg-alt: #fafafa;
+  --text-muted: #555555;
 
-  --bg: #f6f6f6;
-  --surface: #ffffff;
-  --border: #ddd;
-  --ink: #161616;
-  --ink-muted: #666666;
+  --success: #2f9e44;
+  --success-light: #e6f6e9;
+  --danger: #d7263d;
+  --danger-light: #fbe7e9;
 
-  --radius: 4px;
-  --font: "Public Sans", sans-serif;
+  --radius-lg: 2rem;
+  --radius-md: 1.1rem;
+  --radius-pill: 2rem;
+  --font: "Poppins", sans-serif;
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
   color-scheme: light;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+  scroll-behavior: smooth;
   font-size: clamp(15px, 1.1vw + 12px, 17px);
 }
 
 body {
-  margin: 0;
-  min-height: 100vh;
-  background: var(--bg);
-  color: var(--ink);
+  background: #ffffff;
+  color: #111111;
   font-family: var(--font);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
-/* Bandeau tricolore : seul élément d'identité, statique et discret,
-   au lieu d'un accent unique répété partout dans l'interface. */
-.tricolor-bar {
-  display: flex;
-  height: 4px;
-  width: 100%;
-}
-.tricolor-bar span { flex: 1; }
-.tricolor-bar span:nth-child(1) { background: var(--blue-france); }
-.tricolor-bar span:nth-child(2) { background: #ffffff; }
-.tricolor-bar span:nth-child(3) { background: var(--error-red); }
+p { color: var(--text-muted); }
 
-.topbar {
+a, .btn { transition: all 300ms ease; }
+
+/* --- Nav --- */
+#topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: clamp(10px, 2vh, 16px) clamp(16px, 5vw, 40px);
+  gap: 12px;
+  padding: clamp(16px, 3vh, 24px) clamp(20px, 6vw, 48px);
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
+.logo { font-size: clamp(1.05rem, 3.5vw, 1.3rem); font-weight: 600; color: #111; }
 
-.brand-mark { display: flex; flex: none; }
-
-.brand-text { display: flex; flex-direction: column; min-width: 0; }
-
-.brand-name {
-  font-weight: 700;
-  font-size: clamp(0.95rem, 3.2vw, 1.05rem);
-  color: var(--ink);
-}
-
-.brand-tag {
-  font-size: 0.68rem;
-  color: var(--ink-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.best-streak {
-  flex: none;
-  font-size: clamp(0.75rem, 2.5vw, 0.85rem);
-  color: var(--ink-muted);
-  text-align: right;
-}
-.best-streak strong { color: var(--success-green); font-weight: 700; }
+.best-streak { font-size: clamp(0.75rem, 2.5vw, 0.85rem); color: var(--text-muted); }
+.best-streak strong { color: var(--dark); font-weight: 700; }
 
 main#app {
-  max-width: 680px;
+  max-width: 720px;
   margin: 0 auto;
-  padding: clamp(16px, 3vh, 40px) 20px clamp(24px, 4vh, 60px);
+  padding: 0 clamp(20px, 6vw, 48px) clamp(40px, 6vh, 70px);
 }
 
 .screen { animation: fade-in 0.2s ease; }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 
-/* --- Accueil --- */
-.hero-title {
-  font-weight: 700;
-  font-size: clamp(1.5rem, 4.2vw, 2rem);
-  line-height: 1.2;
-  margin: 4px 0 10px;
-  color: var(--ink);
-}
+/* --- Titres, façon sections du template --- */
+.title { font-size: clamp(1.7rem, 5vw, 2.4rem); text-align: center; color: #111; }
+.section-title { margin-bottom: 1.5rem; }
+.eyebrow { text-align: center; font-weight: 600; color: var(--text-muted); margin-bottom: 0.4rem; }
+.section-eyebrow { margin-top: 3rem; }
+.subtitle { text-align: center; max-width: 46ch; margin: 0.8rem auto 0; }
 
-.hero-sub {
-  color: var(--ink-muted);
-  font-size: 1rem;
-  max-width: 52ch;
-  margin: 0 0 24px;
-}
-
-/* Module vedette : la série façon examen blanc, seule en avant, avec un
-   aperçu qui rappelle l'écran de la tablette d'examen (photo + compteur
-   de question). C'est le seul élément "spectaculaire" de l'écran. */
-.feature-module {
+/* --- Hero, façon section#profile --- */
+.hero {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  width: 100%;
-  text-align: left;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px;
-  margin-bottom: 26px;
-  cursor: pointer;
-  font-family: inherit;
-  color: inherit;
-}
-@media (min-width: 620px) {
-  .feature-module { flex-direction: row; align-items: center; padding: 22px; }
+  align-items: center;
+  text-align: center;
+  padding-top: clamp(24px, 5vh, 48px);
 }
 
-.feature-module:hover { border-color: var(--blue-france); }
-.feature-module:focus-visible {
-  outline: 2px solid var(--blue-france);
-  outline-offset: 2px;
-}
-
-.feature-module-preview {
-  flex: none;
-  display: block;
-  width: 100%;
-  max-width: 240px;
-  aspect-ratio: 4 / 3;
-  background: var(--ink);
-  border-radius: 10px;
-  padding: 14px;
-}
-@media (min-width: 620px) {
-  .feature-module-preview { width: 220px; }
-}
-
-.feature-module-screen {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  height: 100%;
-}
-
-.feature-module-counter {
-  align-self: flex-start;
-  background: var(--blue-france);
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 3px 9px;
-  border-radius: 3px;
-}
-
-.feature-module-photo {
-  flex: 1;
-  border-radius: 6px;
-  background: repeating-linear-gradient(135deg, #3a3a3a 0px, #3a3a3a 9px, #464646 9px, #464646 18px);
-}
-
-.feature-module-body {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.feature-module-title { font-size: 1.2rem; font-weight: 700; }
-
-.feature-module-desc {
-  color: var(--ink-muted);
-  font-size: 0.9rem;
-  max-width: 44ch;
-}
-
-/* Tags de catégorie : donnent un sens (registre, difficulté), pas une
-   décoration. Chaque teinte est réservée à ce rôle précis ailleurs dans
-   l'appli (le rouge d'erreur n'est jamais réutilisé ici, par exemple). */
-.module-tag {
-  align-self: flex-start;
-  display: inline-block;
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 3px;
-}
-.module-tag--exam { background: var(--blue-light); color: var(--blue-france); }
-.module-tag--train { background: #ececec; color: var(--ink-muted); }
-.module-tag--hard { background: var(--amber-light); color: var(--amber); }
-.module-tag--course { background: var(--success-green-light); color: var(--success-green); }
-
-/* Liste de démarches, comme sur un site de service public : une rangée
-   par mode, pas une grille de cartes identiques. */
-.mode-list {
-  list-style: none;
-  margin: 0 0 28px;
-  padding: 0;
-  border-top: 1px solid var(--border);
-}
-.mode-list li { border-bottom: 1px solid var(--border); }
-
-.mode-row {
+.hero-pic {
   display: flex;
   align-items: center;
-  gap: 14px;
-  width: 100%;
-  text-align: left;
-  background: none;
-  border: none;
-  padding: 15px 6px;
-  cursor: pointer;
-  font-family: inherit;
-  color: inherit;
-}
-.mode-row:hover { background: var(--blue-light); }
-.mode-row:focus-visible {
-  outline: 2px solid var(--blue-france);
-  outline-offset: -2px;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  margin-bottom: 1.2rem;
 }
 
-.mode-row-text {
+.btn-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.6rem;
+}
+
+/* --- Boutons pilule, comme .btn-color-1 / .btn-color-2 du template --- */
+.btn {
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.9rem 1.6rem;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--dark);
+  cursor: pointer;
+}
+
+.btn-color-1 { background: var(--dark); color: #fff; }
+.btn-color-1:hover { background: var(--darker); border-color: var(--darker); }
+
+.btn-color-2 { background: none; color: var(--dark); }
+.btn-color-2:hover { background: var(--dark); color: #fff; }
+
+.btn-back { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+
+/* --- Grille de modes, façon .details-container / cartes projets --- */
+.mode-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem;
+  justify-content: center;
+}
+
+.mode-card {
+  flex: 1 1 220px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  flex: 1;
-  min-width: 0;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.6rem 1.4rem;
+  cursor: pointer;
+  font-family: inherit;
 }
-.mode-row-title { font-weight: 600; font-size: 0.98rem; }
-.mode-row-desc { color: var(--ink-muted); font-size: 0.84rem; }
-.mode-row-arrow { flex: none; font-size: 1.4rem; color: var(--ink-muted); }
+
+.mode-card:hover, .mode-card:focus-visible {
+  border-color: var(--dark);
+  outline: none;
+}
+
+.mode-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+}
+.mode-card-icon--text {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.mode-card h3 { font-size: 1.05rem; font-weight: 600; color: #111; }
+.mode-card p { font-size: 0.85rem; }
 
 .source-note {
-  font-size: clamp(0.72rem, 2.2vw, 0.78rem);
-  color: var(--ink-muted);
+  margin-top: 2.4rem;
+  font-size: 0.75rem;
+  text-align: center;
 }
 
-/* --- Écrans de quiz : présentés comme une feuille d'examen (fieldset
-   bordé), en écho direct à l'écran de la tablette utilisée en centre
-   d'examen (compteur de question, photo, liste de réponses à cocher). --- */
-.exam-sheet {
-  background: var(--surface);
+/* --- Écrans de quiz --- */
+.quiz-card {
+  background: var(--bg-alt);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: clamp(16px, 3.5vw, 26px);
-  margin-bottom: 16px;
+  border-radius: var(--radius-lg);
+  padding: clamp(20px, 4vw, 32px);
+  margin-top: clamp(16px, 3vh, 28px);
+  margin-bottom: 1.2rem;
 }
 
-.quiz-head {
+.quiz-meta {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 14px;
-}
-
-.quiz-tag {
-  background: var(--blue-light);
-  color: var(--blue-france);
-  font-weight: 600;
-  font-size: 0.78rem;
-  padding: 4px 10px;
-  border-radius: 3px;
-}
-
-.quiz-score {
   font-size: clamp(0.8rem, 3vw, 0.85rem);
-  color: var(--ink-muted);
-  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 10px;
 }
 
 .quiz-progress-track {
-  height: 4px;
-  border-radius: 2px;
-  background: var(--border);
+  height: 6px;
+  border-radius: 3px;
+  background: #e6e6e6;
   overflow: hidden;
   margin-bottom: 18px;
 }
-
 .quiz-progress-fill {
   height: 100%;
   width: 5%;
-  background: var(--blue-france);
-  border-radius: 2px;
+  background: var(--dark);
+  border-radius: 3px;
   transition: width 0.25s ease;
 }
 
 .question-title {
-  font-weight: 700;
-  font-size: clamp(1.1rem, 3vh, 1.3rem);
-  margin: 0 0 18px;
-  color: var(--ink);
+  font-size: clamp(1.1rem, 3vh, 1.35rem);
+  font-weight: 600;
+  color: #111;
+  text-align: center;
+  margin: 0 0 20px;
 }
 
-.sign-stage {
-  display: flex;
-  justify-content: center;
-  margin-bottom: clamp(14px, 3vh, 24px);
-}
+.sign-stage { display: flex; justify-content: center; margin-bottom: clamp(14px, 3vh, 24px); }
 
 .sign-frame {
   width: clamp(120px, 22dvh, 200px);
   height: clamp(120px, 22dvh, 200px);
   background: #fff;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: clamp(12px, 3vh, 20px);
 }
+.sign-frame img { width: 100%; height: 100%; object-fit: contain; }
 
-.sign-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* Empêche le menu natif "Enregistrer l'image" / callout iOS au appui
-   long sur mobile, sur toutes les images de panneaux de l'appli. */
 .sign-frame img,
 .sign-grid-item img,
 .course-item img,
@@ -357,18 +237,12 @@ main#app {
   pointer-events: none;
 }
 
-.sign-loading {
-  color: var(--ink-muted);
-  font-size: 0.85rem;
-  text-align: center;
-}
+.sign-loading { color: var(--text-muted); font-size: 0.85rem; text-align: center; }
 
-/* Options en liste de cases à cocher, comme sur la vraie tablette
-   d'examen (case carrée + libellé), pas des boutons pilules. */
 .options {
   display: flex;
   flex-direction: column;
-  border-top: 1px solid var(--border);
+  gap: 10px;
 }
 
 .option-btn {
@@ -377,197 +251,117 @@ main#app {
   gap: 14px;
   width: 100%;
   text-align: left;
-  padding: clamp(12px, 2.2vh, 15px) 4px;
-  background: none;
-  border: none;
-  border-bottom: 1px solid var(--border);
-  color: var(--ink);
+  padding: 12px 16px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: #111;
   font-family: inherit;
   font-size: clamp(0.9rem, 2vh, 0.98rem);
   cursor: pointer;
 }
-
-.option-btn:hover:not(:disabled) { background: var(--blue-light); }
-.option-btn:focus-visible {
-  outline: 2px solid var(--blue-france);
-  outline-offset: -2px;
+.option-btn:hover:not(:disabled), .option-btn:focus-visible {
+  border-color: var(--dark);
+  outline: none;
 }
 
 .option-letter {
   flex: none;
-  width: 24px;
-  height: 24px;
-  border: 1.5px solid var(--ink-muted);
-  border-radius: 4px;
-  background: #fff;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #eee;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.76rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  color: var(--ink-muted);
+  color: var(--dark);
 }
-
 .option-btn:disabled { cursor: default; }
 
-.option-btn.is-correct { background: var(--success-green-light); }
-.option-btn.is-correct .option-letter {
-  background: var(--success-green);
-  border-color: var(--success-green);
-  color: #fff;
-}
+.option-btn.is-correct { background: var(--success-light); border-color: var(--success); }
+.option-btn.is-correct .option-letter { background: var(--success); color: #fff; }
 
-.option-btn.is-wrong { background: var(--error-red-light); }
-.option-btn.is-wrong .option-letter {
-  background: var(--error-red);
-  border-color: var(--error-red);
-  color: #fff;
-}
+.option-btn.is-wrong { background: var(--danger-light); border-color: var(--danger); }
+.option-btn.is-wrong .option-letter { background: var(--danger); color: #fff; }
 
 .option-btn.is-muted { opacity: 0.5; }
 
-.btn-next {
-  margin-top: 4px;
-  margin-bottom: 8px;
-  width: 100%;
-  padding: clamp(11px, 2vh, 14px);
-  border-radius: var(--radius);
-  border: none;
-  background: var(--blue-france);
-  color: #fff;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  scroll-margin-block: 16px;
-}
-.btn-next:hover { background: var(--blue-france-hover); }
+.btn-next { width: 100%; margin-bottom: 8px; scroll-margin-block: 16px; }
 
-/* --- Fin : présentée comme une attestation, avec le liseré tricolore
-   repris en haut, plutôt qu'une carte "trophée" générique. --- */
-.attestation {
-  position: relative;
-  background: var(--surface);
+/* --- Fin de série --- */
+.result-card {
+  background: var(--bg-alt);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: clamp(24px, 4vh, 36px) clamp(20px, 4vw, 30px) clamp(20px, 3vh, 28px);
-  overflow: hidden;
-}
-.attestation::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--blue-france) 0 33.33%, #fff 33.33% 66.66%, var(--error-red) 66.66% 100%);
+  border-radius: var(--radius-lg);
+  padding: clamp(28px, 5vh, 44px) clamp(20px, 5vw, 32px);
+  margin-top: clamp(16px, 3vh, 28px);
+  text-align: center;
 }
 
 .end-score {
   font-size: clamp(2.2rem, 9vw, 3rem);
-  font-weight: 800;
-  color: var(--blue-france);
-  margin: 4px 0 6px;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 10px 0 6px;
 }
 
-.end-comment {
-  color: var(--ink-muted);
-  margin: 0 0 26px;
-}
-
-.end-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.btn-primary {
-  background: var(--blue-france);
-  color: #fff;
-  border: 1px solid var(--blue-france);
-  border-radius: var(--radius);
-  font-weight: 600;
-  font-size: clamp(0.88rem, 3vw, 0.95rem);
-  padding: clamp(11px, 3vw, 13px) clamp(16px, 5vw, 22px);
-  cursor: pointer;
-}
-.btn-primary:hover { background: var(--blue-france-hover); border-color: var(--blue-france-hover); }
-
-.btn-secondary {
-  background: transparent;
-  color: var(--blue-france);
-  border: 1px solid var(--blue-france);
-  border-radius: var(--radius);
-  font-weight: 600;
-  font-size: clamp(0.88rem, 3vw, 0.95rem);
-  padding: clamp(11px, 3vw, 13px) clamp(16px, 5vw, 22px);
-  cursor: pointer;
-}
-.btn-secondary:hover { background: var(--blue-light); }
-
-/* --- Mode infini : trouve le nom (saisie + autocomplétion) --- */
-.text-answer {
-  position: relative;
-  margin-bottom: clamp(8px, 2vh, 16px);
-}
+/* --- Mode infini : trouve le nom --- */
+.text-answer { position: relative; margin-bottom: clamp(8px, 2vh, 16px); }
 
 .text-answer-input {
   width: 100%;
-  padding: clamp(10px, 2vh, 14px) 14px;
+  padding: 12px 16px;
   background: #fff;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--ink);
+  border-radius: var(--radius-md);
+  color: #111;
   font-family: inherit;
   font-size: clamp(0.9rem, 2vh, 0.98rem);
 }
-.text-answer-input::placeholder { color: var(--ink-muted); }
-.text-answer-input:focus {
-  outline: 2px solid var(--blue-france);
-  outline-offset: 1px;
-}
+.text-answer-input:focus { outline: none; border-color: var(--dark); }
 .text-answer-input:disabled { opacity: 0.7; }
 
 .text-suggestions {
   position: absolute;
   z-index: 10;
-  top: calc(100% + 4px);
+  top: calc(100% + 6px);
   left: 0;
   right: 0;
   background: #fff;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-md);
+  overflow: hidden;
   overflow-y: auto;
   max-height: 260px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
 }
 
 .text-suggestion-item {
   display: block;
   width: 100%;
   text-align: left;
-  padding: 10px 14px;
+  padding: 10px 16px;
   background: transparent;
   border: none;
-  border-bottom: 1px solid var(--border);
-  color: var(--ink);
+  border-bottom: 1px solid #eee;
+  color: #111;
   font-family: inherit;
   font-size: clamp(0.82rem, 2vh, 0.88rem);
   cursor: pointer;
 }
 .text-suggestion-item:last-child { border-bottom: none; }
-.text-suggestion-item:hover,
-.text-suggestion-item:focus-visible {
-  background: var(--blue-light);
+.text-suggestion-item:hover, .text-suggestion-item:focus-visible {
+  background: var(--bg-alt);
   outline: none;
 }
 
-.text-feedback {
-  font-size: clamp(0.85rem, 2vh, 0.92rem);
-  margin: 14px 0 0;
-  font-weight: 600;
-}
-.text-feedback.is-correct { color: var(--success-green); }
-.text-feedback.is-wrong { color: var(--error-red); }
+.text-feedback { font-size: clamp(0.85rem, 2vh, 0.92rem); font-weight: 600; margin: 4px 0 8px; text-align: center; }
+.text-feedback.is-correct { color: var(--success); }
+.text-feedback.is-wrong { color: var(--danger); }
 
-/* --- Mode infini : trouve le panneau (grille de tous les panneaux) --- */
+/* --- Mode infini : trouve le panneau --- */
 .sign-grid-wrap { margin-bottom: clamp(8px, 2vh, 16px); }
 
 .sign-grid {
@@ -576,17 +370,17 @@ main#app {
   gap: 8px;
   max-height: 50vh;
   overflow-y: auto;
-  padding: 8px;
-  background: #fafafa;
+  padding: 10px;
+  background: #fff;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-md);
 }
 
 .sign-grid-item {
   aspect-ratio: 1;
-  background: #fff;
+  background: var(--bg-alt);
   border: 2px solid var(--border);
-  border-radius: 6px;
+  border-radius: 0.7rem;
   padding: 6px;
   cursor: pointer;
   display: flex;
@@ -595,143 +389,65 @@ main#app {
 }
 .sign-grid-item img { width: 100%; height: 100%; object-fit: contain; }
 
-.sign-grid-item:hover:not(:disabled),
-.sign-grid-item:focus-visible {
-  border-color: var(--blue-france);
+.sign-grid-item:hover:not(:disabled), .sign-grid-item:focus-visible {
+  border-color: var(--dark);
   outline: none;
 }
 .sign-grid-item:disabled { cursor: default; }
 
-.sign-grid-item.is-correct {
-  border-color: var(--success-green);
-  background: var(--success-green-light);
-}
-.sign-grid-item.is-wrong {
-  border-color: var(--error-red);
-  background: var(--error-red-light);
-}
+.sign-grid-item.is-correct { border-color: var(--success); background: var(--success-light); }
+.sign-grid-item.is-wrong { border-color: var(--danger); background: var(--danger-light); }
 .sign-grid-item.is-muted { opacity: 0.4; }
 
-/* Aperçu agrandi au survol d'une case de la grille. Position fixed + JS :
-   évite le clipping par overflow-y:auto de .sign-grid et reste dans le
-   viewport quel que soit le scroll. */
 .sign-preview {
   position: fixed;
   z-index: 60;
   width: clamp(160px, 40vw, 220px);
   height: clamp(160px, 40vw, 220px);
   background: #fff;
-  border: 2px solid var(--blue-france);
-  border-radius: var(--radius);
+  border: 1px solid var(--dark);
+  border-radius: var(--radius-md);
   padding: 14px;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
   pointer-events: none;
   animation: fade-in 0.12s ease;
 }
+@media (min-width: 900px) { .sign-preview { width: 260px; height: 260px; padding: 18px; } }
+.sign-preview img { width: 100%; height: 100%; object-fit: contain; }
 
-@media (min-width: 900px) {
-  .sign-preview { width: 260px; height: 260px; padding: 18px; }
-}
+/* --- Cours : tous les panneaux --- */
+.course-header { display: flex; align-items: center; margin: 1.4rem 0 1rem; }
+.course-title { text-align: left; margin-bottom: 0.6rem; }
+.course-header + .title { text-align: left; }
 
-.sign-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* --- Cours : tous les panneaux, présentés comme une documentation de
-   référence (sommaire de catégories + liste), pas une grille de cartes
-   avec des filtres en chips flottants. --- */
-.course-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.btn-back { padding: 8px 16px; font-size: 0.85rem; }
-
-.course-title { margin: 4px 0 8px; }
-
-.course-search { margin: 14px 0 20px; }
-
-.course-layout {
+.course-controls {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
+  margin: 1.4rem 0 1.4rem;
 }
 
-@media (min-width: 760px) {
-  .course-layout { flex-direction: row; align-items: flex-start; }
-  .course-filters {
-    flex: none;
-    width: 190px;
-    position: sticky;
-    top: 16px;
-  }
-  .course-main { flex: 1; min-width: 0; }
-}
-
-.course-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
+.course-filters { display: flex; flex-wrap: wrap; gap: 8px; }
 
 .filter-chip {
-  padding: 6px 14px;
-  border-radius: 999px;
+  padding: 6px 16px;
+  border-radius: var(--radius-pill);
   border: 1px solid var(--border);
   background: #fff;
-  color: var(--ink-muted);
-  font-family: var(--font);
+  color: var(--text-muted);
+  font-family: inherit;
   font-size: 0.82rem;
   cursor: pointer;
 }
-.filter-chip:hover:not(.is-active) { border-color: var(--blue-france); color: var(--ink); }
-.filter-chip.is-active {
-  background: var(--blue-france);
-  color: #fff;
-  border-color: var(--blue-france);
-  font-weight: 600;
-}
+.filter-chip:hover:not(.is-active) { border-color: var(--dark); }
+.filter-chip.is-active { background: var(--dark); color: #fff; border-color: var(--dark); font-weight: 600; }
 
-/* Sur grand écran : le sommaire des catégories devient une vraie liste
-   verticale (comme la table des matières d'un site de documentation),
-   plus les chips flottants du mobile. */
-@media (min-width: 760px) {
-  .course-filters {
-    flex-direction: column;
-    flex-wrap: nowrap;
-    gap: 1px;
-    border-right: 1px solid var(--border);
-    padding-right: 14px;
-  }
-  .filter-chip {
-    display: block;
-    width: 100%;
-    text-align: left;
-    background: none;
-    border: none;
-    border-left: 3px solid transparent;
-    border-radius: 0;
-    padding: 8px 10px;
-  }
-  .filter-chip.is-active {
-    background: var(--blue-light);
-    color: var(--blue-france);
-    border-left-color: var(--blue-france);
-  }
-}
-
-.course-group { margin-bottom: 28px; }
-
+.course-group { margin-bottom: 2rem; }
 .course-group-title {
-  font-size: 1.02rem;
-  font-weight: 700;
-  color: var(--ink);
-  border-bottom: 2px solid var(--border);
-  padding-bottom: 8px;
-  margin: 0 0 14px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #111;
+  margin: 0 0 0.9rem;
 }
 
 .course-grid {
@@ -741,29 +457,24 @@ main#app {
 }
 
 .course-item {
-  background: #fff;
+  background: var(--bg-alt);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 12px 10px;
+  border-radius: var(--radius-md);
+  padding: 14px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
   text-align: center;
 }
-
 .course-item img { width: 64px; height: 64px; object-fit: contain; }
+.course-item-meaning { font-size: 0.82rem; line-height: 1.3; color: #111; }
+.course-item-code { font-size: 0.7rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
 
-.course-item-meaning { font-size: 0.82rem; line-height: 1.3; }
+.course-empty { color: var(--text-muted); text-align: center; padding: 40px 0; }
 
-.course-item-code {
-  font-size: 0.7rem;
-  color: var(--ink-muted);
-  font-variant-numeric: tabular-nums;
-}
-
-.course-empty {
-  color: var(--ink-muted);
-  text-align: center;
-  padding: 40px 0;
+/* --- Responsive, façon mediaqueries.css du template --- */
+@media (max-width: 520px) {
+  .btn-container { flex-direction: column; align-items: stretch; }
+  .mode-grid { flex-direction: column; }
 }
