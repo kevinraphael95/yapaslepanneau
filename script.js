@@ -274,7 +274,7 @@ function revealButton(btn) {
 }
 
 /* ============================================================
- * RECORDS (un par mode infini, affichage du meilleur global)
+ * RECORDS (un par mode infini, affichage compact dans la topbar)
  * ============================================================ */
 
 const BEST_STREAK_KEYS = {
@@ -283,13 +283,13 @@ const BEST_STREAK_KEYS = {
   find: "panneaux-quiz-best-streak-find",
 };
 
-// Libellés courts pour la badge de record. Volontairement différents des
-// titres de l'accueil (« mode infini » au lieu de « QCM infini ») pour
-// rester lisibles dans un espace étroit.
-const STREAK_LABELS = {
-  qcm: "mode infini",
-  text: "trouve le nom",
-  find: "trouve le panneau",
+// Libellés très courts pour tenir sur une seule ligne dans la topbar :
+// « Pan. » abrège « Panneau ». Tous les modes sont affichés s'ils ont
+// un record > 0, séparés par « · ».
+const STREAK_SHORT_LABELS = {
+  qcm: "QCM",
+  text: "Nom",
+  find: "Pan.",
 };
 
 function getStreak(mode) {
@@ -318,24 +318,31 @@ function recordStreak(mode, streak) {
 }
 
 function updateBestStreakBadge() {
-  const best = Math.max(getStreak("qcm"), getStreak("text"), getStreak("find"));
   const badge = document.getElementById("bestStreakBadge");
-  const value = document.getElementById("bestStreakValue");
-  const mode = document.getElementById("bestStreakMode");
+  const list = document.getElementById("bestStreakList");
 
-  if (best > 0) {
-    // On affiche le mode qui détient le record. En cas d'égalité, priorité
-    // à l'ordre qcm > text > find (arbitraire mais déterministe).
-    const owningMode =
-      getStreak("qcm") === best ? "qcm" :
-      getStreak("text") === best ? "text" :
-      "find";
-    value.textContent = best;
-    mode.textContent = `(${STREAK_LABELS[owningMode]})`;
-    badge.hidden = false;
-  } else {
+  // On ne garde que les modes où l'utilisateur a un record > 0.
+  const entries = ["qcm", "text", "find"]
+    .map((mode) => ({ label: STREAK_SHORT_LABELS[mode], value: getStreak(mode) }))
+    .filter(({ value }) => value > 0);
+
+  if (entries.length === 0) {
     badge.hidden = true;
+    return;
   }
+
+  // Reconstruction par nœuds DOM (pas innerHTML) : les libellés sont
+  // statiques et les valeurs numériques, mais on garde l'habitude.
+  list.innerHTML = "";
+  entries.forEach(({ label, value }, i) => {
+    if (i > 0) list.appendChild(document.createTextNode(" · "));
+    list.appendChild(document.createTextNode(`${label} `));
+    const strong = document.createElement("strong");
+    strong.textContent = value;
+    list.appendChild(strong);
+  });
+
+  badge.hidden = false;
 }
 
 /* ============================================================
