@@ -273,76 +273,13 @@ function revealButton(btn) {
   });
 }
 
-/* ============================================================
- * RECORDS (un par mode infini, affichage compact dans la topbar)
- * ============================================================ */
-
-const BEST_STREAK_KEYS = {
-  qcm: "panneaux-quiz-best-streak",
-  text: "panneaux-quiz-best-streak-text",
-  find: "panneaux-quiz-best-streak-find",
-};
-
-// Libellés très courts pour tenir sur une seule ligne dans la topbar :
-// « Pan. » abrège « Panneau ». Tous les modes sont affichés s'ils ont
-// un record > 0, séparés par « · ».
-const STREAK_SHORT_LABELS = {
-  qcm: "QCM",
-  text: "Nom",
-  find: "Pan.",
-};
-
-function getStreak(mode) {
-  try {
-    return Number(localStorage.getItem(BEST_STREAK_KEYS[mode]) || 0);
-  } catch (err) {
-    return 0;
-  }
-}
-
-function setStreak(mode, value) {
-  try {
-    localStorage.setItem(BEST_STREAK_KEYS[mode], String(value));
-  } catch (err) {
-    /* stockage indisponible : on ignore */
-  }
-}
-
-// Retourne true si c'est un nouveau record, et le meilleur précédent
-// (avant écrasement) pour pouvoir composer le commentaire de fin.
-function recordStreak(mode, streak) {
-  const previousBest = getStreak(mode);
-  const isNewRecord = streak > previousBest;
-  if (isNewRecord) setStreak(mode, streak);
-  return { isNewRecord, previousBest };
-}
-
-function updateBestStreakBadge() {
-  const badge = document.getElementById("bestStreakBadge");
-  const list = document.getElementById("bestStreakList");
-
-  // On ne garde que les modes où l'utilisateur a un record > 0.
-  const entries = ["qcm", "text", "find"]
-    .map((mode) => ({ label: STREAK_SHORT_LABELS[mode], value: getStreak(mode) }))
-    .filter(({ value }) => value > 0);
-
-  if (entries.length === 0) {
-    badge.hidden = true;
-    return;
-  }
-
-  // Reconstruction par nœuds DOM (pas innerHTML) : les libellés sont
-  // statiques et les valeurs numériques, mais on garde l'habitude.
-  list.innerHTML = "";
-  entries.forEach(({ label, value }, i) => {
-    if (i > 0) list.appendChild(document.createTextNode(" · "));
-    list.appendChild(document.createTextNode(`${label} `));
-    const strong = document.createElement("strong");
-    strong.textContent = value;
-    list.appendChild(strong);
-  });
-
-  badge.hidden = false;
+// Message de fin pour un mode infini, en fonction de la longueur de la série.
+function commentForStreak(streak) {
+  if (streak === 0) return "Raté dès la première question. Ça arrive !";
+  if (streak < 5) return "Petite série. Retente, tu vas plus loin.";
+  if (streak < 10) return "Pas mal, tu progresses.";
+  if (streak < 20) return "Belle série !";
+  return "Impressionnant, tu maîtrises.";
 }
 
 /* ============================================================
@@ -538,13 +475,7 @@ function endInfinite() {
   const streak = state.streak;
   document.getElementById("infiniteEndScore").textContent =
     streak <= 1 ? `${streak} panneau identifié` : `${streak} panneaux identifiés`;
-
-  const { isNewRecord, previousBest } = recordStreak("qcm", streak);
-  document.getElementById("infiniteEndComment").textContent = isNewRecord
-    ? "Nouveau record personnel !"
-    : `Ton record reste à ${previousBest}.`;
-
-  updateBestStreakBadge();
+  document.getElementById("infiniteEndComment").textContent = commentForStreak(streak);
   showScreen("endInfinite");
 }
 
@@ -723,13 +654,7 @@ function endInfiniteText() {
   const streak = textState.streak;
   document.getElementById("textEndScore").textContent =
     streak <= 1 ? `${streak} panneau identifié` : `${streak} panneaux identifiés`;
-
-  const { isNewRecord, previousBest } = recordStreak("text", streak);
-  document.getElementById("textEndComment").textContent = isNewRecord
-    ? "Nouveau record personnel !"
-    : `Ton record reste à ${previousBest}.`;
-
-  updateBestStreakBadge();
+  document.getElementById("textEndComment").textContent = commentForStreak(streak);
   showScreen("endInfiniteText");
 }
 
@@ -946,13 +871,7 @@ function endInfiniteFind() {
   const streak = findState.streak;
   document.getElementById("findEndScore").textContent =
     streak <= 1 ? `${streak} panneau identifié` : `${streak} panneaux identifiés`;
-
-  const { isNewRecord, previousBest } = recordStreak("find", streak);
-  document.getElementById("findEndComment").textContent = isNewRecord
-    ? "Nouveau record personnel !"
-    : `Ton record reste à ${previousBest}.`;
-
-  updateBestStreakBadge();
+  document.getElementById("findEndComment").textContent = commentForStreak(streak);
   showScreen("endInfiniteFind");
 }
 
@@ -1146,5 +1065,4 @@ document.getElementById("btnStartCourse").addEventListener("click", async () => 
  * INIT
  * ============================================================ */
 
-updateBestStreakBadge();
 showScreen("home");
