@@ -283,6 +283,15 @@ const BEST_STREAK_KEYS = {
   find: "panneaux-quiz-best-streak-find",
 };
 
+// Libellés courts pour la badge de record. Volontairement différents des
+// titres de l'accueil (« mode infini » au lieu de « QCM infini ») pour
+// rester lisibles dans un espace étroit.
+const STREAK_LABELS = {
+  qcm: "mode infini",
+  text: "trouve le nom",
+  find: "trouve le panneau",
+};
+
 function getStreak(mode) {
   try {
     return Number(localStorage.getItem(BEST_STREAK_KEYS[mode]) || 0);
@@ -309,15 +318,20 @@ function recordStreak(mode, streak) {
 }
 
 function updateBestStreakBadge() {
-  const best = Math.max(
-    getStreak("qcm"),
-    getStreak("text"),
-    getStreak("find")
-  );
+  const best = Math.max(getStreak("qcm"), getStreak("text"), getStreak("find"));
   const badge = document.getElementById("bestStreakBadge");
   const value = document.getElementById("bestStreakValue");
+  const mode = document.getElementById("bestStreakMode");
+
   if (best > 0) {
+    // On affiche le mode qui détient le record. En cas d'égalité, priorité
+    // à l'ordre qcm > text > find (arbitraire mais déterministe).
+    const owningMode =
+      getStreak("qcm") === best ? "qcm" :
+      getStreak("text") === best ? "text" :
+      "find";
     value.textContent = best;
+    mode.textContent = `(${STREAK_LABELS[owningMode]})`;
     badge.hidden = false;
   } else {
     badge.hidden = true;
