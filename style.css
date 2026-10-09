@@ -132,6 +132,13 @@ a,
   font-weight: 700;
 }
 
+/* Mode qui détient le record, en retrait visuel par rapport au chiffre :
+ * le chiffre attire l'œil, la parenthèse contextualise. */
+.best-streak-mode {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
 .theme-toggle {
   display: flex;
   align-items: center;
