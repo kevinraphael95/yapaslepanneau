@@ -122,21 +122,6 @@ a,
   gap: 14px;
 }
 
-/* Records des 3 modes infinis sur une seule ligne : « Record : QCM 8 ·
- * Nom 6 · Pan. 4 ». nowrap pour éviter un retour à la ligne moche si ça
- * serre ; sur écran très étroit, on masque la badge (voir media query
- * tout en bas) plutôt que de casser la topbar. */
-.best-streak {
-  font-size: clamp(0.72rem, 2.2vw, 0.82rem);
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
-.best-streak strong {
-  color: var(--dark);
-  font-weight: 700;
-}
-
 .theme-toggle {
   display: flex;
   align-items: center;
@@ -844,15 +829,5 @@ main#app {
    * 2 colonnes sur mobile. */
   .mode-grid {
     grid-template-columns: 1fr;
-  }
-}
-
-/* Sous 420px, la topbar devient trop serrée : logo + badge 3 records +
- * bouton thème ne tiennent plus sur une ligne. On masque la badge plutôt
- * que de casser la mise en page ou de wraper mochement. Les records
- * restent consultables dans les écrans de fin de partie. */
-@media (max-width: 420px) {
-  .best-streak {
-    display: none;
   }
 }
