@@ -282,10 +282,11 @@ function debounce(fn, delay) {
   };
 }
 
-// Filet de sécurité : avec un layout resserré, une fenêtre très basse, un
-// zoom élevé ou une barre d'outils/webcam qui déborde, le bouton « suivant »
-// peut être hors de la vue quand il s'affiche.
+// Affiche le bouton « suivant » à l'écran et lui donne le focus : Entrée (ou
+// Espace) suffit alors pour enchaîner. Le scroll sert de filet de sécurité
+// avec un layout resserré, une fenêtre très basse ou un zoom élevé.
 function revealButton(btn) {
+  btn.focus({ preventScroll: true });
   requestAnimationFrame(() => {
     btn.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" });
   });
