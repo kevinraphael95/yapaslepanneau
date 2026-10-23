@@ -215,6 +215,15 @@
   <img id="signPreviewImg" alt="" draggable="false" decoding="async">
 </div>
 
+<!-- Easter egg (Konami code) : l'iframe YouTube n'est créée qu'à l'ouverture,
+     et détruite à la fermeture pour couper la vidéo. -->
+<div class="egg-modal" id="eggModal" hidden role="dialog" aria-modal="true" aria-label="Vidéo surprise">
+  <div class="egg-box">
+    <button class="egg-close" id="eggClose" type="button" aria-label="Fermer la vidéo">×</button>
+    <div class="egg-video" id="eggVideo"></div>
+  </div>
+</div>
+
 <noscript>
   <div style="max-width:720px;margin:2rem auto;padding:1.5rem;text-align:center;font-family:sans-serif;">
     Ce jeu a besoin de JavaScript pour fonctionner. Active-le pour réviser les panneaux.

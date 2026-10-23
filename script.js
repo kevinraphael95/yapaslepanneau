@@ -962,6 +962,63 @@ document.getElementById("btnStartCourse").addEventListener("click", async () => 
 });
 
 /* ============================================================
+ * EASTER EGG — Konami code (↑ ↑ ↓ ↓ ← → ← → B A)
+ * Ouvre une fenêtre avec une vidéo YouTube lancée automatiquement.
+ * ============================================================ */
+
+const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+const EGG_VIDEO_URL = "https://www.youtube-nocookie.com/embed/-i_TnZw9dYU?autoplay=1&rel=0";
+
+const elEgg = {
+  modal: document.getElementById("eggModal"),
+  video: document.getElementById("eggVideo"),
+  close: document.getElementById("eggClose"),
+};
+let konamiPos = 0;
+let eggPreviousFocus = null;
+
+function openEgg() {
+  eggPreviousFocus = document.activeElement;
+  const frame = document.createElement("iframe");
+  frame.src = EGG_VIDEO_URL;
+  frame.title = "Vidéo surprise";
+  frame.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+  frame.allowFullscreen = true;
+  elEgg.video.innerHTML = "";
+  elEgg.video.appendChild(frame);
+  elEgg.modal.hidden = false;
+  elEgg.close.focus();
+}
+
+function closeEgg() {
+  elEgg.modal.hidden = true;
+  elEgg.video.innerHTML = ""; // détruit l'iframe : la vidéo s'arrête
+  if (eggPreviousFocus && eggPreviousFocus.focus) eggPreviousFocus.focus();
+}
+
+elEgg.close.addEventListener("click", closeEgg);
+elEgg.modal.addEventListener("click", (e) => {
+  if (e.target === elEgg.modal) closeEgg(); // clic sur le fond
+});
+
+document.addEventListener("keydown", (e) => {
+  if (!elEgg.modal.hidden) {
+    if (e.key === "Escape") closeEgg();
+    return;
+  }
+  const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  if (key === KONAMI[konamiPos]) {
+    konamiPos += 1;
+    if (konamiPos === KONAMI.length) {
+      konamiPos = 0;
+      openEgg();
+    }
+  } else {
+    konamiPos = key === KONAMI[0] ? 1 : 0;
+  }
+});
+
+/* ============================================================
  * INIT
  * ============================================================ */
 
