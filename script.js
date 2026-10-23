@@ -1013,7 +1013,7 @@ document.getElementById("btnStartCourse").addEventListener("click", async () => 
 });
 
 /* ============================================================
- * EASTER EGG — Konami code (↑ ↑ ↓ ↓ ← → ← → B A)
+ * EASTER EGG — Konami code (↑ ↑ ↓ ↓ ← → ← →)
  * Ouvre une fenêtre avec une vidéo YouTube lancée automatiquement.
  * ============================================================ */
 
@@ -1057,6 +1057,13 @@ document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeEgg();
     return;
   }
+
+  // Easter egg limité à l'écran d'accueil
+  if (screens.home.hidden) {
+    konamiPos = 0;
+    return;
+  }
+
   const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
   if (key === KONAMI[konamiPos]) {
     konamiPos += 1;
