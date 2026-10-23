@@ -81,13 +81,10 @@ applyTheme(getStoredTheme() || getSystemTheme());
 
 const screens = {
   home: document.getElementById("screen-home"),
-  quiz: document.getElementById("screen-quiz"),
-  endQcm: document.getElementById("screen-end-qcm"),
-  endInfinite: document.getElementById("screen-end-infinite"),
-  quizText: document.getElementById("screen-quiz-text"),
-  endInfiniteText: document.getElementById("screen-end-infinite-text"),
   quizFind: document.getElementById("screen-quiz-find"),
-  endInfiniteFind: document.getElementById("screen-end-infinite-find"),
+  endFind: document.getElementById("screen-end-find"),
+  quizText: document.getElementById("screen-quiz-text"),
+  endText: document.getElementById("screen-end-text"),
   course: document.getElementById("screen-course"),
 };
 
@@ -101,13 +98,10 @@ function showScreen(name) {
 // Aucun nettoyage d'état nécessaire : chaque mode réinitialise son propre
 // state au prochain démarrage.
 [
-  "btnHomeFromQuiz",
-  "btnHomeFromQuizText",
   "btnHomeFromQuizFind",
-  "btnHomeFromQcm",
-  "btnHomeFromInfinite",
-  "btnHomeFromInfiniteText",
-  "btnHomeFromInfiniteFind",
+  "btnHomeFromQuizText",
+  "btnHomeFromEndFind",
+  "btnHomeFromEndText",
   "btnHomeFromCourse",
 ].forEach((id) => {
   const btn = document.getElementById(id);
@@ -126,7 +120,7 @@ function showScreen(name) {
 
 const imageUrlCache = new Map();
 const WIKI_BATCH_SIZE = 50;
-const IMAGE_CACHE_KEY = "panneaux-image-cache-v2";
+const IMAGE_CACHE_KEY = "panneaux-image-cache-v3";
 const IMAGE_CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 function computeSignsSignature() {
@@ -143,7 +137,8 @@ function loadCachedImages() {
     if (parsed.signature !== computeSignsSignature()) return false;
 
     Object.entries(parsed.data).forEach(([code, url]) => imageUrlCache.set(code, url));
-    return SIGNS.every((s) => imageUrlCache.has(s.code));
+    // Un cache sans aucune URL a été produit par un échec réseau : on l'ignore.
+    return SIGNS.every((s) => imageUrlCache.has(s.code)) && SIGNS.some((s) => imageUrlCache.get(s.code));
   } catch (err) {
     return false;
   }
@@ -155,6 +150,7 @@ function saveCachedImages() {
     imageUrlCache.forEach((url, code) => {
       data[code] = url;
     });
+    localStorage.removeItem("panneaux-image-cache-v2");
     localStorage.setItem(
       IMAGE_CACHE_KEY,
       JSON.stringify({ timestamp: Date.now(), signature: computeSignsSignature(), data })
@@ -173,9 +169,10 @@ async function fetchImageBatch(signsBatch) {
 
   try {
     const res = await fetch(endpoint);
+    if (!res.ok) return false;
     const data = await res.json();
     const query = data.query;
-    if (!query || !query.pages) return;
+    if (!query || !query.pages) return false;
 
     // L'API peut renvoyer un titre canonique différent de celui envoyé
     // (underscores → espaces, première lettre capitalisée). Le mapping
@@ -202,29 +199,49 @@ async function fetchImageBatch(signsBatch) {
         imageUrlCache.set(sign.code, page.imageinfo[0].url);
       }
     });
+    return true;
   } catch (err) {
-    /* erreur réseau : le code appelant retombera sur un autre panneau */
+    // Erreur réseau : signalée à l'appelant pour ne pas mettre un résultat partiel en cache.
+    return false;
   }
 }
 
-async function preloadAllSignImages() {
-  if (loadCachedImages()) return;
+// false si au moins un lot a échoué : on retentera au prochain lancement d'un mode.
+let preloadOk = true;
 
-  imageUrlCache.clear();
-  for (let i = 0; i < SIGNS.length; i += WIKI_BATCH_SIZE) {
-    await fetchImageBatch(SIGNS.slice(i, i + WIKI_BATCH_SIZE));
+async function preloadAllSignImages() {
+  if (loadCachedImages()) {
+    preloadOk = true;
+    return;
   }
 
-  // Tout code non résolu par l'API est marqué explicitement comme absent,
-  // pour ne jamais être retenté en boucle à chaque question.
+  imageUrlCache.clear();
+  let allOk = true;
+  for (let i = 0; i < SIGNS.length; i += WIKI_BATCH_SIZE) {
+    const ok = await fetchImageBatch(SIGNS.slice(i, i + WIKI_BATCH_SIZE));
+    allOk = allOk && ok;
+  }
+
+  // Tout code non résolu par l'API est marqué comme absent pour la session,
+  // mais on ne persiste JAMAIS un résultat issu d'un échec réseau.
   SIGNS.forEach((s) => {
     if (!imageUrlCache.has(s.code)) imageUrlCache.set(s.code, null);
   });
-  saveCachedImages();
+  preloadOk = allOk;
+  if (allOk) saveCachedImages();
 }
 
-// Lancé une seule fois ; tout le reste du jeu attend cette promesse.
-const preloadPromise = preloadAllSignImages();
+// Lancé au chargement ; tout le reste du jeu attend cette promesse.
+let preloadPromise = preloadAllSignImages();
+
+// À appeler au début de chaque mode : si le chargement a échoué, on réessaie.
+async function ensureImages() {
+  await preloadPromise;
+  if (!preloadOk) {
+    preloadPromise = preloadAllSignImages();
+    await preloadPromise;
+  }
+}
 
 async function fetchSignImageUrl(code) {
   if (imageUrlCache.has(code)) return imageUrlCache.get(code);
@@ -245,15 +262,16 @@ function shuffle(array) {
   return arr;
 }
 
-// Exclut les panneaux qui partagent la même signification que la bonne
-// réponse : sans ça, le QCM peut afficher deux boutons identiques (ex.
-// A15a1 et A15a2 « Passage d'animaux domestiques ») dont un seul est
-// marqué correct.
-function pickDistractors(sign, count) {
-  const isUsable = (s) => s.code !== sign.code && s.meaning !== sign.meaning;
-  const sameCat = shuffle(SIGNS.filter((s) => s.cat === sign.cat && isUsable(s)));
-  const otherCat = shuffle(SIGNS.filter((s) => s.cat !== sign.cat && isUsable(s)));
-  return sameCat.concat(otherCat).slice(0, count);
+// Normalise pour comparer : sans accents, apostrophes typographiques ramenées
+// à « ' », minuscules, espaces simplifiés.
+function norm(str) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[’‘`]/g, "'")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function debounce(fn, delay) {
@@ -283,396 +301,87 @@ function commentForStreak(streak) {
 }
 
 /* ============================================================
- * MODE QCM — 20 QUESTIONS ET MODE INFINI (panneau -> 4 propositions)
+ * LOGIQUE COMMUNE AUX DEUX MODES DE JEU
+ *
+ * Chaque mode existe en deux variantes :
+ *   "short"    : 10 panneaux, score sur 10, une erreur ne stoppe pas la partie ;
+ *   "infinite" : on enchaîne jusqu'à la première erreur (record sauvegardé).
  * ============================================================ */
 
-const state = {
-  mode: null, // "qcm" | "infinite"
-  queue: [],
-  score: 0,
-  streak: 0,
-  qIndex: 0,
-  total: 20,
-  locked: false,
-  forceEnd: false,
-};
+const SHORT_TOTAL = 10;
+const RECORD_KEYS = { find: "panneaux-record-find", text: "panneaux-record-text" };
 
-const el = {
-  progressTrack: document.getElementById("progressTrack"),
-  progressFill: document.getElementById("progressFill"),
-  questionCounter: document.getElementById("questionCounter"),
-  scoreCounter: document.getElementById("scoreCounter"),
-  signFrame: document.getElementById("signFrame"),
-  signLoading: document.getElementById("signLoading"),
-  signImage: document.getElementById("signImage"),
-  optionsList: document.getElementById("optionsList"),
-  btnNext: document.getElementById("btnNext"),
-};
-
-function startGame(mode) {
-  state.mode = mode;
-  state.queue = shuffle(SIGNS);
-  state.score = 0;
-  state.streak = 0;
-  state.qIndex = 0;
-  state.total = mode === "qcm" ? 20 : Infinity;
-  state.locked = false;
-  state.forceEnd = false;
-  el.progressTrack.style.visibility = mode === "qcm" ? "visible" : "hidden";
-  showScreen("quiz");
-  nextQuestion();
-}
-
-async function nextQuestion() {
-  state.locked = false;
-  state.forceEnd = false;
-  el.btnNext.hidden = true;
-
-  if (state.mode === "qcm" && state.qIndex >= state.total) {
-    return endQcm();
-  }
-
-  // Pioche un panneau dont l'image est disponible ; sinon on essaie le suivant.
-  let sign = null;
-  let imageUrl = null;
-  let attempts = 0;
-  const maxAttempts = SIGNS.length * 2; // garde-fou si l'API est indisponible
-
-  while (sign === null) {
-    attempts += 1;
-    if (attempts > maxAttempts) {
-      el.signLoading.hidden = false;
-      el.signLoading.textContent =
-        "Impossible de charger les images des panneaux. Vérifie ta connexion et réessaie.";
-      el.signImage.hidden = true;
-      return;
-    }
-    if (state.queue.length === 0) state.queue = shuffle(SIGNS);
-    const candidate = state.queue.shift();
-    const url = await fetchSignImageUrl(candidate.code);
-    if (url) {
-      sign = candidate;
-      imageUrl = url;
-    }
-  }
-
-  renderQuestion(sign, imageUrl);
-}
-
-function renderQuestion(sign, imageUrl) {
-  state.qIndex += 1;
-
-  if (state.mode === "qcm") {
-    el.questionCounter.textContent = `Question ${state.qIndex} / ${state.total}`;
-    el.scoreCounter.textContent = `Score : ${state.score}`;
-    el.progressFill.style.width = `${((state.qIndex - 1) / state.total) * 100}%`;
-  } else {
-    el.questionCounter.textContent = `Panneau ${state.qIndex}`;
-    el.scoreCounter.textContent = `Série : ${state.streak}`;
-  }
-
-  el.signLoading.textContent = "chargement…";
-  el.signImage.hidden = true;
-  el.signLoading.hidden = false;
-  el.signImage.alt = "Panneau à identifier";
-  el.signImage.onload = () => {
-    el.signLoading.hidden = true;
-    el.signImage.hidden = false;
-  };
-  el.signImage.onerror = () => {
-    el.signLoading.hidden = false;
-    el.signLoading.textContent = "Image indisponible";
-    el.signImage.hidden = true;
-  };
-  el.signImage.src = imageUrl;
-
-  const distractors = pickDistractors(sign, 3);
-  const options = shuffle([
-    { text: sign.meaning, correct: true },
-    ...distractors.map((d) => ({ text: d.meaning, correct: false })),
-  ]);
-
-  el.optionsList.innerHTML = "";
-  const letters = ["A", "B", "C", "D"];
-  options.forEach((opt, i) => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "option-btn";
-
-    const letterSpan = document.createElement("span");
-    letterSpan.className = "option-letter";
-    letterSpan.textContent = letters[i];
-    letterSpan.setAttribute("aria-hidden", "true");
-
-    const textSpan = document.createElement("span");
-    textSpan.textContent = opt.text;
-
-    btn.appendChild(letterSpan);
-    btn.appendChild(textSpan);
-    btn.addEventListener("click", () => handleAnswer(btn, opt, options));
-    el.optionsList.appendChild(btn);
-  });
-}
-
-function handleAnswer(button, chosen, allOptions) {
-  if (state.locked) return;
-  state.locked = true;
-
-  const buttons = Array.from(el.optionsList.children);
-  buttons.forEach((b, i) => {
-    b.disabled = true;
-    if (allOptions[i].correct) b.classList.add("is-correct");
-    else if (b === button) b.classList.add("is-wrong");
-    else b.classList.add("is-muted");
-  });
-
-  if (chosen.correct) {
-    state.score += 1;
-    state.streak += 1;
-    state.forceEnd = false;
-    el.btnNext.textContent = state.mode === "qcm" ? "Suivant" : "Panneau suivant";
-    el.btnNext.hidden = false;
-    el.scoreCounter.textContent =
-      state.mode === "qcm" ? `Score : ${state.score}` : `Série : ${state.streak}`;
-    revealButton(el.btnNext);
-  } else if (state.mode === "qcm") {
-    state.forceEnd = false;
-    el.btnNext.textContent = "Suivant";
-    el.btnNext.hidden = false;
-    revealButton(el.btnNext);
-  } else {
-    // Mode infini : une erreur termine la partie, mais on laisse d'abord
-    // voir la bonne réponse en surbrillance avant l'écran de fin.
-    state.forceEnd = true;
-    el.btnNext.textContent = "Voir le résultat";
-    el.btnNext.hidden = false;
-    revealButton(el.btnNext);
+function getRecord(key) {
+  try {
+    return parseInt(localStorage.getItem(key), 10) || 0;
+  } catch (err) {
+    return 0;
   }
 }
 
-el.btnNext.addEventListener("click", () => {
-  if (state.forceEnd) return endInfinite();
-  if (state.mode === "qcm" && state.qIndex >= state.total) return endQcm();
-  nextQuestion();
-});
-
-function endQcm() {
-  const { score, total } = state;
-  document.getElementById("qcmEndScore").textContent = `${score} / ${total}`;
-
-  const pct = score / total;
-  let comment;
-  if (pct === 1) comment = "Sans faute. Tu connais tes panneaux sur le bout des doigts.";
-  else if (pct >= 0.8) comment = "Très solide, encore quelques révisions et c'est parfait.";
-  else if (pct >= 0.5) comment = "Pas mal, mais il reste des panneaux à revoir.";
-  else comment = "Ça mérite une bonne session de révision, retente ta chance.";
-  document.getElementById("qcmEndComment").textContent = comment;
-
-  showScreen("endQcm");
+function setRecord(key, value) {
+  try {
+    localStorage.setItem(key, String(value));
+  } catch (err) {
+    /* stockage indisponible : on ignore */
+  }
 }
 
-function endInfinite() {
-  const streak = state.streak;
-  document.getElementById("infiniteEndScore").textContent =
-    streak <= 1 ? `${streak} panneau identifié` : `${streak} panneaux identifiés`;
-  document.getElementById("infiniteEndComment").textContent = commentForStreak(streak);
-  showScreen("endInfinite");
+function headerLabels(st) {
+  return st.mode === "short"
+    ? { counter: `Panneau ${st.qIndex} / ${SHORT_TOTAL}`, score: `Score : ${st.score}` }
+    : { counter: `Panneau ${st.qIndex}`, score: `Série : ${st.score}` };
 }
 
-document.getElementById("btnStartQcm").addEventListener("click", () => startGame("qcm"));
-document.getElementById("btnStartInfinite").addEventListener("click", () => startGame("infinite"));
-document.getElementById("btnRetryQcm").addEventListener("click", () => startGame("qcm"));
-document.getElementById("btnRetryInfinite").addEventListener("click", () => startGame("infinite"));
+// Enregistre la réponse et décide si la partie s'arrête juste après.
+function applyAnswer(st, correct) {
+  if (correct) st.score += 1;
+  const lastOfShort = st.mode === "short" && st.qIndex >= SHORT_TOTAL;
+  st.forceEnd = lastOfShort || (st.mode === "infinite" && !correct);
+}
+
+function commentForScore(pct) {
+  if (pct === 1) return "Sans faute. Tu connais tes panneaux sur le bout des doigts.";
+  if (pct >= 0.8) return "Très solide, encore quelques révisions et c'est parfait.";
+  if (pct >= 0.5) return "Pas mal, mais il reste des panneaux à revoir.";
+  return "Ça mérite une bonne session de révision, retente ta chance.";
+}
+
+function fillEndScreen(st, ids, recordKey) {
+  const title = document.getElementById(ids.title);
+  const score = document.getElementById(ids.score);
+  const comment = document.getElementById(ids.comment);
+
+  if (st.mode === "short") {
+    title.textContent = "Résultat";
+    score.textContent = `${st.score} / ${SHORT_TOTAL}`;
+    comment.textContent = commentForScore(st.score / SHORT_TOTAL);
+    return;
+  }
+
+  const best = getRecord(recordKey);
+  const isRecord = st.score > best;
+  if (isRecord) setRecord(recordKey, st.score);
+
+  let suffix = "";
+  if (isRecord) suffix = " Nouveau record !";
+  else if (best > 0) suffix = ` Record : ${best}.`;
+
+  title.textContent = "Série terminée";
+  score.textContent =
+    st.score <= 1 ? `${st.score} panneau identifié` : `${st.score} panneaux identifiés`;
+  comment.textContent = commentForStreak(st.score) + suffix;
+}
 
 /* ============================================================
- * MODE INFINI — TROUVE LE NOM (panneau -> signification tapée)
+ * MODE « TROUVE LE PANNEAU » (signification -> panneau dans la grille)
  * ============================================================ */
 
-const ALL_MEANINGS = Array.from(new Set(SIGNS.map((s) => s.meaning)));
-
-const textState = {
-  streak: 0,
-  qIndex: 0,
-  locked: false,
-  queue: [],
-  current: null,
-  forceEnd: false,
-};
-
-const elText = {
-  frame: document.getElementById("textSignFrame"),
-  loading: document.getElementById("textSignLoading"),
-  image: document.getElementById("textSignImage"),
-  counter: document.getElementById("textQuestionCounter"),
-  score: document.getElementById("textScoreCounter"),
-  input: document.getElementById("textAnswerInput"),
-  suggestions: document.getElementById("textSuggestions"),
-  feedback: document.getElementById("textFeedback"),
-  btnNext: document.getElementById("btnTextNext"),
-};
-
-function startTextGame() {
-  textState.streak = 0;
-  textState.qIndex = 0;
-  textState.locked = false;
-  textState.forceEnd = false;
-  textState.queue = shuffle(SIGNS);
-  showScreen("quizText");
-  nextTextQuestion();
-}
-
-async function nextTextQuestion() {
-  textState.locked = false;
-  textState.forceEnd = false;
-  elText.btnNext.hidden = true;
-  elText.btnNext.textContent = "Panneau suivant";
-  elText.feedback.hidden = true;
-  elText.input.value = "";
-  elText.input.disabled = false;
-  elText.suggestions.hidden = true;
-  elText.suggestions.innerHTML = "";
-
-  let sign = null;
-  let imageUrl = null;
-  let attempts = 0;
-  const maxAttempts = SIGNS.length * 2;
-
-  while (sign === null) {
-    attempts += 1;
-    if (attempts > maxAttempts) {
-      elText.loading.hidden = false;
-      elText.loading.textContent =
-        "Impossible de charger les images des panneaux. Vérifie ta connexion et réessaie.";
-      elText.image.hidden = true;
-      return;
-    }
-    if (textState.queue.length === 0) textState.queue = shuffle(SIGNS);
-    const candidate = textState.queue.shift();
-    const url = await fetchSignImageUrl(candidate.code);
-    if (url) {
-      sign = candidate;
-      imageUrl = url;
-    }
-  }
-
-  textState.current = sign;
-  textState.qIndex += 1;
-  elText.counter.textContent = `Panneau ${textState.qIndex}`;
-  elText.score.textContent = `Série : ${textState.streak}`;
-
-  elText.loading.textContent = "chargement…";
-  elText.image.hidden = true;
-  elText.loading.hidden = false;
-  elText.image.alt = "Panneau à identifier";
-  elText.image.onload = () => {
-    elText.loading.hidden = true;
-    elText.image.hidden = false;
-  };
-  elText.image.onerror = () => {
-    elText.loading.hidden = false;
-    elText.loading.textContent = "Image indisponible";
-    elText.image.hidden = true;
-  };
-  elText.image.src = imageUrl;
-
-  elText.input.focus();
-}
-
-function closeTextSuggestions() {
-  elText.suggestions.hidden = true;
-  elText.suggestions.innerHTML = "";
-}
-
-elText.input.addEventListener("input", () => {
-  const query = elText.input.value.trim().toLowerCase();
-  if (query.length < 3) return closeTextSuggestions();
-
-  const matches = ALL_MEANINGS.filter((m) => m.toLowerCase().includes(query)).slice(0, 6);
-  closeTextSuggestions();
-  if (matches.length === 0) return;
-
-  matches.forEach((m) => {
-    const item = document.createElement("button");
-    item.type = "button";
-    item.className = "text-suggestion-item";
-    item.textContent = m;
-    item.addEventListener("click", () => {
-      elText.input.value = m;
-      closeTextSuggestions();
-      submitTextAnswer(m);
-    });
-    elText.suggestions.appendChild(item);
-  });
-  elText.suggestions.hidden = false;
-});
-
-elText.input.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    submitTextAnswer(elText.input.value);
-  } else if (e.key === "Escape") {
-    closeTextSuggestions();
-  }
-});
-
-// Ferme le menu de suggestions quand on clique en dehors de la zone de
-// saisie (l'input + le menu sont dans le même wrapper .text-answer).
-document.addEventListener("click", (e) => {
-  if (elText.suggestions.hidden) return;
-  if (!e.target.closest(".text-answer")) closeTextSuggestions();
-});
-
-function submitTextAnswer(value) {
-  if (textState.locked || !textState.current) return;
-  textState.locked = true;
-  closeTextSuggestions();
-  elText.input.disabled = true;
-
-  const normalized = value.trim().toLowerCase();
-  const correct = normalized === textState.current.meaning.toLowerCase();
-
-  elText.feedback.hidden = false;
-  if (correct) {
-    textState.streak += 1;
-    textState.forceEnd = false;
-    elText.feedback.textContent = `Exact : ${textState.current.meaning}`;
-    elText.feedback.className = "text-feedback is-correct";
-    elText.score.textContent = `Série : ${textState.streak}`;
-    elText.btnNext.hidden = false;
-    revealButton(elText.btnNext);
-  } else {
-    elText.feedback.textContent = `Raté. Réponse : ${textState.current.meaning}`;
-    elText.feedback.className = "text-feedback is-wrong";
-    textState.forceEnd = true;
-    elText.btnNext.textContent = "Voir le résultat";
-    elText.btnNext.hidden = false;
-    revealButton(elText.btnNext);
-  }
-}
-
-function endInfiniteText() {
-  const streak = textState.streak;
-  document.getElementById("textEndScore").textContent =
-    streak <= 1 ? `${streak} panneau identifié` : `${streak} panneaux identifiés`;
-  document.getElementById("textEndComment").textContent = commentForStreak(streak);
-  showScreen("endInfiniteText");
-}
-
-elText.btnNext.addEventListener("click", () => {
-  if (textState.forceEnd) return endInfiniteText();
-  nextTextQuestion();
-});
-
-document.getElementById("btnStartInfiniteText").addEventListener("click", () => startTextGame());
-document.getElementById("btnRetryInfiniteText").addEventListener("click", () => startTextGame());
-
-/* ============================================================
- * MODE INFINI — TROUVE LE PANNEAU
- * (signification -> panneau à retrouver dans la grille complète)
- * ============================================================ */
+const SIGN_BY_CODE = new Map(SIGNS.map((s) => [s.code, s]));
 
 const findState = {
-  streak: 0,
+  mode: "short",
+  score: 0,
   qIndex: 0,
   locked: false,
   pool: [],
@@ -745,6 +454,7 @@ window.addEventListener("resize", () => {
 // ne suivrait plus la case survolée).
 elFind.grid.addEventListener("scroll", hideSignPreview);
 
+
 // Construit la grille une seule fois, dans l'ordre de SIGNS. Les panneaux
 // sans image disponible sont simplement absents et ne seront jamais tirés.
 async function buildSignGrid() {
@@ -788,21 +498,26 @@ async function buildSignGrid() {
 
   elFind.loading.hidden = true;
   elFind.grid.hidden = false;
-  findState.gridBuilt = true;
+  // Une grille vide ou construite sur un chargement partiel sera reconstruite
+  // au prochain lancement du mode.
+  findState.gridBuilt = findState.pool.length > 0 && preloadOk;
 }
 
-async function startFindGame() {
-  findState.streak = 0;
+async function startFindGame(mode) {
+  findState.mode = mode;
+  findState.score = 0;
   findState.qIndex = 0;
   findState.locked = false;
   findState.forceEnd = false;
+  elFind.btnNext.hidden = true;
   showScreen("quizFind");
   elFind.prompt.textContent = "Chargement des panneaux…";
+  await ensureImages();
   await buildSignGrid();
 
   if (findState.pool.length === 0) {
     elFind.prompt.textContent =
-      "Impossible de charger les panneaux. Vérifie ta connexion et réessaie.";
+      "Impossible de charger les panneaux. Vérifie ta connexion, puis reviens à l'accueil et relance le mode.";
     return;
   }
 
@@ -815,7 +530,6 @@ function nextFindQuestion() {
   findState.forceEnd = false;
   hideSignPreview();
   elFind.btnNext.hidden = true;
-  elFind.btnNext.textContent = "Panneau suivant";
 
   Array.from(elFind.grid.children).forEach((cell) => {
     cell.classList.remove("is-correct", "is-wrong", "is-muted");
@@ -827,8 +541,9 @@ function nextFindQuestion() {
   findState.current = sign;
   findState.qIndex += 1;
 
-  elFind.counter.textContent = `Panneau ${findState.qIndex}`;
-  elFind.score.textContent = `Série : ${findState.streak}`;
+  const labels = headerLabels(findState);
+  elFind.counter.textContent = labels.counter;
+  elFind.score.textContent = labels.score;
   elFind.prompt.textContent = `Retrouve le panneau : ${sign.meaning}`;
 }
 
@@ -841,7 +556,7 @@ function handleFindAnswer(cell, sign) {
 
   Array.from(elFind.grid.children).forEach((c) => {
     c.disabled = true;
-    const cSign = findState.pool.find((s) => s.code === c.dataset.code);
+    const cSign = SIGN_BY_CODE.get(c.dataset.code);
     if (cSign && cSign.meaning === correctMeaning) {
       // Tout panneau partageant la même signification (ex. vache/mouton
       // pour « Passage d'animaux domestiques ») compte comme bonne réponse.
@@ -853,35 +568,218 @@ function handleFindAnswer(cell, sign) {
     }
   });
 
-  if (isCorrect) {
-    findState.streak += 1;
-    findState.forceEnd = false;
-    elFind.score.textContent = `Série : ${findState.streak}`;
-    elFind.btnNext.hidden = false;
-    revealButton(elFind.btnNext);
-  } else {
-    findState.forceEnd = true;
-    elFind.btnNext.textContent = "Voir le résultat";
-    elFind.btnNext.hidden = false;
-    revealButton(elFind.btnNext);
-  }
+  applyAnswer(findState, isCorrect);
+  elFind.score.textContent = headerLabels(findState).score;
+  elFind.btnNext.textContent = findState.forceEnd ? "Voir le résultat" : "Panneau suivant";
+  elFind.btnNext.hidden = false;
+  revealButton(elFind.btnNext);
 }
 
-function endInfiniteFind() {
-  const streak = findState.streak;
-  document.getElementById("findEndScore").textContent =
-    streak <= 1 ? `${streak} panneau identifié` : `${streak} panneaux identifiés`;
-  document.getElementById("findEndComment").textContent = commentForStreak(streak);
-  showScreen("endInfiniteFind");
+function endFind() {
+  fillEndScreen(
+    findState,
+    { title: "findEndTitle", score: "findEndScore", comment: "findEndComment" },
+    RECORD_KEYS.find
+  );
+  showScreen("endFind");
 }
 
 elFind.btnNext.addEventListener("click", () => {
-  if (findState.forceEnd) return endInfiniteFind();
+  if (findState.forceEnd) return endFind();
   nextFindQuestion();
 });
 
-document.getElementById("btnStartInfiniteFind").addEventListener("click", () => startFindGame());
-document.getElementById("btnRetryInfiniteFind").addEventListener("click", () => startFindGame());
+document.getElementById("btnStartFindShort").addEventListener("click", () => startFindGame("short"));
+document.getElementById("btnStartFindInfinite").addEventListener("click", () => startFindGame("infinite"));
+document.getElementById("btnRetryFind").addEventListener("click", () => startFindGame(findState.mode));
+
+/* ============================================================
+ * MODE « TROUVE LE NOM » (panneau -> signification tapée)
+ * ============================================================ */
+
+const ALL_MEANINGS = Array.from(new Set(SIGNS.map((s) => s.meaning)));
+const NORM_MEANINGS = ALL_MEANINGS.map((m) => ({ text: m, key: norm(m) }));
+
+// Les suffixes « (danger) », « (indication) », « (temporaire) » ne servent qu'à
+// distinguer deux panneaux de même nom : on accepte la réponse sans eux.
+const TAG_SUFFIX = /\s*\((danger|indication|temporaire)\)\s*$/;
+
+const textState = {
+  mode: "short",
+  score: 0,
+  qIndex: 0,
+  locked: false,
+  queue: [],
+  current: null,
+  forceEnd: false,
+};
+
+const elText = {
+  frame: document.getElementById("textSignFrame"),
+  loading: document.getElementById("textSignLoading"),
+  image: document.getElementById("textSignImage"),
+  counter: document.getElementById("textQuestionCounter"),
+  score: document.getElementById("textScoreCounter"),
+  input: document.getElementById("textAnswerInput"),
+  suggestions: document.getElementById("textSuggestions"),
+  feedback: document.getElementById("textFeedback"),
+  btnNext: document.getElementById("btnTextNext"),
+};
+
+function startTextGame(mode) {
+  textState.mode = mode;
+  textState.score = 0;
+  textState.qIndex = 0;
+  textState.locked = false;
+  textState.forceEnd = false;
+  textState.queue = shuffle(SIGNS);
+  showScreen("quizText");
+  nextTextQuestion();
+}
+
+async function nextTextQuestion() {
+  textState.locked = false;
+  textState.forceEnd = false;
+  elText.btnNext.hidden = true;
+  elText.feedback.hidden = true;
+  elText.input.value = "";
+  elText.input.disabled = false;
+  closeTextSuggestions();
+
+  await ensureImages();
+
+  let sign = null;
+  let imageUrl = null;
+  let attempts = 0;
+  const maxAttempts = SIGNS.length * 2;
+
+  while (sign === null) {
+    attempts += 1;
+    if (attempts > maxAttempts) {
+      elText.loading.hidden = false;
+      elText.loading.textContent =
+        "Impossible de charger les images des panneaux. Vérifie ta connexion, puis reviens à l'accueil et relance le mode.";
+      elText.image.hidden = true;
+      return;
+    }
+    if (textState.queue.length === 0) textState.queue = shuffle(SIGNS);
+    const candidate = textState.queue.shift();
+    const url = await fetchSignImageUrl(candidate.code);
+    if (url) {
+      sign = candidate;
+      imageUrl = url;
+    }
+  }
+
+  textState.current = sign;
+  textState.qIndex += 1;
+  const labels = headerLabels(textState);
+  elText.counter.textContent = labels.counter;
+  elText.score.textContent = labels.score;
+
+  elText.loading.textContent = "chargement…";
+  elText.image.hidden = true;
+  elText.loading.hidden = false;
+  elText.image.alt = "Panneau à identifier";
+  elText.image.onload = () => {
+    elText.loading.hidden = true;
+    elText.image.hidden = false;
+  };
+  elText.image.onerror = () => {
+    elText.loading.hidden = false;
+    elText.loading.textContent = "Image indisponible";
+    elText.image.hidden = true;
+  };
+  elText.image.src = imageUrl;
+
+  elText.input.focus();
+}
+
+function closeTextSuggestions() {
+  elText.suggestions.hidden = true;
+  elText.suggestions.innerHTML = "";
+}
+
+elText.input.addEventListener("input", () => {
+  const query = norm(elText.input.value);
+  if (query.length < 3) return closeTextSuggestions();
+
+  const matches = NORM_MEANINGS.filter((m) => m.key.includes(query))
+    .slice(0, 6)
+    .map((m) => m.text);
+  closeTextSuggestions();
+  if (matches.length === 0) return;
+
+  matches.forEach((m) => {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "text-suggestion-item";
+    item.textContent = m;
+    item.addEventListener("click", () => {
+      elText.input.value = m;
+      closeTextSuggestions();
+      submitTextAnswer(m);
+    });
+    elText.suggestions.appendChild(item);
+  });
+  elText.suggestions.hidden = false;
+});
+
+elText.input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    submitTextAnswer(elText.input.value);
+  } else if (e.key === "Escape") {
+    closeTextSuggestions();
+  }
+});
+
+// Ferme le menu de suggestions quand on clique en dehors de la zone de
+// saisie (l'input + le menu sont dans le même wrapper .text-answer).
+document.addEventListener("click", (e) => {
+  if (elText.suggestions.hidden) return;
+  if (!e.target.closest(".text-answer")) closeTextSuggestions();
+});
+
+function submitTextAnswer(value) {
+  if (textState.locked || !textState.current) return;
+  if (!norm(value)) return; // un champ vide ne doit pas coûter une série
+  textState.locked = true;
+  closeTextSuggestions();
+  elText.input.disabled = true;
+
+  const meaning = textState.current.meaning;
+  const answer = norm(value);
+  const correct = answer === norm(meaning) || answer === norm(meaning.replace(TAG_SUFFIX, ""));
+
+  applyAnswer(textState, correct);
+
+  elText.feedback.hidden = false;
+  elText.feedback.textContent = correct ? `Exact : ${meaning}` : `Raté. Réponse : ${meaning}`;
+  elText.feedback.className = "text-feedback " + (correct ? "is-correct" : "is-wrong");
+  elText.score.textContent = headerLabels(textState).score;
+  elText.btnNext.textContent = textState.forceEnd ? "Voir le résultat" : "Panneau suivant";
+  elText.btnNext.hidden = false;
+  revealButton(elText.btnNext);
+}
+
+function endText() {
+  fillEndScreen(
+    textState,
+    { title: "textEndTitle", score: "textEndScore", comment: "textEndComment" },
+    RECORD_KEYS.text
+  );
+  showScreen("endText");
+}
+
+elText.btnNext.addEventListener("click", () => {
+  if (textState.forceEnd) return endText();
+  nextTextQuestion();
+});
+
+document.getElementById("btnStartTextShort").addEventListener("click", () => startTextGame("short"));
+document.getElementById("btnStartTextInfinite").addEventListener("click", () => startTextGame("infinite"));
+document.getElementById("btnRetryText").addEventListener("click", () => startTextGame(textState.mode));
 
 /* ============================================================
  * COURS — TOUS LES PANNEAUX (consultation libre, par catégorie)
@@ -930,9 +828,11 @@ const elCourse = {
 async function buildCourseView() {
   if (courseState.built) return;
   elCourse.loading.hidden = false;
+  elCourse.loading.textContent = "Chargement des panneaux…";
   elCourse.list.hidden = true;
   elCourse.empty.hidden = true;
 
+  await ensureImages();
   const urls = await Promise.all(SIGNS.map((s) => fetchSignImageUrl(s.code)));
   courseState.items = [];
   SIGNS.forEach((sign, i) => {
@@ -952,7 +852,7 @@ async function buildCourseView() {
 
   elCourse.loading.hidden = true;
   elCourse.list.hidden = false;
-  courseState.built = true;
+  courseState.built = preloadOk;
 }
 
 function buildCourseFilters() {
@@ -978,14 +878,14 @@ function buildCourseFilters() {
 }
 
 function renderCourseList() {
-  const query = courseState.query.trim().toLowerCase();
+  const query = norm(courseState.query);
 
   const filtered = courseState.items.filter(({ sign }) => {
     if (courseState.activeCat !== "all" && sign.cat !== courseState.activeCat) return false;
     if (
       query &&
-      !sign.meaning.toLowerCase().includes(query) &&
-      !sign.code.toLowerCase().includes(query)
+      !norm(sign.meaning).includes(query) &&
+      !norm(sign.code).includes(query)
     ) {
       return false;
     }

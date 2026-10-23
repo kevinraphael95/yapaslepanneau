@@ -81,7 +81,7 @@ const SIGNS = [
   { code: "B2b", cat: "interdiction", meaning: "Interdiction de tourner à droite à la prochaine intersection" },
   { code: "B2c", cat: "interdiction", meaning: "Interdiction de faire demi-tour" },
   { code: "B3", cat: "interdiction", meaning: "Interdiction de dépasser tous les véhicules à moteur (sauf deux-roues)" },
-  { code: "B3a", cat: "interdiction", meaning: "L'interdiction de dépasser concerne seulement les transport de marchandises de plus de 3,5 tonnes" },
+  { code: "B3a", cat: "interdiction", meaning: "L'interdiction de dépasser concerne seulement les transports de marchandises de plus de 3,5 tonnes" },
   { code: "B4", cat: "interdiction", meaning: "Arrêt obligatoire au poste de douane" },
   { code: "B5a", cat: "interdiction", meaning: "Arrêt obligatoire au poste de gendarmerie" },
   { code: "B5b", cat: "interdiction", meaning: "Arrêt obligatoire au poste de police" },

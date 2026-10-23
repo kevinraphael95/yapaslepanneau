@@ -18,19 +18,19 @@
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panneaux — Révise le code de la route</title>
-<meta name="description" content="Quiz gratuit pour réviser les panneaux de signalisation du code de la route français : QCM 20 questions, mode infini, trouve le nom, trouve le panneau, et cours complet illustré.">
+<meta name="description" content="Quiz gratuit pour réviser les panneaux de signalisation du code de la route français : trouve le panneau, trouve le nom (10 questions ou mode infini) et cours complet illustré.">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Panneaux — Révise le code de la route">
-<meta property="og:description" content="Quiz gratuit pour réviser les panneaux du code de la route : QCM, mode infini, trouve le nom, trouve le panneau, et cours complet illustré.">
+<meta property="og:description" content="Quiz gratuit pour réviser les panneaux du code de la route : trouve le panneau, trouve le nom, et cours complet illustré.">
 <meta property="og:url" content="https://kevinraphael95.github.io/yapaslepanneau">
 <meta property="og:image" content="https://kevinraphael95.github.io/yapaslepanneau/favicon.svg">
 <meta property="og:image:alt" content="Panneau de signalisation français">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Panneaux — Révise le code de la route">
-<meta name="twitter:description" content="Quiz gratuit pour réviser les panneaux du code de la route : QCM, mode infini, trouve le nom, trouve le panneau, et cours complet illustré.">
+<meta name="twitter:description" content="Quiz gratuit pour réviser les panneaux du code de la route : trouve le panneau, trouve le nom, et cours complet illustré.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -57,13 +57,13 @@
     <p class="subtitle">Révise la signalisation du code de la route.</p>
 
     <div class="mode-category">
-      <h2 class="category-title">QCM — Modes faciles</h2>
+      <h2 class="category-title">Trouve le panneau</h2>
       <div class="mode-grid">
-        <button class="mode-card" id="btnStartQcm" type="button">
-          <h3>20 questions</h3>
-          <p>Un score final, comme un examen blanc.</p>
+        <button class="mode-card" id="btnStartFindShort" type="button">
+          <h3>10 panneaux</h3>
+          <p>La signification s'affiche, retrouve le panneau. Score sur 10.</p>
         </button>
-        <button class="mode-card" id="btnStartInfinite" type="button">
+        <button class="mode-card" id="btnStartFindInfinite" type="button">
           <h3>Mode infini</h3>
           <p>Enchaîne jusqu'à ta première erreur.</p>
         </button>
@@ -71,15 +71,15 @@
     </div>
 
     <div class="mode-category">
-      <h2 class="category-title">Modes difficiles</h2>
+      <h2 class="category-title">Trouve le nom</h2>
       <div class="mode-grid">
-        <button class="mode-card" id="btnStartInfiniteText" type="button">
-          <h3>Trouve le nom</h3>
-          <p>Le panneau s'affiche, tape sa signification.</p>
+        <button class="mode-card" id="btnStartTextShort" type="button">
+          <h3>10 panneaux</h3>
+          <p>Le panneau s'affiche, tape sa signification. Score sur 10.</p>
         </button>
-        <button class="mode-card" id="btnStartInfiniteFind" type="button">
-          <h3>Trouve le panneau</h3>
-          <p>La signification s'affiche, retrouve le panneau.</p>
+        <button class="mode-card" id="btnStartTextInfinite" type="button">
+          <h3>Mode infini</h3>
+          <p>Enchaîne jusqu'à ta première erreur.</p>
         </button>
       </div>
     </div>
@@ -90,59 +90,6 @@
     </button>
 
     <p class="source-note">Illustrations des panneaux : Wikimedia Commons.</p>
-  </section>
-
-  <!-- ÉCRAN QUIZ -->
-  <section class="screen" id="screen-quiz" hidden>
-    <div class="quiz-card">
-      <div class="quiz-meta">
-        <button class="quiz-back" id="btnHomeFromQuiz" type="button">‹ Retour</button>
-        <span id="questionCounter">Question 1</span>
-        <span class="quiz-score" id="scoreCounter">Score : 0</span>
-      </div>
-      <div class="quiz-progress-track" id="progressTrack" aria-hidden="true">
-        <div class="quiz-progress-fill" id="progressFill"></div>
-      </div>
-
-      <h2 class="question-title">Que signifie ce panneau ?</h2>
-
-      <div class="sign-stage">
-        <div class="sign-frame" id="signFrame">
-          <div class="sign-loading" id="signLoading">chargement…</div>
-          <img id="signImage" alt="" hidden draggable="false" decoding="async">
-        </div>
-      </div>
-
-      <div class="options" id="optionsList"></div>
-    </div>
-
-    <button class="btn btn-color-1 btn-next" id="btnNext" type="button" hidden>Suivant</button>
-  </section>
-
-  <!-- ÉCRAN FIN QCM -->
-  <section class="screen" id="screen-end-qcm" hidden>
-    <div class="result-card">
-      <h1 class="title" id="qcmEndTitle">Résultat</h1>
-      <p class="end-score" id="qcmEndScore" aria-live="polite">0 / 20</p>
-      <p class="subtitle" id="qcmEndComment"></p>
-      <div class="btn-container">
-        <button class="btn btn-color-1" id="btnRetryQcm" type="button">Refaire un QCM</button>
-        <button class="btn btn-color-2" id="btnHomeFromQcm" type="button">Retour à l'accueil</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ÉCRAN FIN INFINI -->
-  <section class="screen" id="screen-end-infinite" hidden>
-    <div class="result-card">
-      <h1 class="title">Série terminée</h1>
-      <p class="end-score" id="infiniteEndScore" aria-live="polite">0 panneau</p>
-      <p class="subtitle" id="infiniteEndComment"></p>
-      <div class="btn-container">
-        <button class="btn btn-color-1" id="btnRetryInfinite" type="button">Retenter</button>
-        <button class="btn btn-color-2" id="btnHomeFromInfinite" type="button">Retour à l'accueil</button>
-      </div>
-    </div>
   </section>
 
   <!-- ÉCRAN QUIZ INFINI TEXTE (panneau -> nom) -->
@@ -186,14 +133,14 @@
   </section>
 
   <!-- ÉCRAN FIN INFINI TEXTE -->
-  <section class="screen" id="screen-end-infinite-text" hidden>
+  <section class="screen" id="screen-end-text" hidden>
     <div class="result-card">
-      <h1 class="title">Série terminée</h1>
+      <h1 class="title" id="textEndTitle">Série terminée</h1>
       <p class="end-score" id="textEndScore" aria-live="polite">0 panneau</p>
       <p class="subtitle" id="textEndComment"></p>
       <div class="btn-container">
-        <button class="btn btn-color-1" id="btnRetryInfiniteText" type="button">Retenter</button>
-        <button class="btn btn-color-2" id="btnHomeFromInfiniteText" type="button">Retour à l'accueil</button>
+        <button class="btn btn-color-1" id="btnRetryText" type="button">Retenter</button>
+        <button class="btn btn-color-2" id="btnHomeFromEndText" type="button">Retour à l'accueil</button>
       </div>
     </div>
   </section>
@@ -219,14 +166,14 @@
   </section>
 
   <!-- ÉCRAN FIN INFINI IMAGE -->
-  <section class="screen" id="screen-end-infinite-find" hidden>
+  <section class="screen" id="screen-end-find" hidden>
     <div class="result-card">
-      <h1 class="title">Série terminée</h1>
+      <h1 class="title" id="findEndTitle">Série terminée</h1>
       <p class="end-score" id="findEndScore" aria-live="polite">0 panneau</p>
       <p class="subtitle" id="findEndComment"></p>
       <div class="btn-container">
-        <button class="btn btn-color-1" id="btnRetryInfiniteFind" type="button">Retenter</button>
-        <button class="btn btn-color-2" id="btnHomeFromInfiniteFind" type="button">Retour à l'accueil</button>
+        <button class="btn btn-color-1" id="btnRetryFind" type="button">Retenter</button>
+        <button class="btn btn-color-2" id="btnHomeFromEndFind" type="button">Retour à l'accueil</button>
       </div>
     </div>
   </section>

@@ -6,10 +6,10 @@ Petit quiz gratuit, en HTML/CSS/JS pour réviser les panneaux de signalisation d
 
 ## Modes de jeu
 
-- **QCM — 20 questions** : un panneau, 4 propositions, un score final sur 20.
-- **Mode infini** : même principe en QCM, mais on enchaîne jusqu'à la première erreur (record de série sauvegardé).
-- **Hard — trouve le nom (infini)** : le panneau s'affiche, il faut taper sa signification (autocomplétion à partir de 3 lettres). A l'infini jusqu'à faire une erreur.
-- **Hard — trouve le panneau (infini)** : la signification s'affiche, il faut retrouver le bon panneau dans une grille contenant tous les panneaux du jeu. Survoler une case affiche un aperçu agrandi dans la marge de l'écran. A l'infini jusqu'à faire une erreur.
+- **Trouve le panneau — 10 panneaux** : la signification s'affiche, il faut retrouver le bon panneau dans une grille contenant tous les panneaux du jeu. Score sur 10. Survoler une case affiche un aperçu agrandi dans la marge de l'écran.
+- **Trouve le panneau — mode infini** : même principe, on enchaîne jusqu'à la première erreur (record sauvegardé).
+- **Trouve le nom — 10 panneaux** : le panneau s'affiche, il faut taper sa signification (autocomplétion à partir de 3 lettres, insensible aux accents et à la casse). Score sur 10.
+- **Trouve le nom — mode infini** : même principe, jusqu'à la première erreur (record sauvegardé).
 - **Cours — tous les panneaux** : consultation libre de tous les panneaux avec leur signification, groupés par catégorie, filtrables et cherchables.
 
 ## Structure du projet
@@ -18,7 +18,7 @@ Petit quiz gratuit, en HTML/CSS/JS pour réviser les panneaux de signalisation d
 index.html        Structure de la page (tous les écrans)
 style.css         Mise en page
 signs.js          Base de données des panneaux (code, catégorie, signification)
-script.js         Logique des 5 modes de jeu + gestion des écrans
+script.js         Logique des modes de jeu + gestion des écrans
 favicon.svg       Icône du site
 ```
 
@@ -42,9 +42,12 @@ Tout se passe dans `signs.js` : chaque entrée est un objet `{ code, cat, meanin
 
 Le jeu utilise `localStorage` (aucune donnée envoyée à un serveur) pour :
 - le cache des images Wikimedia (30 jours) ;
-- les records de série en mode infini (un par mode : QCM infini, trouve-le-nom, trouve-le-panneau).
+- les records de série (un par mode infini : trouve-le-panneau, trouve-le-nom) ;
+- le thème clair / sombre.
+
+Le cache d'images n'est écrit que si **tous** les lots ont été téléchargés : un échec réseau ne bloque donc plus le jeu.
 
 ## Crédits
 
 - Illustrations des panneaux : [Wikimedia Commons](https://commons.wikimedia.org/).
-- Polices : [Oswald](https://fonts.google.com/specimen/Oswald) et [Inter](https://fonts.google.com/specimen/Inter) (Google Fonts).
+- Police : [Poppins](https://fonts.google.com/specimen/Poppins) (Google Fonts).
