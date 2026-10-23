@@ -966,7 +966,7 @@ document.getElementById("btnStartCourse").addEventListener("click", async () => 
  * Ouvre une fenêtre avec une vidéo YouTube lancée automatiquement.
  * ============================================================ */
 
-const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight"];
 const EGG_VIDEO_URL = "https://www.youtube-nocookie.com/embed/-i_TnZw9dYU?autoplay=1&rel=0";
 
 const elEgg = {
