@@ -695,9 +695,37 @@ async function nextTextQuestion() {
   elText.input.focus();
 }
 
+// Navigation clavier dans les suggestions : le focus reste dans le champ,
+// l'élément en surbrillance est annoncé via aria-activedescendant.
+let textActive = -1;
+
+elText.input.setAttribute("role", "combobox");
+elText.input.setAttribute("aria-autocomplete", "list");
+elText.input.setAttribute("aria-controls", "textSuggestions");
+elText.input.setAttribute("aria-expanded", "false");
+
+function setTextActive(index) {
+  const items = Array.from(elText.suggestions.children);
+  items.forEach((item, i) => {
+    const on = i === index;
+    item.classList.toggle("is-active", on);
+    item.setAttribute("aria-selected", String(on));
+  });
+  textActive = index;
+  if (index >= 0 && items[index]) {
+    elText.input.setAttribute("aria-activedescendant", items[index].id);
+    items[index].scrollIntoView({ block: "nearest" });
+  } else {
+    elText.input.removeAttribute("aria-activedescendant");
+  }
+}
+
 function closeTextSuggestions() {
   elText.suggestions.hidden = true;
   elText.suggestions.innerHTML = "";
+  textActive = -1;
+  elText.input.setAttribute("aria-expanded", "false");
+  elText.input.removeAttribute("aria-activedescendant");
 }
 
 elText.input.addEventListener("input", () => {
@@ -710,10 +738,14 @@ elText.input.addEventListener("input", () => {
   closeTextSuggestions();
   if (matches.length === 0) return;
 
-  matches.forEach((m) => {
+  matches.forEach((m, i) => {
     const item = document.createElement("button");
     item.type = "button";
     item.className = "text-suggestion-item";
+    item.id = `textSuggestion${i}`;
+    item.tabIndex = -1; // le focus reste dans le champ
+    item.setAttribute("role", "option");
+    item.setAttribute("aria-selected", "false");
     item.textContent = m;
     item.addEventListener("click", () => {
       elText.input.value = m;
@@ -723,12 +755,30 @@ elText.input.addEventListener("input", () => {
     elText.suggestions.appendChild(item);
   });
   elText.suggestions.hidden = false;
+  elText.input.setAttribute("aria-expanded", "true");
 });
 
 elText.input.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
+  const items = elText.suggestions.children;
+  const isOpen = !elText.suggestions.hidden && items.length > 0;
+
+  if (e.key === "ArrowDown" && isOpen) {
     e.preventDefault();
-    submitTextAnswer(elText.input.value);
+    setTextActive((textActive + 1) % items.length);
+  } else if (e.key === "ArrowUp" && isOpen) {
+    e.preventDefault();
+    setTextActive(textActive <= 0 ? items.length - 1 : textActive - 1);
+  } else if (e.key === "Enter") {
+    e.preventDefault();
+    // Une suggestion en surbrillance est choisie ; sinon on valide le texte tapé.
+    if (isOpen && textActive >= 0) {
+      const chosen = items[textActive].textContent;
+      elText.input.value = chosen;
+      closeTextSuggestions();
+      submitTextAnswer(chosen);
+    } else {
+      submitTextAnswer(elText.input.value);
+    }
   } else if (e.key === "Escape") {
     closeTextSuggestions();
   }
@@ -966,7 +1016,7 @@ document.getElementById("btnStartCourse").addEventListener("click", async () => 
  * Ouvre une fenêtre avec une vidéo YouTube lancée automatiquement.
  * ============================================================ */
 
-const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight"];
+const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
 const EGG_VIDEO_URL = "https://www.youtube-nocookie.com/embed/-i_TnZw9dYU?autoplay=1&rel=0";
 
 const elEgg = {

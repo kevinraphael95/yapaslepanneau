@@ -583,6 +583,10 @@ main#app {
   outline: none;
 }
 
+.text-suggestion-item.is-active {
+  background: var(--chip-bg);
+}
+
 .text-feedback {
   font-size: clamp(0.85rem, 2vh, 0.92rem);
   font-weight: 600;
