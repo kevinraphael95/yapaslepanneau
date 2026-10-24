@@ -889,8 +889,8 @@ main#app {
   padding: 0;
 }
 
-/* Plus de barre du haut : logo en haut à gauche, bouton de thème en bas à
- * gauche, tous deux flottants par-dessus le panneau latéral. */
+/* Plus de barre du haut : logo et bouton de thème flottent en haut du
+ * panneau latéral. */
 #topbar {
   padding: 0;
   height: 0;
@@ -919,10 +919,11 @@ main#app {
   border-radius: 0.6rem;
 }
 
+/* Bouton de thème : en haut, à droite du logo (bord droit du panneau latéral). */
 .topbar-right {
   position: fixed;
-  bottom: 24px;
-  left: 32px;
+  top: 20px;
+  left: calc(340px - 32px - 34px);
   z-index: 5;
 }
 
@@ -939,7 +940,7 @@ main#app {
 .side {
   background: var(--bg-alt);
   border-right: 1px solid var(--border);
-  padding: 76px 32px 80px;
+  padding: 76px 32px 32px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -1074,7 +1075,6 @@ main#app {
   .topbar-right {
     top: 20px;
     right: 16px;
-    bottom: auto;
     left: auto;
   }
   .logo {
