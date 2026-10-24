@@ -404,6 +404,35 @@ const elFind = {
   btnNext: document.getElementById("btnFindNext"),
 };
 
+/* ---------- Taille des cases adaptée à l'écran ---------- */
+
+// Cherche la plus grande taille de case pour que TOUS les panneaux tiennent
+// dans l'espace disponible (sans scroller la page ni la grille). Sous le
+// minimum, on garde le minimum et la grille scrolle en interne.
+function fitSignGrid() {
+  const grid = elFind.grid;
+  const n = grid.children.length;
+  if (grid.hidden || n === 0 || screens.quizFind.hidden) return;
+
+  const GAP = 8, PAD = 10, MIN = 44, MAX = 110;
+  const top = grid.getBoundingClientRect().top;
+  // Marge basse : bouton « Panneau suivant » + paddings de la page.
+  const availH = Math.max(160, window.innerHeight - top - 120) - PAD * 2 - 2;
+  const availW = grid.clientWidth - PAD * 2;
+  if (availW <= 0) return;
+
+  let best = MIN;
+  for (let size = MAX; size >= MIN; size--) {
+    const cols = Math.max(1, Math.floor((availW + GAP) / (size + GAP)));
+    const rows = Math.ceil(n / cols);
+    if (rows * (size + GAP) - GAP <= availH) { best = size; break; }
+  }
+  grid.style.setProperty("--cell", best + "px");
+  grid.style.maxHeight = availH + PAD * 2 + 2 + "px";
+}
+
+window.addEventListener("resize", fitSignGrid);
+
 // Construit la grille une seule fois, dans l'ordre de SIGNS. Les panneaux
 // sans image disponible sont simplement absents et ne seront jamais tirés.
 async function buildSignGrid() {
@@ -442,6 +471,7 @@ async function buildSignGrid() {
 
   elFind.loading.hidden = true;
   elFind.grid.hidden = false;
+  fitSignGrid();
   // Une grille vide ou construite sur un chargement partiel sera reconstruite
   // au prochain lancement du mode.
   findState.gridBuilt = findState.pool.length > 0 && preloadOk;
@@ -465,6 +495,7 @@ async function startFindGame(mode) {
     return;
   }
 
+  fitSignGrid();
   findState.queue = shuffle(findState.pool);
   nextFindQuestion();
 }
