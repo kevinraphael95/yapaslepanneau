@@ -75,6 +75,16 @@ document.getElementById("themeToggle").addEventListener("click", (event) => {
 // Ici on refait le calcul complet (icône + ARIA + theme-color).
 applyTheme(getStoredTheme() || getSystemTheme());
 
+// Tant que l'utilisateur n'a pas choisi lui-même, le thème suit le système
+// en direct (changement de thème de l'OS ou du navigateur).
+try {
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    if (!getStoredTheme()) applyTheme(getSystemTheme());
+  });
+} catch (err) {
+  /* anciens navigateurs : on ignore */
+}
+
 /* ============================================================
  * ÉCRANS
  * ============================================================ */
