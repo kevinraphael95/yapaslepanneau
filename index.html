@@ -12,7 +12,7 @@
       var theme = stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
       document.documentElement.dataset.theme = theme;
       var meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute("content", theme === "dark" ? "#1c1c1e" : "#ffffff");
+      if (meta) meta.setAttribute("content", theme === "dark" ? "#111214" : "#ffffff");
     } catch (e) {}
   })();
 </script>
@@ -35,7 +35,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://commons.wikimedia.org">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -52,57 +52,62 @@
 <main id="app">
 
   <!-- ÉCRAN ACCUEIL -->
-  <section class="screen" id="screen-home">
-    <h1 class="title">Connais-tu vraiment les panneaux de signalisation ?</h1>
-    <p class="subtitle">Révise la signalisation du code de la route.</p>
+  <section class="screen split" id="screen-home">
+    <aside class="side">
+      <h1 class="title">Connais-tu vraiment les panneaux de signalisation ?</h1>
+      <p class="subtitle">Révise la signalisation du code de la route.</p>
+      <p class="source-note">Illustrations des panneaux : Wikimedia Commons.</p>
+    </aside>
 
-    <div class="mode-category">
-      <h2 class="category-title">Trouve le panneau</h2>
-      <div class="mode-grid">
-        <button class="mode-card" id="btnStartFindShort" type="button">
-          <h3>10 panneaux</h3>
-          <p>La signification s'affiche, retrouve le panneau. Score sur 10.</p>
-        </button>
-        <button class="mode-card" id="btnStartFindInfinite" type="button">
-          <h3>Mode infini</h3>
-          <p>Enchaîne jusqu'à ta première erreur.</p>
-        </button>
+    <div class="stage">
+      <div class="mode-category">
+        <h2 class="category-title">Trouve le panneau</h2>
+        <div class="mode-grid">
+          <button class="mode-card" id="btnStartFindShort" type="button">
+            <h3>10 panneaux</h3>
+            <p>La signification s'affiche, retrouve le panneau. Score sur 10.</p>
+          </button>
+          <button class="mode-card" id="btnStartFindInfinite" type="button">
+            <h3>Mode infini</h3>
+            <p>Enchaîne jusqu'à ta première erreur.</p>
+          </button>
+        </div>
       </div>
-    </div>
 
-    <div class="mode-category">
-      <h2 class="category-title">Trouve le nom</h2>
-      <div class="mode-grid">
-        <button class="mode-card" id="btnStartTextShort" type="button">
-          <h3>10 panneaux</h3>
-          <p>Le panneau s'affiche, tape sa signification. Score sur 10.</p>
-        </button>
-        <button class="mode-card" id="btnStartTextInfinite" type="button">
-          <h3>Mode infini</h3>
-          <p>Enchaîne jusqu'à ta première erreur.</p>
-        </button>
+      <div class="mode-category">
+        <h2 class="category-title">Trouve le nom</h2>
+        <div class="mode-grid">
+          <button class="mode-card" id="btnStartTextShort" type="button">
+            <h3>10 panneaux</h3>
+            <p>Le panneau s'affiche, tape sa signification. Score sur 10.</p>
+          </button>
+          <button class="mode-card" id="btnStartTextInfinite" type="button">
+            <h3>Mode infini</h3>
+            <p>Enchaîne jusqu'à ta première erreur.</p>
+          </button>
+        </div>
       </div>
+
+      <button class="course-link" id="btnStartCourse" type="button">
+        <span>Cours — tous les panneaux</span>
+        <span class="course-link-arrow" aria-hidden="true">›</span>
+      </button>
     </div>
-
-    <button class="course-link" id="btnStartCourse" type="button">
-      <span>Cours — tous les panneaux</span>
-      <span class="course-link-arrow" aria-hidden="true">›</span>
-    </button>
-
-    <p class="source-note">Illustrations des panneaux : Wikimedia Commons.</p>
   </section>
 
   <!-- ÉCRAN QUIZ INFINI TEXTE (panneau -> nom) -->
-  <section class="screen" id="screen-quiz-text" hidden>
-    <div class="quiz-card">
-      <div class="quiz-meta">
-        <button class="quiz-back" id="btnHomeFromQuizText" type="button">‹ Retour</button>
+  <section class="screen split" id="screen-quiz-text" hidden>
+    <aside class="side">
+      <button class="quiz-back" id="btnHomeFromQuizText" type="button">‹ Retour</button>
+      <p class="side-meta">
         <span id="textQuestionCounter">Panneau 1</span>
         <span class="quiz-score" id="textScoreCounter">Série : 0</span>
-      </div>
-
+      </p>
       <h2 class="question-title">Quelle est la signification de ce panneau ?</h2>
+      <button class="btn btn-color-1 btn-next" id="btnTextNext" type="button" hidden>Panneau suivant</button>
+    </aside>
 
+    <div class="stage stage-center">
       <div class="sign-stage">
         <div class="sign-frame" id="textSignFrame">
           <div class="sign-loading" id="textSignLoading">chargement…</div>
@@ -128,8 +133,6 @@
 
       <p class="text-feedback" id="textFeedback" hidden aria-live="polite"></p>
     </div>
-
-    <button class="btn btn-color-1 btn-next" id="btnTextNext" type="button" hidden>Panneau suivant</button>
   </section>
 
   <!-- ÉCRAN FIN INFINI TEXTE -->
@@ -146,23 +149,23 @@
   </section>
 
   <!-- ÉCRAN QUIZ INFINI IMAGE (nom -> panneau) -->
-  <section class="screen" id="screen-quiz-find" hidden>
-    <div class="quiz-card">
-      <div class="quiz-meta">
-        <button class="quiz-back" id="btnHomeFromQuizFind" type="button">‹ Retour</button>
+  <section class="screen split" id="screen-quiz-find" hidden>
+    <aside class="side">
+      <button class="quiz-back" id="btnHomeFromQuizFind" type="button">‹ Retour</button>
+      <p class="side-meta">
         <span id="findQuestionCounter">Panneau 1</span>
         <span class="quiz-score" id="findScoreCounter">Série : 0</span>
-      </div>
-
+      </p>
       <h2 class="question-title" id="findPrompt" aria-live="polite">Retrouve le panneau…</h2>
+      <button class="btn btn-color-1 btn-next" id="btnFindNext" type="button" hidden>Panneau suivant</button>
+    </aside>
 
+    <div class="stage">
       <div class="sign-grid-wrap" id="findGridWrap">
         <p class="sign-loading" id="findGridLoading">Chargement des panneaux…</p>
         <div class="sign-grid" id="signGrid" hidden></div>
       </div>
     </div>
-
-    <button class="btn btn-color-1 btn-next" id="btnFindNext" type="button" hidden>Panneau suivant</button>
   </section>
 
   <!-- ÉCRAN FIN INFINI IMAGE -->

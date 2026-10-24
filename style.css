@@ -14,8 +14,8 @@
   --text-muted: #555555;
   --dark: #353535;
   --darker: #000000;
-  --border: #a3a3a3;
-  --bg-alt: #fafafa;
+  --border: #e3e3e0;
+  --bg-alt: #f6f6f4;
   --card-surface: #ffffff;
   --chip-bg: #eeeeee;
   --btn-fill-text: #ffffff;
@@ -25,26 +25,27 @@
   --danger: #d7263d;
   --danger-light: #fbe7e9;
 
-  --radius-lg: 2rem;
-  --radius-md: 1.1rem;
-  --radius-pill: 2rem;
+  --radius-lg: 1rem;
+  --radius-md: 0.6rem;
+  --radius-pill: 999px;
 
-  --font: "Poppins", sans-serif;
+  --font: "Inter", sans-serif;
+  --serif: "Fraunces", Georgia, serif;
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --page-bg: #1c1c1e;
+  --page-bg: #111214;
   --text: #f2f2f2;
   --text-muted: #a9a9ad;
   --dark: #f2f2f2;
   --darker: #ffffff;
-  --border: #47474b;
-  --bg-alt: #2a2a2c;
-  --card-surface: #232325;
+  --border: #2c2d31;
+  --bg-alt: #1a1b1e;
+  --card-surface: #1f2024;
   --chip-bg: #3a3a3d;
-  --btn-fill-text: #1c1c1e;
+  --btn-fill-text: #111214;
 
   --success: #4cc26a;
   --success-light: #17301f;
@@ -153,13 +154,6 @@ main#app {
   padding: 0 clamp(20px, 6vw, 48px) clamp(24px, 4vh, 48px);
 }
 
-/* Mode « trouve le panneau » : page plus large pour agrandir la grille. */
-body.wide-find main#app {
-  max-width: min(1500px, 100%);
-  padding-left: clamp(10px, 2vw, 32px);
-  padding-right: clamp(10px, 2vw, 32px);
-}
-
 .screen {
   animation: fade-in 0.2s ease;
 }
@@ -236,7 +230,8 @@ body.wide-find main#app {
 
 /* Réserve toujours la place du bouton « Panneau suivant » (mode trouve le
  * panneau) : en apparaissant il ne décale plus la mise en page. */
-#btnFindNext[hidden] {
+#btnFindNext[hidden],
+#btnTextNext[hidden] {
   display: block;
   visibility: hidden;
 }
@@ -886,49 +881,192 @@ body.wide-find main#app {
 
 
 /* ============================================================
- * REFONTE VISUELLE — trouve le panneau / trouve le nom
+ * DESIGN « ATELIER » — vue scindée : panneau latéral + scène
  * ============================================================ */
 
-/* Trouve le panneau : plus de cadres imbriqués, consigne en grand. */
-#screen-quiz-find .quiz-card {
-  background: transparent;
-  border: 0;
+main#app {
+  max-width: none;
   padding: 0;
 }
 
-#findPrompt {
-  font-size: clamp(1.15rem, 3vh, 1.7rem);
-  line-height: 1.3;
-  margin-bottom: 14px;
+#topbar {
+  padding: 14px clamp(16px, 3vw, 32px);
 }
 
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.logo::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #d62a22;
+}
+
+.btn {
+  border-radius: 0.6rem;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  min-height: calc(100dvh - 62px);
+}
+
+.split[hidden] {
+  display: none;
+}
+
+.side {
+  background: var(--bg-alt);
+  border-right: 1px solid var(--border);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.stage {
+  min-width: 0;
+  padding: 32px 36px;
+}
+
+.stage-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.side .title {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 2.4vw, 2.2rem);
+  line-height: 1.15;
+  text-align: left;
+  margin: 24px 0 0;
+}
+
+.side .subtitle {
+  text-align: left;
+  margin: 0;
+  max-width: none;
+}
+
+.side .source-note {
+  margin-top: auto;
+  text-align: left;
+}
+
+.side-meta {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 28px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.side .question-title {
+  font-family: var(--serif);
+  font-size: clamp(1.5rem, 2.2vw, 2.1rem);
+  line-height: 1.15;
+  text-align: left;
+  margin: 0;
+}
+
+.side .btn-next {
+  margin-top: auto;
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.stage .mode-category,
+.stage .course-link {
+  max-width: 760px;
+}
+
+.mode-card {
+  padding: 1.3rem;
+}
+
+.mode-card h3 {
+  font-size: 1.05rem;
+}
+
+.mode-card p {
+  font-size: 0.82rem;
+}
+
+/* Grille de « trouve le panneau » : sans boîte, tuiles à fine bordure. */
 .sign-grid {
   background: transparent;
   border: 0;
-  padding: 4px;
+  padding: 0;
+  justify-content: start;
+  min-height: 160px;
 }
 
 .sign-grid-item {
   background: var(--card-surface);
-  border-color: transparent;
-  border-radius: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
 }
 
-/* Bouton « Panneau suivant » : compact et centré. */
-#btnFindNext {
-  display: block; /* nécessaire pour que margin auto centre le bouton */
-  width: auto;
-  min-width: 220px;
-  margin-left: auto;
-  margin-right: auto;
+.sign-grid-item.is-correct,
+.sign-grid-item.is-wrong {
+  border-width: 2px;
 }
 
-/* Trouve le nom : champ de saisie arrondi, panneau dans un cadre doux. */
-#screen-quiz-text .text-answer-input {
+.stage-center .text-answer {
+  width: min(560px, 100%);
+}
+
+.text-answer-input {
   border-radius: 999px;
   padding: 14px 22px;
 }
 
+/* Écrans de fin et cours : colonne centrée. */
+#screen-end-find,
+#screen-end-text,
+#screen-course {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 24px 40px;
+}
+
+@media (max-width: 800px) {
+  .split {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .side {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 20px;
+  }
+  .side .title,
+  .side-meta {
+    margin-top: 12px;
+  }
+  .side .btn-next {
+    margin-top: 8px;
+  }
+  .stage {
+    padding: 20px;
+  }
+}
+
 .sign-frame {
-  border-radius: 1.8rem;
+  border-radius: 1.6rem;
 }

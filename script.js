@@ -21,7 +21,7 @@ const SUN_ICON =
 
 const MOON_ICON = '<path fill="currentColor" d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z"/>';
 
-const THEME_COLOR = { light: "#ffffff", dark: "#1c1c1e" };
+const THEME_COLOR = { light: "#ffffff", dark: "#111214" };
 
 function getStoredTheme() {
   try {
@@ -91,8 +91,6 @@ const screens = {
 function showScreen(name) {
   Object.values(screens).forEach((el) => (el.hidden = true));
   screens[name].hidden = false;
-  // Le mode « trouve le panneau » utilise plus de largeur pour des panneaux plus grands.
-  document.body.classList.toggle("wide-find", name === "quizFind");
   window.scrollTo(0, 0);
 }
 
@@ -413,17 +411,17 @@ function fitSignGrid() {
   const grid = elFind.grid;
   if (grid.hidden || grid.children.length === 0 || screens.quizFind.hidden) return;
 
-  const GAP = 8, PAD = 10, MIN = 64, MAX = 110;
+  const GAP = 10, PAD = 0, MIN = 64, MAX = 120;
   const availW = grid.clientWidth - PAD * 2;
   if (availW <= 0) return;
 
-  const cols = window.innerWidth < 600 ? 4 : window.innerWidth < 1000 ? 8 : 12;
+  const cols = window.innerWidth < 600 ? 4 : window.innerWidth < 1000 ? 6 : 9;
   const size = Math.max(MIN, Math.min(MAX, Math.floor((availW - GAP * (cols - 1)) / cols)));
   grid.style.setProperty("--cell", size + "px");
 
   const top = grid.getBoundingClientRect().top;
   // Marge basse : bouton « Panneau suivant » + paddings de la page.
-  const maxH = Math.max(200, window.innerHeight - top - 135);
+  const maxH = Math.max(200, window.innerHeight - top - 32);
   grid.style.maxHeight = maxH + "px";
 }
 
