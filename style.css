@@ -1084,14 +1084,34 @@ main#app {
   .side {
     border-right: 0;
     border-bottom: 1px solid var(--border);
-    padding: 64px 20px 20px;
+    padding: 60px 16px 14px;
+    gap: 8px;
   }
-  .side .title,
+  .side .title {
+    margin-top: 4px;
+  }
   .side-meta {
-    margin-top: 12px;
+    margin-top: 2px;
+    font-size: 0.7rem;
   }
+  /* Consigne compacte pour laisser la place aux panneaux. */
+  .side .question-title {
+    font-size: 1.1rem;
+    line-height: 1.25;
+  }
+  /* Bouton « suivant » flottant en bas : ne décale plus rien. */
   .side .btn-next {
-    margin-top: 8px;
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    width: auto;
+    margin: 0;
+    z-index: 6;
+  }
+  #btnFindNext[hidden],
+  #btnTextNext[hidden] {
+    display: none;
   }
   .stage {
     padding: 20px;
