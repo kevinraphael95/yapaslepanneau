@@ -65,6 +65,7 @@
 }
 
 html {
+  scrollbar-gutter: stable;
   scroll-behavior: smooth;
   font-size: clamp(15px, 1.1vw + 12px, 17px);
 }
@@ -231,6 +232,13 @@ body.wide-find main#app {
 .btn-color-2:hover {
   background: var(--dark);
   color: var(--btn-fill-text);
+}
+
+/* Réserve toujours la place du bouton « Panneau suivant » (mode trouve le
+ * panneau) : en apparaissant il ne décale plus la mise en page. */
+#btnFindNext[hidden] {
+  display: block;
+  visibility: hidden;
 }
 
 .btn-next {
