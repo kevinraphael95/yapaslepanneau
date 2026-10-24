@@ -421,7 +421,7 @@ function fitSignGrid() {
 
   const top = grid.getBoundingClientRect().top;
   // Marge basse : bouton « Panneau suivant » + paddings de la page.
-  const maxH = Math.max(200, window.innerHeight - top - 32);
+  const maxH = Math.max(200, window.innerHeight - top - 24);
   grid.style.maxHeight = maxH + "px";
 }
 
