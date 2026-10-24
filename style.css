@@ -902,11 +902,6 @@ body.wide-find main#app {
   margin-bottom: 14px;
 }
 
-.find-filters {
-  justify-content: center;
-  margin-bottom: 14px;
-}
-
 .sign-grid {
   background: transparent;
   border: 0;
@@ -917,10 +912,6 @@ body.wide-find main#app {
   background: var(--card-surface);
   border-color: transparent;
   border-radius: 1rem;
-}
-
-.sign-grid-item[hidden] {
-  display: none;
 }
 
 /* Bouton « Panneau suivant » : compact et centré. */
