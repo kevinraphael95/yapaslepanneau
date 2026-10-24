@@ -402,7 +402,65 @@ const elFind = {
   counter: document.getElementById("findQuestionCounter"),
   score: document.getElementById("findScoreCounter"),
   btnNext: document.getElementById("btnFindNext"),
+  filters: document.getElementById("findFilters"),
 };
+
+/* ---------- Filtres par catégorie (mode trouve le panneau) ---------- */
+
+const FIND_CAT_SHORT = {
+  danger: "Danger",
+  priorite: "Priorité",
+  interdiction: "Interdiction",
+  obligation: "Obligation",
+  fin: "Fin",
+  zone: "Zone",
+  indication: "Indication",
+  service: "Service",
+  temporaire: "Chantier",
+};
+
+// Pool de tirage : tous les panneaux, ou ceux de la catégorie choisie.
+function findActivePool() {
+  const f = findState.filter || "all";
+  return f === "all" ? findState.pool : findState.pool.filter((s) => s.cat === f);
+}
+
+// N'affiche dans la grille que les panneaux de la catégorie active.
+function applyFindFilter() {
+  const f = findState.filter || "all";
+  Array.from(elFind.grid.children).forEach((cell) => {
+    const sign = SIGN_BY_CODE.get(cell.dataset.code);
+    cell.hidden = f !== "all" && (!sign || sign.cat !== f);
+  });
+  elFind.grid.scrollTop = 0;
+  fitSignGrid();
+}
+
+function renderFindFilters() {
+  const present = new Set(findState.pool.map((s) => s.cat));
+  const items = [["all", "Tous"]].concat(
+    CAT_ORDER.filter((c) => present.has(c)).map((c) => [c, FIND_CAT_SHORT[c] || c])
+  );
+  elFind.filters.innerHTML = "";
+  items.forEach(([value, label]) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "filter-chip" + ((findState.filter || "all") === value ? " is-active" : "");
+    btn.textContent = label;
+    btn.addEventListener("click", () => {
+      if ((findState.filter || "all") === value) return;
+      findState.filter = value;
+      renderFindFilters();
+      applyFindFilter();
+      // Changer de catégorie relance une partie sur cette catégorie.
+      findState.score = 0;
+      findState.qIndex = 0;
+      findState.queue = shuffle(findActivePool());
+      nextFindQuestion();
+    });
+    elFind.filters.appendChild(btn);
+  });
+}
 
 /* ---------- Taille des cases adaptée à l'écran ---------- */
 
@@ -492,7 +550,10 @@ async function startFindGame(mode) {
   }
 
   fitSignGrid();
-  findState.queue = shuffle(findState.pool);
+  findState.filter = "all";
+  renderFindFilters();
+  applyFindFilter();
+  findState.queue = shuffle(findActivePool());
   nextFindQuestion();
 }
 
@@ -506,7 +567,7 @@ function nextFindQuestion() {
     cell.disabled = false;
   });
 
-  if (findState.queue.length === 0) findState.queue = shuffle(findState.pool);
+  if (findState.queue.length === 0) findState.queue = shuffle(findActivePool());
   const sign = findState.queue.shift();
   findState.current = sign;
   findState.qIndex += 1;
