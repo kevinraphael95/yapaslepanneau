@@ -889,11 +889,18 @@ main#app {
   padding: 0;
 }
 
+/* Plus de barre du haut : logo en haut à gauche, bouton de thème en bas à
+ * gauche, tous deux flottants par-dessus le panneau latéral. */
 #topbar {
-  padding: 14px clamp(16px, 3vw, 32px);
+  padding: 0;
+  height: 0;
 }
 
 .logo {
+  position: fixed;
+  top: 28px;
+  left: 32px;
+  z-index: 5;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -912,10 +919,17 @@ main#app {
   border-radius: 0.6rem;
 }
 
+.topbar-right {
+  position: fixed;
+  bottom: 24px;
+  left: 32px;
+  z-index: 5;
+}
+
 .split {
   display: grid;
   grid-template-columns: 340px minmax(0, 1fr);
-  min-height: calc(100dvh - 62px);
+  height: 100dvh;
 }
 
 .split[hidden] {
@@ -925,7 +939,7 @@ main#app {
 .side {
   background: var(--bg-alt);
   border-right: 1px solid var(--border);
-  padding: 32px;
+  padding: 76px 32px 80px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -934,7 +948,14 @@ main#app {
 
 .stage {
   min-width: 0;
-  padding: 32px 36px;
+  padding: 24px 28px;
+  overflow-y: auto;
+}
+
+#screen-home .stage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .stage-center {
@@ -950,7 +971,7 @@ main#app {
   font-size: clamp(1.8rem, 2.4vw, 2.2rem);
   line-height: 1.15;
   text-align: left;
-  margin: 24px 0 0;
+  margin: 8px 0 0;
 }
 
 .side .subtitle {
@@ -1042,18 +1063,28 @@ main#app {
 #screen-course {
   max-width: 760px;
   margin: 0 auto;
-  padding: 0 24px 40px;
+  padding: 76px 24px 40px;
 }
 
 @media (max-width: 800px) {
   .split {
     grid-template-columns: 1fr;
-    min-height: 0;
+    height: auto;
+  }
+  .topbar-right {
+    top: 20px;
+    right: 16px;
+    bottom: auto;
+    left: auto;
+  }
+  .logo {
+    left: 20px;
+    top: 24px;
   }
   .side {
     border-right: 0;
     border-bottom: 1px solid var(--border);
-    padding: 20px;
+    padding: 64px 20px 20px;
   }
   .side .title,
   .side-meta {
