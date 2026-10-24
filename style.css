@@ -422,8 +422,9 @@ body.wide-find main#app {
 }
 
 .sign-frame {
-  width: clamp(84px, 15dvh, 140px);
-  height: clamp(84px, 15dvh, 140px);
+  /* Taille adaptative : suit la hauteur de l'écran (limitée par la largeur). */
+  width: clamp(110px, min(32dvh, 70vw), 320px);
+  height: clamp(110px, min(32dvh, 70vw), 320px);
   background: var(--card-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
