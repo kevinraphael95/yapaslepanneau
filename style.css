@@ -916,6 +916,7 @@ body.wide-find main#app {
 
 /* Bouton « Panneau suivant » : compact et centré. */
 #btnFindNext {
+  display: block; /* nécessaire pour que margin auto centre le bouton */
   width: auto;
   min-width: 220px;
   margin-left: auto;
