@@ -91,6 +91,8 @@ const screens = {
 function showScreen(name) {
   Object.values(screens).forEach((el) => (el.hidden = true));
   screens[name].hidden = false;
+  // Le mode « trouve le panneau » utilise plus de largeur pour des panneaux plus grands.
+  document.body.classList.toggle("wide-find", name === "quizFind");
   window.scrollTo(0, 0);
 }
 
@@ -402,60 +404,6 @@ const elFind = {
   btnNext: document.getElementById("btnFindNext"),
 };
 
-/* ---------- Aperçu agrandi au survol d'une case ---------- */
-
-const elSignPreview = {
-  wrap: document.getElementById("signPreview"),
-  img: document.getElementById("signPreviewImg"),
-};
-
-function positionSignPreview() {
-  if (!elSignPreview.wrap) return;
-  const previewRect = elSignPreview.wrap.getBoundingClientRect();
-  const margin = 16;
-  const mainRect = document.getElementById("app").getBoundingClientRect();
-
-  // Position fixe, toujours la même, indépendante de la case survolée :
-  // dans la marge à droite si possible, sinon à gauche, sinon centrée.
-  const spaceRight = window.innerWidth - mainRect.right;
-  const spaceLeft = mainRect.left;
-
-  let left;
-  if (spaceRight >= previewRect.width + margin * 2) {
-    left = mainRect.right + margin;
-  } else if (spaceLeft >= previewRect.width + margin * 2) {
-    left = mainRect.left - previewRect.width - margin;
-  } else {
-    left = window.innerWidth / 2 - previewRect.width / 2;
-  }
-  left = Math.max(margin, Math.min(left, window.innerWidth - previewRect.width - margin));
-  const top = Math.max(margin, window.innerHeight / 2 - previewRect.height / 2);
-
-  elSignPreview.wrap.style.left = `${left}px`;
-  elSignPreview.wrap.style.top = `${top}px`;
-}
-
-function showSignPreview(url) {
-  if (!url || !elSignPreview.wrap || !elSignPreview.img) return;
-  elSignPreview.img.src = url;
-  elSignPreview.wrap.hidden = false;
-  positionSignPreview();
-}
-
-function hideSignPreview() {
-  if (!elSignPreview.wrap) return;
-  elSignPreview.wrap.hidden = true;
-}
-
-window.addEventListener("resize", () => {
-  if (elSignPreview.wrap && !elSignPreview.wrap.hidden) positionSignPreview();
-});
-
-// Le popup doit disparaître dès qu'on scrolle la grille (sa position fixe
-// ne suivrait plus la case survolée).
-elFind.grid.addEventListener("scroll", hideSignPreview);
-
-
 // Construit la grille une seule fois, dans l'ordre de SIGNS. Les panneaux
 // sans image disponible sont simplement absents et ne seront jamais tirés.
 async function buildSignGrid() {
@@ -484,14 +432,9 @@ async function buildSignGrid() {
     cell.appendChild(img);
 
     cell.addEventListener("click", () => {
-      hideSignPreview();
       handleFindAnswer(cell, sign);
     });
     cell.addEventListener("contextmenu", (e) => e.preventDefault());
-    cell.addEventListener("mouseenter", () => showSignPreview(url));
-    cell.addEventListener("mouseleave", hideSignPreview);
-    cell.addEventListener("focus", () => showSignPreview(url));
-    cell.addEventListener("blur", hideSignPreview);
 
     elFind.grid.appendChild(cell);
     findState.pool.push(sign);
@@ -529,7 +472,6 @@ async function startFindGame(mode) {
 function nextFindQuestion() {
   findState.locked = false;
   findState.forceEnd = false;
-  hideSignPreview();
   elFind.btnNext.hidden = true;
 
   Array.from(elFind.grid.children).forEach((cell) => {

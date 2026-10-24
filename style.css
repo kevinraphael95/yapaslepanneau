@@ -152,6 +152,13 @@ main#app {
   padding: 0 clamp(20px, 6vw, 48px) clamp(24px, 4vh, 48px);
 }
 
+/* Mode « trouve le panneau » : page plus large pour agrandir la grille. */
+body.wide-find main#app {
+  max-width: min(1500px, 100%);
+  padding-left: clamp(10px, 2vw, 32px);
+  padding-right: clamp(10px, 2vw, 32px);
+}
+
 .screen {
   animation: fade-in 0.2s ease;
 }
@@ -428,8 +435,7 @@ main#app {
  * pas du contenu à copier. */
 .sign-frame img,
 .sign-grid-item img,
-.course-item img,
-.sign-preview img {
+.course-item img {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
@@ -603,7 +609,7 @@ main#app {
 }
 
 /* ============================================================
- * MODE "TROUVE LE PANNEAU" (grille + aperçu au survol)
+ * MODE "TROUVE LE PANNEAU" (grille)
  * ============================================================ */
 
 .sign-grid-wrap {
@@ -612,9 +618,10 @@ main#app {
 
 .sign-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-  gap: 8px;
-  max-height: 50vh;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(76px, 11vw, 110px), 1fr));
+  gap: 10px;
+  max-height: calc(100vh - 200px);
+  min-height: 280px;
   overflow-y: auto;
   padding: 10px;
   background: var(--card-surface);
@@ -662,36 +669,6 @@ main#app {
 
 .sign-grid-item.is-muted {
   opacity: 0.4;
-}
-
-/* Aperçu agrandi : position fixe calculée en JS, jamais cliquable
- * (pointer-events: none) pour ne pas intercepter les clics sur la grille. */
-.sign-preview {
-  position: fixed;
-  z-index: 60;
-  width: clamp(160px, 40vw, 220px);
-  height: clamp(160px, 40vw, 220px);
-  padding: 14px;
-  background: var(--card-surface);
-  border: 1px solid var(--dark);
-  border-radius: var(--radius-md);
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
-  pointer-events: none;
-  animation: fade-in 0.12s ease;
-}
-
-@media (min-width: 900px) {
-  .sign-preview {
-    width: 260px;
-    height: 260px;
-    padding: 18px;
-  }
-}
-
-.sign-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
 }
 
 /* ============================================================

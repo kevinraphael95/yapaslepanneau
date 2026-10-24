@@ -208,13 +208,6 @@
 
 </main>
 
-<!-- Aperçu agrandi au survol (mode "trouve le panneau") : un seul élément
-     réutilisé et repositionné en JS. Doit exister dans le DOM avant que
-     script.js ne s'exécute (script sans defer = parse bloquant). -->
-<div class="sign-preview" id="signPreview" hidden aria-hidden="true">
-  <img id="signPreviewImg" alt="" draggable="false" decoding="async">
-</div>
-
 <!-- Easter egg (Konami code) : l'iframe YouTube n'est créée qu'à l'ouverture,
      et détruite à la fermeture pour couper la vidéo. -->
 <div class="egg-modal" id="eggModal" hidden role="dialog" aria-modal="true" aria-label="Vidéo surprise">
