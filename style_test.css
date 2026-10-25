@@ -1,0 +1,1496 @@
+/* VERSION 2 : en-tête en haut + grille 9 colonnes max 1100px */
+/* ============================================================
+ * THÈME CLAIR / SOMBRE
+ *
+ * Deux jeux de variables avec les mêmes rôles. L'accent --dark joue
+ * le rôle "encre" : sombre sur fond clair, clair sur fond sombre —
+ * d'où ce nom un peu trompeur en thème sombre.
+ * ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  --page-bg: #ffffff;
+  --text: #111111;
+  --text-muted: #555555;
+  --dark: #353535;
+  --darker: #000000;
+  --border: #e3e3e0;
+  --bg-alt: #f6f6f4;
+  --card-surface: #ffffff;
+  --chip-bg: #eeeeee;
+  --btn-fill-text: #ffffff;
+
+  --success: #2f9e44;
+  --success-light: #e6f6e9;
+  --danger: #d7263d;
+  --danger-light: #fbe7e9;
+
+  --radius-lg: 1rem;
+  --radius-md: 0.6rem;
+  --radius-pill: 999px;
+
+  --font: "Inter", sans-serif;
+  --serif: "Fraunces", Georgia, serif;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --page-bg: #111214;
+  --text: #f2f2f2;
+  --text-muted: #a9a9ad;
+  --dark: #f2f2f2;
+  --darker: #ffffff;
+  --border: #2c2d31;
+  --bg-alt: #1a1b1e;
+  --card-surface: #1f2024;
+  --chip-bg: #3a3a3d;
+  --btn-fill-text: #111214;
+
+  --success: #4cc26a;
+  --success-light: #17301f;
+  --danger: #ef5468;
+  --danger-light: #3a1418;
+}
+
+/* ============================================================
+ * BASE
+ * ============================================================ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  /* Mobile : pas de flash gris/bleu au tap sur les éléments interactifs. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scrollbar-gutter: stable;
+  scroll-behavior: smooth;
+  font-size: clamp(15px, 1.1vw + 12px, 17px);
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--text);
+  font-family: var(--font);
+  line-height: 1.55;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+p {
+  color: var(--text-muted);
+}
+
+a,
+.btn {
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+ * TOPBAR
+ * ============================================================ */
+
+#topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: clamp(10px, 2vh, 16px) clamp(20px, 6vw, 48px);
+}
+
+.logo {
+  font-size: clamp(1.05rem, 3.5vw, 1.3rem);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card-surface);
+  color: var(--dark);
+  cursor: pointer;
+  flex: none;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+  border-color: var(--dark);
+  outline: none;
+}
+
+/* ============================================================
+ * LAYOUT PRINCIPAL
+ * ============================================================ */
+
+main#app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 6vw, 48px) clamp(24px, 4vh, 48px);
+}
+
+.screen {
+  animation: fade-in 0.2s ease;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ============================================================
+ * TITRES
+ * ============================================================ */
+
+.title {
+  font-size: clamp(1.5rem, 4.5vw, 2.1rem);
+  text-align: center;
+  color: var(--text);
+  margin-top: clamp(12px, 2.5vh, 20px);
+}
+
+.subtitle {
+  text-align: center;
+  max-width: 46ch;
+  margin: 0.6rem auto 1.6rem;
+  font-size: 0.92rem;
+}
+
+/* ============================================================
+ * BOUTONS
+ * ============================================================ */
+
+.btn-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.6rem;
+}
+
+.btn {
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.9rem 1.6rem;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--dark);
+  cursor: pointer;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--dark);
+  outline-offset: 2px;
+}
+
+.btn-color-1 {
+  background: var(--dark);
+  color: var(--btn-fill-text);
+}
+
+.btn-color-1:hover {
+  background: var(--darker);
+  border-color: var(--darker);
+}
+
+.btn-color-2 {
+  background: none;
+  color: var(--dark);
+}
+
+.btn-color-2:hover {
+  background: var(--dark);
+  color: var(--btn-fill-text);
+}
+
+/* Réserve toujours la place du bouton « Panneau suivant » (mode trouve le
+ * panneau) : en apparaissant il ne décale plus la mise en page. */
+#btnFindNext[hidden],
+#btnTextNext[hidden] {
+  display: block;
+  visibility: hidden;
+}
+
+.btn-next {
+  width: 100%;
+  margin-bottom: 8px;
+  scroll-margin-bottom: 16px;
+}
+
+/* ============================================================
+ * ACCUEIL — catégories et cartes de mode
+ * ============================================================ */
+
+.mode-category {
+  margin-bottom: 1.4rem;
+}
+
+.category-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 0.6rem;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.mode-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  text-align: left;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text);
+}
+
+.mode-card:hover,
+.mode-card:focus-visible {
+  border-color: var(--dark);
+  outline: none;
+}
+
+.mode-card h3 {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.mode-card p {
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.course-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.9rem 1.1rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  margin-top: 0.4rem;
+}
+
+.course-link:hover,
+.course-link:focus-visible {
+  border-color: var(--dark);
+  outline: none;
+}
+
+.course-link-arrow {
+  font-size: 1.3rem;
+  color: var(--text-muted);
+}
+
+.source-note {
+  margin-top: 1.4rem;
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+/* ============================================================
+ * CARTE DE QUIZ (commune à tous les modes sauf "cours")
+ * ============================================================ */
+
+.quiz-card {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: clamp(14px, 3vw, 22px);
+  margin-top: clamp(10px, 2vh, 18px);
+  margin-bottom: 0.8rem;
+}
+
+.quiz-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(0.78rem, 3vw, 0.85rem);
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.quiz-score {
+  margin-left: auto;
+}
+
+.quiz-back {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 5px 12px 5px 8px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--card-surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.quiz-back:hover,
+.quiz-back:focus-visible {
+  border-color: var(--dark);
+  outline: none;
+}
+
+/* Barre de progression : visible uniquement en QCM 20 questions.
+ * Le JS met width à 0 à la première question, puis avance par pas de
+ * 1/total. On part de 0 côté CSS pour éviter un saut visuel. */
+.quiz-progress-track {
+  height: 5px;
+  border-radius: 3px;
+  background: var(--chip-bg);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.quiz-progress-fill {
+  height: 100%;
+  width: 0;
+  background: var(--dark);
+  border-radius: 3px;
+  transition: width 0.25s ease;
+}
+
+.question-title {
+  font-size: clamp(1rem, 2.6vh, 1.2rem);
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  margin: 0 0 10px;
+}
+
+/* ============================================================
+ * CADRE D'IMAGE DU PANNEAU (QCM + trouve-le-nom)
+ * ============================================================ */
+
+.sign-stage {
+  display: flex;
+  justify-content: center;
+  margin-bottom: clamp(8px, 2vh, 14px);
+}
+
+.sign-frame {
+  /* Taille adaptative : suit la hauteur de l'écran (limitée par la largeur). */
+  width: clamp(110px, min(32dvh, 70vw), 320px);
+  height: clamp(110px, min(32dvh, 70vw), 320px);
+  background: var(--card-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(8px, 2vh, 14px);
+}
+
+.sign-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Empêche la sélection/le drag des panneaux : ce sont des illustrations,
+ * pas du contenu à copier. */
+.sign-frame img,
+.sign-grid-item img,
+.course-item img {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.sign-loading {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* ============================================================
+ * OPTIONS DU QCM (A / B / C / D)
+ * ============================================================ */
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.option-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 14px;
+  background: var(--card-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-family: inherit;
+  font-size: clamp(0.9rem, 2vh, 0.98rem);
+  cursor: pointer;
+}
+
+.option-btn:hover:not(:disabled),
+.option-btn:focus-visible {
+  border-color: var(--dark);
+  outline: none;
+}
+
+.option-letter {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--chip-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.option-btn:disabled {
+  cursor: default;
+}
+
+.option-btn.is-correct {
+  background: var(--success-light);
+  border-color: var(--success);
+}
+
+.option-btn.is-correct .option-letter {
+  background: var(--success);
+  color: #ffffff;
+}
+
+.option-btn.is-wrong {
+  background: var(--danger-light);
+  border-color: var(--danger);
+}
+
+.option-btn.is-wrong .option-letter {
+  background: var(--danger);
+  color: #ffffff;
+}
+
+.option-btn.is-muted {
+  opacity: 0.5;
+}
+
+/* ============================================================
+ * MODE "TROUVE LE NOM" (saisie texte + suggestions)
+ * ============================================================ */
+
+.text-answer {
+  position: relative;
+  margin-bottom: clamp(8px, 2vh, 16px);
+}
+
+.text-answer-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--card-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-family: inherit;
+  font-size: clamp(0.9rem, 2vh, 0.98rem);
+}
+
+.text-answer-input:focus {
+  outline: none;
+  border-color: var(--dark);
+}
+
+.text-answer-input:disabled {
+  opacity: 0.7;
+}
+
+.text-suggestions {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  background: var(--card-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+}
+
+.text-suggestion-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-family: inherit;
+  font-size: clamp(0.82rem, 2vh, 0.88rem);
+  cursor: pointer;
+}
+
+.text-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.text-suggestion-item:hover,
+.text-suggestion-item:focus-visible {
+  background: var(--bg-alt);
+  outline: none;
+}
+
+.text-suggestion-item.is-active {
+  background: var(--chip-bg);
+}
+
+.text-feedback {
+  font-size: clamp(0.85rem, 2vh, 0.92rem);
+  font-weight: 600;
+  margin: 4px 0 8px;
+  text-align: center;
+}
+
+.text-feedback.is-correct {
+  color: var(--success);
+}
+
+.text-feedback.is-wrong {
+  color: var(--danger);
+}
+
+/* ============================================================
+ * MODE "TROUVE LE PANNEAU" (grille)
+ * ============================================================ */
+
+.sign-grid-wrap {
+  margin-bottom: clamp(8px, 2vh, 16px);
+}
+
+.sign-grid {
+  /* --cell est calculée en JS (fitSignGrid) pour tout faire tenir à l'écran ;
+   * valeur de repli en CSS pur si le JS n'a pas encore tourné. */
+  --cell: clamp(48px, min(8vw, 9vh), 88px);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, var(--cell));
+  grid-auto-rows: var(--cell);
+  justify-content: center;
+  gap: 8px;
+  max-height: calc(100dvh - 310px);
+  min-height: 160px;
+  overflow-y: auto;
+  padding: 10px;
+  background: var(--card-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.sign-grid-item {
+  aspect-ratio: 1;
+  background: var(--bg-alt);
+  border: 2px solid var(--border);
+  border-radius: 0.7rem;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sign-grid-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.sign-grid-item:hover:not(:disabled),
+.sign-grid-item:focus-visible {
+  border-color: var(--dark);
+  outline: none;
+}
+
+.sign-grid-item:disabled {
+  cursor: default;
+}
+
+.sign-grid-item.is-correct {
+  border-color: var(--success);
+  background: var(--success-light);
+}
+
+.sign-grid-item.is-wrong {
+  border-color: var(--danger);
+  background: var(--danger-light);
+}
+
+.sign-grid-item.is-muted {
+  opacity: 0.4;
+}
+
+/* ============================================================
+ * ÉCRANS DE FIN DE PARTIE
+ * ============================================================ */
+
+.result-card {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: clamp(28px, 5vh, 44px) clamp(20px, 5vw, 32px);
+  margin-top: clamp(16px, 3vh, 28px);
+  text-align: center;
+}
+
+.end-score {
+  font-size: clamp(2.2rem, 9vw, 3rem);
+  font-weight: 700;
+  color: var(--dark);
+  margin: 10px 0 6px;
+}
+
+/* ============================================================
+ * ÉCRAN COURS (tous les panneaux, par catégorie)
+ * ============================================================ */
+
+.course-header {
+  display: flex;
+  align-items: center;
+  margin: 1.4rem 0 1rem;
+}
+
+.course-title {
+  text-align: left;
+  margin-bottom: 0.6rem;
+}
+
+.course-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 1.4rem 0;
+}
+
+.course-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-chip {
+  padding: 6px 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--card-surface);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.filter-chip:hover:not(.is-active),
+.filter-chip:focus-visible {
+  border-color: var(--dark);
+  outline: none;
+}
+
+.filter-chip.is-active {
+  background: var(--dark);
+  color: var(--btn-fill-text);
+  border-color: var(--dark);
+  font-weight: 600;
+}
+
+.course-group {
+  margin-bottom: 2rem;
+}
+
+.course-group-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 0.9rem;
+}
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+}
+
+.course-item {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.course-item img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.course-item-meaning {
+  font-size: 0.82rem;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.course-item-code {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.course-empty {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 40px 0;
+}
+
+/* ============================================================
+ * RESPONSIVE
+ * ============================================================ */
+
+@media (max-width: 520px) {
+  .btn-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  /* .mode-grid est un grid, pas un flex : la règle précédente
+   * (flex-direction: column) était ignorée et la grille restait à
+   * 2 colonnes sur mobile. */
+  .mode-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+ * EASTER EGG — fenêtre vidéo (Konami code)
+ * ============================================================ */
+
+.egg-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.egg-modal[hidden] {
+  display: none;
+}
+
+.egg-box {
+  position: relative;
+  width: min(100%, 800px);
+}
+
+.egg-video {
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.egg-video iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.egg-close {
+  position: absolute;
+  top: -2.6rem;
+  right: 0;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--card-surface);
+  color: var(--text);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.egg-close:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+
+/* ============================================================
+ * DESIGN « ATELIER » — vue scindée : panneau latéral + scène
+ * ============================================================ */
+
+main#app {
+  max-width: none;
+  padding: 0;
+}
+
+/* Plus de barre du haut : logo et bouton de thème flottent en haut du
+ * panneau latéral. */
+#topbar {
+  padding: 0;
+  height: 0;
+}
+
+.logo {
+  position: fixed;
+  top: 28px;
+  left: 32px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.logo::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #d62a22;
+}
+
+.btn {
+  border-radius: 0.6rem;
+}
+
+/* ============================================================
+ * Mise en page : le bloc d'infos (ex-panneau latéral) passe en haut,
+ * pleine largeur, et le contenu du jeu s'affiche dessous.
+ * ============================================================ */
+
+.split {
+  --page-x: clamp(20px, 5vw, 48px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100dvh;
+}
+
+.split[hidden] {
+  display: none;
+}
+
+.logo {
+  left: clamp(20px, 5vw, 48px);
+  top: 24px;
+}
+
+.topbar-right {
+  position: fixed;
+  top: 20px;
+  right: clamp(16px, 4vw, 32px);
+  z-index: 5;
+}
+
+.side {
+  position: relative;
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+  padding: 68px var(--page-x) 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.side .title {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  line-height: 1.15;
+  text-align: left;
+  margin: 0;
+}
+
+.side .subtitle {
+  text-align: left;
+  margin: 0;
+  max-width: none;
+}
+
+.side .source-note {
+  margin: 0;
+  text-align: left;
+}
+
+.side-meta {
+  display: flex;
+  gap: 16px;
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.side .question-title {
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  line-height: 1.2;
+  text-align: left;
+  margin: 0;
+  max-width: 34ch;
+}
+
+/* « Panneau suivant » : à droite de l'en-tête, hors flux pour ne rien décaler. */
+.side .btn-next {
+  position: absolute;
+  right: var(--page-x);
+  bottom: 20px;
+  width: auto;
+  margin: 0;
+}
+
+#btnFindNext[hidden],
+#btnTextNext[hidden] {
+  display: none;
+}
+
+.stage {
+  min-width: 0;
+  padding: 24px var(--page-x);
+  overflow-y: auto;
+}
+
+#screen-home .stage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stage-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.stage .mode-category,
+.stage .course-link {
+  max-width: 760px;
+}
+
+.mode-card {
+  padding: 1.3rem;
+}
+
+.mode-card h3 {
+  font-size: 1.05rem;
+}
+
+.mode-card p {
+  font-size: 0.82rem;
+}
+
+/* Grille de « trouve le panneau » : sans boîte, tuiles à fine bordure. */
+.sign-grid {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  justify-content: start;
+  min-height: 160px;
+}
+
+.sign-grid-item {
+  background: var(--card-surface);
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+}
+
+.sign-grid-item.is-correct,
+.sign-grid-item.is-wrong {
+  border-width: 2px;
+}
+
+.stage-center .text-answer {
+  width: min(560px, 100%);
+}
+
+.text-answer-input {
+  border-radius: 999px;
+  padding: 14px 22px;
+}
+
+/* Écrans de fin et cours : colonne centrée. */
+#screen-end-find,
+#screen-end-text,
+#screen-course {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 76px 24px 40px;
+}
+
+@media (max-width: 800px) {
+  .split {
+    grid-template-rows: auto auto;
+    height: auto;
+  }
+  .side {
+    padding-top: 60px;
+    padding-bottom: 14px;
+    gap: 8px;
+  }
+  .side-meta {
+    font-size: 0.7rem;
+  }
+  .side .question-title {
+    font-size: 1.1rem;
+    line-height: 1.25;
+  }
+  /* Bouton « suivant » flottant en bas : ne décale plus rien. */
+  .side .btn-next {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    width: auto;
+    z-index: 6;
+  }
+  .stage {
+    padding: 20px;
+  }
+}
+
+.sign-frame {
+  border-radius: 1.6rem;
+}
+
+/* ============================================================
+ * Un seul défilement + contenu plus centré.
+ * La grille de panneaux ne défile plus toute seule (le max-height posé en
+ * JS par fitSignGrid est neutralisé) : c'est la zone de jeu qui défile.
+ * ============================================================ */
+
+.sign-grid {
+  max-height: none !important;
+  overflow: visible;
+  justify-content: center;
+}
+
+.sign-grid-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.side {
+  align-items: center;
+  text-align: center;
+}
+
+.side .title,
+.side .subtitle,
+.side .source-note,
+.side .question-title {
+  text-align: center;
+  margin-inline: auto;
+}
+
+.side .quiz-back {
+  align-self: flex-start;
+}
+
+.side-meta {
+  justify-content: center;
+}
+
+.stage .mode-category,
+.stage .course-link {
+  width: 100%;
+  margin-inline: auto;
+}
+
+@media (max-width: 800px) {
+  .side .btn-next {
+    margin: 0;
+  }
+}
+
+/* ============================================================
+ * En-tête compact : plus de logo, boutons Retour / thème plus gros,
+ * sur la même ligne que le compteur, question juste en dessous.
+ * ============================================================ */
+
+.logo {
+  display: none;
+}
+
+.side {
+  padding: 14px var(--page-x) 16px;
+  gap: 6px;
+}
+
+#screen-home .side {
+  padding-top: 68px;
+}
+
+.topbar-right {
+  top: 14px;
+  right: clamp(20px, 5vw, 48px);
+}
+
+.theme-toggle {
+  width: 46px;
+  height: 46px;
+}
+
+.theme-toggle svg {
+  width: 22px;
+  height: 22px;
+}
+
+.side .quiz-back {
+  position: absolute;
+  top: 14px;
+  left: var(--page-x);
+  min-height: 46px;
+  padding: 0 1.2rem;
+  font-size: 1.05rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.side-meta {
+  min-height: 46px;
+  align-items: center;
+}
+
+/* « Panneau suivant » : sur la ligne du haut, à gauche du bouton de thème. */
+.side .btn-next {
+  top: 14px;
+  bottom: auto;
+  right: calc(clamp(20px, 5vw, 48px) + 58px);
+  height: 46px;
+  padding-block: 0;
+}
+
+@media (max-width: 800px) {
+  .topbar-right {
+    top: 14px;
+    right: 16px;
+  }
+  .side {
+    padding: 14px 16px 12px;
+  }
+  #screen-home .side {
+    padding-top: 68px;
+  }
+  .side .quiz-back {
+    left: 16px;
+  }
+  .side .btn-next {
+    top: auto;
+    bottom: 16px;
+    right: 16px;
+    height: auto;
+    padding-block: revert;
+  }
+}
+
+/* ============================================================
+ * Écran cours : même structure que les quiz (bande en haut + zone qui défile).
+ * ============================================================ */
+
+#screen-course {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Le titre occupe la ligne des boutons Retour / thème. */
+#screen-course .side .title {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+}
+
+#screen-course .course-controls {
+  max-width: 1000px;
+  margin: 0 auto 1.4rem;
+}
+
+#screen-course .course-filters {
+  justify-content: center;
+}
+
+#screen-course .course-list,
+#screen-course .course-empty {
+  max-width: 1000px;
+  margin-inline: auto;
+}
+
+#screen-course .sign-loading {
+  text-align: center;
+}
+
+/* ============================================================
+ * Accueil : le titre remonte sur la ligne du bouton de thème
+ * (marges latérales pour ne jamais passer dessous).
+ * ============================================================ */
+
+#screen-home .side,
+#screen-home .side:first-child {
+  padding-top: 14px;
+}
+
+#screen-home .side .title {
+  width: 100%;
+  min-height: 46px;
+  margin: 0;
+  padding-inline: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+@media (max-width: 800px) {
+  #screen-home .side {
+    padding-top: 14px;
+  }
+}
+
+/* ============================================================
+ * Téléphone : Retour / thème sur une ligne, compteur et question
+ * en dessous (plus de chevauchement avec le bouton Retour).
+ * ============================================================ */
+
+@media (max-width: 800px) {
+  .side {
+    padding: 12px 16px 12px;
+  }
+  .topbar-right {
+    top: 12px;
+    right: 16px;
+  }
+  .theme-toggle {
+    width: 42px;
+    height: 42px;
+  }
+  .side .quiz-back {
+    top: 12px;
+    left: 16px;
+    min-height: 42px;
+    padding: 0 1rem;
+    font-size: 1rem;
+  }
+  .side-meta {
+    margin-top: 48px;
+    min-height: 0;
+    gap: 14px;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+  }
+  .side .question-title {
+    max-width: none;
+  }
+  /* Accueil et cours : le titre passe sous la ligne des boutons. */
+  #screen-home .side .title {
+    min-height: 42px;
+    padding-inline: 54px;
+  }
+  #screen-course .side .title {
+    margin-top: 48px;
+    min-height: 0;
+  }
+}
+
+/* ============================================================
+ * En-tête toujours visible + textes un peu plus gros.
+ * Sur ordinateur la zone de jeu défile déjà sous l'en-tête ; sur téléphone
+ * c'est la page qui défile, donc l'en-tête devient « sticky ».
+ * ============================================================ */
+
+.side .question-title {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.side-meta {
+  font-size: 0.85rem;
+}
+
+.side .subtitle {
+  font-size: 1.05rem;
+}
+
+#screen-course .side .title {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+@media (max-width: 800px) {
+  .side {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+  }
+  .side .question-title {
+    font-size: 1.35rem;
+    line-height: 1.25;
+  }
+  .side-meta {
+    font-size: 0.8rem;
+  }
+  #screen-home .side .title {
+    font-size: 1.5rem;
+  }
+  #screen-course .side .title {
+    font-size: 1.5rem;
+  }
+}
+
+/* ============================================================
+ * Téléphone : « Panneau suivant » en grand bouton pleine largeur en bas.
+ * (le `padding-block: revert` précédent effaçait le padding du bouton)
+ * ============================================================ */
+
+@media (max-width: 800px) {
+  .side .btn-next {
+    left: 16px;
+    right: auto;
+    bottom: 16px;
+    width: calc(100% - 32px);
+    height: 56px;
+    padding: 0 1.2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  }
+  /* Laisse la place du bouton sous la dernière ligne de panneaux. */
+  #screen-quiz-find .stage,
+  #screen-quiz-text .stage {
+    padding-bottom: 96px;
+  }
+}
+
+/* ============================================================
+ * Grille « Trouve le panneau » : prend toute la largeur disponible.
+ * Les colonnes s'étirent (1fr) au lieu d'avoir une taille fixe calculée en JS.
+ * ============================================================ */
+
+.sign-grid-wrap {
+  max-width: none;
+}
+
+.sign-grid {
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  grid-auto-rows: auto;
+  gap: 10px;
+  justify-content: stretch;
+}
+
+@media (max-width: 600px) {
+  .sign-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+}
+
+/* Plus de bande vide à droite : la page ne défile plus (c'est la zone de jeu
+ * qui défile), donc inutile de lui réserver la place d'une barre de défilement. */
+html {
+  scrollbar-gutter: auto;
+}
+
+/* ============================================================
+ * Grille « Trouve le panneau » : nombre de colonnes fixe (9 / 6 / 4)
+ * dans une zone centrée, pour des cases plus grandes.
+ * ============================================================ */
+
+.sign-grid-wrap {
+  max-width: 1400px;
+  margin-inline: auto;
+}
+
+.sign-grid {
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+}
+
+@media (max-width: 1000px) {
+  .sign-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .sign-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Largeur identique à l'ancienne grille (9 cases de ~141 px). */
+.sign-grid-wrap {
+  max-width: 1350px;
+}
+
+/* Largeur finale : 1100px, comme la version qui te plaisait. */
+.sign-grid-wrap {
+  max-width: 1100px;
+}
