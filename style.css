@@ -919,17 +919,16 @@ main#app {
   border-radius: 0.6rem;
 }
 
-/* Bouton de thème : en haut, à droite du logo (bord droit du panneau latéral). */
-.topbar-right {
-  position: fixed;
-  top: 20px;
-  left: calc(340px - 32px - 34px);
-  z-index: 5;
-}
+/* ============================================================
+ * Mise en page : le bloc d'infos (ex-panneau latéral) passe en haut,
+ * pleine largeur, et le contenu du jeu s'affiche dessous.
+ * ============================================================ */
 
 .split {
+  --page-x: clamp(20px, 5vw, 48px);
   display: grid;
-  grid-template-columns: 340px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
   height: 100dvh;
 }
 
@@ -937,19 +936,85 @@ main#app {
   display: none;
 }
 
+.logo {
+  left: clamp(20px, 5vw, 48px);
+  top: 24px;
+}
+
+.topbar-right {
+  position: fixed;
+  top: 20px;
+  right: clamp(16px, 4vw, 32px);
+  z-index: 5;
+}
+
 .side {
+  position: relative;
   background: var(--bg-alt);
-  border-right: 1px solid var(--border);
-  padding: 76px 32px 32px;
+  border-bottom: 1px solid var(--border);
+  padding: 68px var(--page-x) 20px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 14px;
+  gap: 10px;
+}
+
+.side .title {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  line-height: 1.15;
+  text-align: left;
+  margin: 0;
+}
+
+.side .subtitle {
+  text-align: left;
+  margin: 0;
+  max-width: none;
+}
+
+.side .source-note {
+  margin: 0;
+  text-align: left;
+}
+
+.side-meta {
+  display: flex;
+  gap: 16px;
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.side .question-title {
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  line-height: 1.2;
+  text-align: left;
+  margin: 0;
+  max-width: 34ch;
+}
+
+/* « Panneau suivant » : à droite de l'en-tête, hors flux pour ne rien décaler. */
+.side .btn-next {
+  position: absolute;
+  right: var(--page-x);
+  bottom: 20px;
+  width: auto;
+  margin: 0;
+}
+
+#btnFindNext[hidden],
+#btnTextNext[hidden] {
+  display: none;
 }
 
 .stage {
   min-width: 0;
-  padding: 24px 28px;
+  padding: 24px var(--page-x);
   overflow-y: auto;
 }
 
@@ -965,51 +1030,6 @@ main#app {
   align-items: center;
   justify-content: center;
   gap: 24px;
-}
-
-.side .title {
-  font-family: var(--serif);
-  font-size: clamp(1.8rem, 2.4vw, 2.2rem);
-  line-height: 1.15;
-  text-align: left;
-  margin: 8px 0 0;
-}
-
-.side .subtitle {
-  text-align: left;
-  margin: 0;
-  max-width: none;
-}
-
-.side .source-note {
-  margin-top: auto;
-  text-align: left;
-}
-
-.side-meta {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 28px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.side .question-title {
-  font-family: var(--serif);
-  font-size: clamp(1.5rem, 2.2vw, 2.1rem);
-  line-height: 1.15;
-  text-align: left;
-  margin: 0;
-}
-
-.side .btn-next {
-  margin-top: auto;
-  margin-bottom: 0;
-  width: 100%;
 }
 
 .stage .mode-category,
@@ -1069,32 +1089,17 @@ main#app {
 
 @media (max-width: 800px) {
   .split {
-    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
     height: auto;
   }
-  .topbar-right {
-    top: 20px;
-    right: 16px;
-    left: auto;
-  }
-  .logo {
-    left: 20px;
-    top: 24px;
-  }
   .side {
-    border-right: 0;
-    border-bottom: 1px solid var(--border);
-    padding: 60px 16px 14px;
+    padding-top: 60px;
+    padding-bottom: 14px;
     gap: 8px;
   }
-  .side .title {
-    margin-top: 4px;
-  }
   .side-meta {
-    margin-top: 2px;
     font-size: 0.7rem;
   }
-  /* Consigne compacte pour laisser la place aux panneaux. */
   .side .question-title {
     font-size: 1.1rem;
     line-height: 1.25;
@@ -1106,12 +1111,7 @@ main#app {
     right: 16px;
     bottom: 16px;
     width: auto;
-    margin: 0;
     z-index: 6;
-  }
-  #btnFindNext[hidden],
-  #btnTextNext[hidden] {
-    display: none;
   }
   .stage {
     padding: 20px;
@@ -1120,4 +1120,135 @@ main#app {
 
 .sign-frame {
   border-radius: 1.6rem;
+}
+
+/* ============================================================
+ * Un seul défilement + contenu plus centré.
+ * La grille de panneaux ne défile plus toute seule (le max-height posé en
+ * JS par fitSignGrid est neutralisé) : c'est la zone de jeu qui défile.
+ * ============================================================ */
+
+.sign-grid {
+  max-height: none !important;
+  overflow: visible;
+  justify-content: center;
+}
+
+.sign-grid-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.side {
+  align-items: center;
+  text-align: center;
+}
+
+.side .title,
+.side .subtitle,
+.side .source-note,
+.side .question-title {
+  text-align: center;
+  margin-inline: auto;
+}
+
+.side .quiz-back {
+  align-self: flex-start;
+}
+
+.side-meta {
+  justify-content: center;
+}
+
+.stage .mode-category,
+.stage .course-link {
+  width: 100%;
+  margin-inline: auto;
+}
+
+@media (max-width: 800px) {
+  .side .btn-next {
+    margin: 0;
+  }
+}
+
+/* ============================================================
+ * En-tête compact : plus de logo, boutons Retour / thème plus gros,
+ * sur la même ligne que le compteur, question juste en dessous.
+ * ============================================================ */
+
+.logo {
+  display: none;
+}
+
+.side {
+  padding: 14px var(--page-x) 16px;
+  gap: 6px;
+}
+
+#screen-home .side {
+  padding-top: 68px;
+}
+
+.topbar-right {
+  top: 14px;
+  right: clamp(20px, 5vw, 48px);
+}
+
+.theme-toggle {
+  width: 46px;
+  height: 46px;
+}
+
+.theme-toggle svg {
+  width: 22px;
+  height: 22px;
+}
+
+.side .quiz-back {
+  position: absolute;
+  top: 14px;
+  left: var(--page-x);
+  min-height: 46px;
+  padding: 0 1.2rem;
+  font-size: 1.05rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.side-meta {
+  min-height: 46px;
+  align-items: center;
+}
+
+/* « Panneau suivant » : sur la ligne du haut, à gauche du bouton de thème. */
+.side .btn-next {
+  top: 14px;
+  bottom: auto;
+  right: calc(clamp(20px, 5vw, 48px) + 58px);
+  height: 46px;
+  padding-block: 0;
+}
+
+@media (max-width: 800px) {
+  .topbar-right {
+    top: 14px;
+    right: 16px;
+  }
+  .side {
+    padding: 14px 16px 12px;
+  }
+  #screen-home .side {
+    padding-top: 68px;
+  }
+  .side .quiz-back {
+    left: 16px;
+  }
+  .side .btn-next {
+    top: auto;
+    bottom: 16px;
+    right: 16px;
+    height: auto;
+    padding-block: revert;
+  }
 }
