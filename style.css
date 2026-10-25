@@ -1252,3 +1252,40 @@ main#app {
     padding-block: revert;
   }
 }
+
+/* ============================================================
+ * Écran cours : même structure que les quiz (bande en haut + zone qui défile).
+ * ============================================================ */
+
+#screen-course {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Le titre occupe la ligne des boutons Retour / thème. */
+#screen-course .side .title {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+}
+
+#screen-course .course-controls {
+  max-width: 1000px;
+  margin: 0 auto 1.4rem;
+}
+
+#screen-course .course-filters {
+  justify-content: center;
+}
+
+#screen-course .course-list,
+#screen-course .course-empty {
+  max-width: 1000px;
+  margin-inline: auto;
+}
+
+#screen-course .sign-loading {
+  text-align: center;
+}
