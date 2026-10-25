@@ -1428,3 +1428,32 @@ main#app {
     padding-bottom: 96px;
   }
 }
+
+/* ============================================================
+ * Grille « Trouve le panneau » : prend toute la largeur disponible.
+ * Les colonnes s'étirent (1fr) au lieu d'avoir une taille fixe calculée en JS.
+ * ============================================================ */
+
+.sign-grid-wrap {
+  max-width: none;
+}
+
+.sign-grid {
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  grid-auto-rows: auto;
+  gap: 10px;
+  justify-content: stretch;
+}
+
+@media (max-width: 600px) {
+  .sign-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+}
+
+/* Plus de bande vide à droite : la page ne défile plus (c'est la zone de jeu
+ * qui défile), donc inutile de lui réserver la place d'une barre de défilement. */
+html {
+  scrollbar-gutter: auto;
+}
