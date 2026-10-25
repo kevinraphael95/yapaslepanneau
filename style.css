@@ -1404,3 +1404,27 @@ main#app {
     font-size: 1.5rem;
   }
 }
+
+/* ============================================================
+ * Téléphone : « Panneau suivant » en grand bouton pleine largeur en bas.
+ * (le `padding-block: revert` précédent effaçait le padding du bouton)
+ * ============================================================ */
+
+@media (max-width: 800px) {
+  .side .btn-next {
+    left: 16px;
+    right: auto;
+    bottom: 16px;
+    width: calc(100% - 32px);
+    height: 56px;
+    padding: 0 1.2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  }
+  /* Laisse la place du bouton sous la dernière ligne de panneaux. */
+  #screen-quiz-find .stage,
+  #screen-quiz-text .stage {
+    padding-bottom: 96px;
+  }
+}
