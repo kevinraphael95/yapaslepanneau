@@ -1289,3 +1289,118 @@ main#app {
 #screen-course .sign-loading {
   text-align: center;
 }
+
+/* ============================================================
+ * Accueil : le titre remonte sur la ligne du bouton de thème
+ * (marges latérales pour ne jamais passer dessous).
+ * ============================================================ */
+
+#screen-home .side,
+#screen-home .side:first-child {
+  padding-top: 14px;
+}
+
+#screen-home .side .title {
+  width: 100%;
+  min-height: 46px;
+  margin: 0;
+  padding-inline: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+@media (max-width: 800px) {
+  #screen-home .side {
+    padding-top: 14px;
+  }
+}
+
+/* ============================================================
+ * Téléphone : Retour / thème sur une ligne, compteur et question
+ * en dessous (plus de chevauchement avec le bouton Retour).
+ * ============================================================ */
+
+@media (max-width: 800px) {
+  .side {
+    padding: 12px 16px 12px;
+  }
+  .topbar-right {
+    top: 12px;
+    right: 16px;
+  }
+  .theme-toggle {
+    width: 42px;
+    height: 42px;
+  }
+  .side .quiz-back {
+    top: 12px;
+    left: 16px;
+    min-height: 42px;
+    padding: 0 1rem;
+    font-size: 1rem;
+  }
+  .side-meta {
+    margin-top: 48px;
+    min-height: 0;
+    gap: 14px;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+  }
+  .side .question-title {
+    max-width: none;
+  }
+  /* Accueil et cours : le titre passe sous la ligne des boutons. */
+  #screen-home .side .title {
+    min-height: 42px;
+    padding-inline: 54px;
+  }
+  #screen-course .side .title {
+    margin-top: 48px;
+    min-height: 0;
+  }
+}
+
+/* ============================================================
+ * En-tête toujours visible + textes un peu plus gros.
+ * Sur ordinateur la zone de jeu défile déjà sous l'en-tête ; sur téléphone
+ * c'est la page qui défile, donc l'en-tête devient « sticky ».
+ * ============================================================ */
+
+.side .question-title {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.side-meta {
+  font-size: 0.85rem;
+}
+
+.side .subtitle {
+  font-size: 1.05rem;
+}
+
+#screen-course .side .title {
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+@media (max-width: 800px) {
+  .side {
+    position: sticky;
+    top: 0;
+    z-index: 4;
+  }
+  .side .question-title {
+    font-size: 1.35rem;
+    line-height: 1.25;
+  }
+  .side-meta {
+    font-size: 0.8rem;
+  }
+  #screen-home .side .title {
+    font-size: 1.5rem;
+  }
+  #screen-course .side .title {
+    font-size: 1.5rem;
+  }
+}
