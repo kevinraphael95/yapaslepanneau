@@ -21,7 +21,7 @@ const SUN_ICON =
 
 const MOON_ICON = '<path fill="currentColor" d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z"/>';
 
-const THEME_COLOR = { light: "#ffffff", dark: "#111214" };
+const THEME_COLOR = { light: "#f4f5f7", dark: "#0e131b" };
 
 function getStoredTheme() {
   try {
