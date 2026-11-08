@@ -4,214 +4,234 @@
 <meta charset="UTF-8">
 <script>
   // Applique le thème avant le premier rendu pour éviter un flash blanc
-  // au chargement quand le thème sombre est actif (sinon la page peint en
-  // clair par défaut le temps que script.js s'exécute en fin de page).
+  // au chargement quand le thème sombre est actif.
   (function () {
     try {
       var stored = localStorage.getItem("panneaux-theme");
       var theme = stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
       document.documentElement.dataset.theme = theme;
       var meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute("content", theme === "dark" ? "#0e131b" : "#f4f5f7");
+      if (meta) meta.setAttribute("content", theme === "dark" ? "#0F1214" : "#EDEFF2");
     } catch (e) {}
   })();
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panneaux — Révise le code de la route</title>
-<meta name="description" content="Quiz gratuit pour réviser les panneaux de signalisation du code de la route français : trouve le panneau, trouve le nom (10 questions ou mode infini) et cours complet illustré.">
-<meta name="theme-color" content="#f4f5f7">
+<meta name="description" content="Quiz gratuit pour réviser les panneaux de signalisation du code de la route français : trouve le panneau, trouve le nom (10 questions ou mode infini) et liste des panneaux illustré.">
+<meta name="theme-color" content="#EDEFF2">
+<meta name="color-scheme" content="light dark">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Panneaux — Révise le code de la route">
-<meta property="og:description" content="Quiz gratuit pour réviser les panneaux du code de la route : trouve le panneau, trouve le nom, et cours complet illustré.">
+<meta property="og:description" content="Quiz gratuit pour réviser les panneaux du code de la route : trouve le panneau, trouve le nom, et liste des panneaux illustré.">
 <meta property="og:url" content="https://kevinraphael95.github.io/yapaslepanneau">
 <meta property="og:image" content="https://kevinraphael95.github.io/yapaslepanneau/favicon.svg">
 <meta property="og:image:alt" content="Panneau de signalisation français">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Panneaux — Révise le code de la route">
-<meta name="twitter:description" content="Quiz gratuit pour réviser les panneaux du code de la route : trouve le panneau, trouve le nom, et cours complet illustré.">
+<meta name="twitter:description" content="Quiz gratuit pour réviser les panneaux du code de la route : trouve le panneau, trouve le nom, et liste des panneaux illustré.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://commons.wikimedia.org">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<nav id="topbar">
-  <span class="logo">Révise les panneaux</span>
-  <div class="topbar-right">
-    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Basculer le thème clair / sombre" aria-pressed="false">
-      <svg id="themeIcon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"></svg>
-    </button>
+<header id="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="9" fill="#0A4CA3"/><rect x="3" y="3" width="34" height="34" rx="6" fill="none" stroke="#fff" stroke-width="2"/><path d="M20 10 31 29H9Z" fill="#fff" stroke="#C8102E" stroke-width="3" stroke-linejoin="round"/></svg>
+      <span class="logo">Révise les panneaux</span>
+    </div>
+    <nav class="nav" aria-label="Navigation">
+      <button type="button" id="navHome" class="is-on">Accueil</button>
+      <button type="button" id="navCourse">Cours</button>
+    </nav>
+    <div class="topbar-right">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Basculer le thème clair / sombre" aria-pressed="false">
+        <svg id="themeIcon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"></svg>
+      </button>
+    </div>
   </div>
-</nav>
+</header>
 
 <main id="app">
 
   <!-- ÉCRAN ACCUEIL -->
-  <section class="screen split" id="screen-home">
-    <aside class="side">
-      <h1 class="title">Connais-tu vraiment les panneaux de signalisation ?</h1>
-      <p class="subtitle">Révise la signalisation du code de la route.</p>
-      <p class="source-note">Illustrations des panneaux : Wikimedia Commons.</p>
-    </aside>
-
-    <div class="stage">
-      <div class="mode-category">
-        <h2 class="category-title">Trouve le panneau</h2>
-        <div class="mode-grid">
-          <button class="mode-card" id="btnStartFindShort" type="button">
-            <h3>10 panneaux</h3>
-            <p>La signification s'affiche, retrouve le panneau. Score sur 10.</p>
-          </button>
-          <button class="mode-card" id="btnStartFindInfinite" type="button">
-            <h3>Mode infini</h3>
-            <p>Enchaîne jusqu'à ta première erreur.</p>
-          </button>
-        </div>
+  <section class="screen" id="screen-home">
+    <div class="home">
+      <div class="home-text">
+        <h1 class="title">Connais-tu vraiment les panneaux ?</h1>
+        <p class="lead">Entraîne-toi sur la signalisation du code de la route : retrouve le panneau, devine son nom, ou parcours le liste des panneaux.</p>
+        <p class="home-records" id="homeRecords" hidden><i aria-hidden="true"></i><span id="homeRecordsText"></span></p>
       </div>
 
-      <div class="mode-category">
-        <h2 class="category-title">Trouve le nom</h2>
-        <div class="mode-grid">
-          <button class="mode-card" id="btnStartTextShort" type="button">
-            <h3>10 panneaux</h3>
-            <p>Le panneau s'affiche, tape sa signification. Score sur 10.</p>
-          </button>
-          <button class="mode-card" id="btnStartTextInfinite" type="button">
-            <h3>Mode infini</h3>
-            <p>Enchaîne jusqu'à ta première erreur.</p>
-          </button>
+      <div class="board"><div class="board-in">
+        <div class="board-row">
+          <div class="board-mini" aria-hidden="true">
+            <svg viewBox="0 0 100 100"><polygon points="30,3 70,3 97,30 97,70 70,97 30,97 3,70 3,30" fill="#fff"/><polygon points="31,8 69,8 92,31 92,69 69,92 31,92 8,69 8,31" fill="#C8102E"/><text x="50" y="62" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,Arial" font-weight="700" font-size="34" fill="#fff">STOP</text></svg>
+          </div>
+          <div>
+            <h2>Trouve le panneau</h2>
+            <p class="board-sub">La signification s’affiche, retrouve le panneau.</p>
+            <div class="opts">
+              <button class="opt" id="btnStartFindShort" type="button">10 panneaux</button>
+              <button class="opt" id="btnStartFindInfinite" type="button">Mode infini</button>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <button class="course-link" id="btnStartCourse" type="button">
-        <span>Cours — tous les panneaux</span>
-        <span class="course-link-arrow" aria-hidden="true">›</span>
-      </button>
+        <div class="board-row">
+          <div class="board-mini" aria-hidden="true">
+            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#C8102E"/><rect x="20" y="42" width="60" height="16" rx="2" fill="#fff"/></svg>
+          </div>
+          <div>
+            <h2>Trouve le nom</h2>
+            <p class="board-sub">Le panneau s’affiche, tape sa signification.</p>
+            <div class="opts">
+              <button class="opt" id="btnStartTextShort" type="button">10 panneaux</button>
+              <button class="opt" id="btnStartTextInfinite" type="button">Mode infini</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="board-row board-link" id="btnStartCourse" type="button">
+          <div class="board-mini" aria-hidden="true">
+            <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#0A4CA3" stroke="#fff" stroke-width="4"/><path d="M50 18 72 46H59V82H41V46H28Z" fill="#fff"/></svg>
+          </div>
+          <span class="board-link-in"><h2>liste des panneaux</h2><span class="board-go" aria-hidden="true">›</span></span>
+        </button>
+      </div></div>
     </div>
   </section>
 
-  <!-- ÉCRAN QUIZ INFINI TEXTE (panneau -> nom) -->
-  <section class="screen split" id="screen-quiz-text" hidden>
-    <aside class="side">
-      <button class="quiz-back" id="btnHomeFromQuizText" type="button">‹ Retour</button>
-      <p class="side-meta">
-        <span id="textQuestionCounter">Panneau 1</span>
-        <span class="quiz-score" id="textScoreCounter">Série : 0</span>
-      </p>
-      <h2 class="question-title">Quelle est la signification de ce panneau ?</h2>
-      <button class="btn btn-color-1 btn-next" id="btnTextNext" type="button" hidden>Panneau suivant</button>
-    </aside>
+  <!-- ÉCRAN QUIZ TEXTE (panneau -> nom) -->
+  <section class="screen" id="screen-quiz-text" hidden>
+    <div class="quiz-card">
+      <div class="quiz-top">
+        <button class="quiz-back" id="btnHomeFromQuizText" type="button">‹ Retour</button>
+        <div class="progress" id="textProgress" aria-hidden="true"></div>
+        <span class="quiz-score" id="textScoreCounter">Score : 0</span>
+      </div>
+      <p class="quiz-meta" id="textQuestionCounter">Panneau 1</p>
 
-    <div class="stage stage-center">
-      <div class="sign-stage">
-        <div class="sign-frame" id="textSignFrame">
-          <div class="sign-loading" id="textSignLoading">chargement…</div>
-          <img id="textSignImage" alt="Panneau à identifier" hidden draggable="false" decoding="async">
+      <div class="text-layout">
+        <div class="sign-stage">
+          <div class="sign-frame" id="textSignFrame">
+            <div class="sign-loading" id="textSignLoading">chargement…</div>
+            <img id="textSignImage" alt="Panneau à identifier" hidden draggable="false" decoding="async">
+          </div>
+        </div>
+
+        <div class="text-side">
+          <h2 class="question-title">Quelle est la signification de ce panneau ?</h2>
+
+          <div class="text-answer">
+            <input
+              type="text"
+              id="textAnswerInput"
+              class="text-answer-input"
+              placeholder="Tape la signification (3 lettres minimum)…"
+              autocomplete="off"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+              enterkeyhint="done"
+              aria-label="Signification du panneau"
+            >
+            <div class="text-suggestions" id="textSuggestions" hidden role="listbox"></div>
+          </div>
+
+          <p class="text-feedback" id="textFeedback" hidden aria-live="polite"></p>
+          <button class="btn btn-color-1 btn-next" id="btnTextNext" type="button" hidden>Panneau suivant</button>
         </div>
       </div>
-
-      <div class="text-answer">
-        <input
-          type="text"
-          id="textAnswerInput"
-          class="text-answer-input"
-          placeholder="Tape la signification…"
-          autocomplete="off"
-          autocapitalize="off"
-          autocorrect="off"
-          spellcheck="false"
-          enterkeyhint="done"
-          aria-label="Signification du panneau"
-        >
-        <div class="text-suggestions" id="textSuggestions" hidden role="listbox"></div>
-      </div>
-
-      <p class="text-feedback" id="textFeedback" hidden aria-live="polite"></p>
     </div>
   </section>
 
-  <!-- ÉCRAN FIN INFINI TEXTE -->
+  <!-- ÉCRAN FIN TEXTE -->
   <section class="screen" id="screen-end-text" hidden>
     <div class="result-card">
-      <h1 class="title" id="textEndTitle">Série terminée</h1>
       <p class="end-score" id="textEndScore" aria-live="polite">0 panneau</p>
-      <p class="subtitle" id="textEndComment"></p>
+      <h1 class="title" id="textEndTitle">Série terminée</h1>
+      <p class="lead" id="textEndComment"></p>
+      <div class="missed" id="textEndMissed" hidden></div>
       <div class="btn-container">
         <button class="btn btn-color-1" id="btnRetryText" type="button">Retenter</button>
-        <button class="btn btn-color-2" id="btnHomeFromEndText" type="button">Retour à l'accueil</button>
+        <button class="btn btn-color-2" id="btnHomeFromEndText" type="button">Retour à l’accueil</button>
       </div>
     </div>
   </section>
 
-  <!-- ÉCRAN QUIZ INFINI IMAGE (nom -> panneau) -->
-  <section class="screen split" id="screen-quiz-find" hidden>
-    <aside class="side">
-      <button class="quiz-back" id="btnHomeFromQuizFind" type="button">‹ Retour</button>
-      <p class="side-meta">
-        <span id="findQuestionCounter">Panneau 1</span>
-        <span class="quiz-score" id="findScoreCounter">Série : 0</span>
-      </p>
-      <h2 class="question-title" id="findPrompt" aria-live="polite">Retrouve le panneau…</h2>
-      <button class="btn btn-color-1 btn-next" id="btnFindNext" type="button" hidden>Panneau suivant</button>
-    </aside>
+  <!-- ÉCRAN QUIZ IMAGE (nom -> panneau) -->
+  <section class="screen" id="screen-quiz-find" hidden>
+    <div class="quiz-card quiz-card-wide">
+      <div class="quiz-top">
+        <button class="quiz-back" id="btnHomeFromQuizFind" type="button">‹ Retour</button>
+        <div class="progress" id="findProgress" aria-hidden="true"></div>
+        <span class="quiz-score" id="findScoreCounter">Score : 0</span>
+      </div>
+      <p class="quiz-meta" id="findQuestionCounter">Panneau 1</p>
 
-    <div class="stage">
+      <h2 class="question-title" id="findPrompt" aria-live="polite">Retrouve le panneau…</h2>
+
       <div class="sign-grid-wrap" id="findGridWrap">
         <p class="sign-loading" id="findGridLoading">Chargement des panneaux…</p>
         <div class="sign-grid" id="signGrid" hidden></div>
       </div>
     </div>
+
+    <button class="btn btn-color-1 btn-next" id="btnFindNext" type="button" hidden>Panneau suivant</button>
   </section>
 
-  <!-- ÉCRAN FIN INFINI IMAGE -->
+  <!-- ÉCRAN FIN IMAGE -->
   <section class="screen" id="screen-end-find" hidden>
     <div class="result-card">
-      <h1 class="title" id="findEndTitle">Série terminée</h1>
       <p class="end-score" id="findEndScore" aria-live="polite">0 panneau</p>
-      <p class="subtitle" id="findEndComment"></p>
+      <h1 class="title" id="findEndTitle">Série terminée</h1>
+      <p class="lead" id="findEndComment"></p>
+      <div class="missed" id="findEndMissed" hidden></div>
       <div class="btn-container">
         <button class="btn btn-color-1" id="btnRetryFind" type="button">Retenter</button>
-        <button class="btn btn-color-2" id="btnHomeFromEndFind" type="button">Retour à l'accueil</button>
+        <button class="btn btn-color-2" id="btnHomeFromEndFind" type="button">Retour à l’accueil</button>
       </div>
     </div>
   </section>
 
   <!-- ÉCRAN COURS : TOUS LES PANNEAUX -->
-  <section class="screen split" id="screen-course" hidden>
-    <aside class="side">
+  <section class="screen" id="screen-course" hidden>
+    <div class="course-header">
       <button class="quiz-back" id="btnHomeFromCourse" type="button">‹ Retour</button>
-      <h1 class="title course-title">Tous les panneaux</h1>
-      <p class="subtitle">Parcours les <strong id="courseCount">0</strong> panneaux illustrés, filtre par catégorie ou cherche une signification.</p>
-    </aside>
-
-    <div class="stage">
-      <div class="course-controls">
-        <input
-          type="text"
-          id="courseSearch"
-          class="text-answer-input"
-          placeholder="Rechercher une signification ou un code…"
-          autocomplete="off"
-          autocapitalize="off"
-          autocorrect="off"
-          spellcheck="false"
-          aria-label="Rechercher un panneau"
-        >
-        <div class="course-filters" id="courseFilters"></div>
-      </div>
-
-      <p class="sign-loading" id="courseLoading">Chargement des panneaux…</p>
-      <div class="course-list" id="courseList" hidden></div>
-      <p class="course-empty" id="courseEmpty" hidden>Aucun panneau ne correspond à ta recherche.</p>
     </div>
+    <h1 class="title course-title">Tous les panneaux</h1>
+    <p class="lead">Parcours les <strong id="courseCount">0</strong> panneaux illustrés, filtre par catégorie ou cherche une signification.</p>
+
+    <div class="course-controls">
+      <input
+        type="text"
+        id="courseSearch"
+        class="text-answer-input"
+        placeholder="Rechercher une signification ou un code…"
+        autocomplete="off"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
+        aria-label="Rechercher un panneau"
+      >
+      <div class="course-filters" id="courseFilters"></div>
+    </div>
+
+    <p class="sign-loading" id="courseLoading">Chargement des panneaux…</p>
+    <div class="course-list" id="courseList" hidden></div>
+    <p class="course-empty" id="courseEmpty" hidden>Aucun panneau ne correspond à ta recherche.</p>
   </section>
 
 </main>
+
+<footer id="footer">Illustrations des panneaux : Wikimedia Commons.</footer>
 
 <!-- Easter egg (Konami code) : l'iframe YouTube n'est créée qu'à l'ouverture,
      et détruite à la fermeture pour couper la vidéo. -->

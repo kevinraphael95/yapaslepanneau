@@ -21,7 +21,7 @@ const SUN_ICON =
 
 const MOON_ICON = '<path fill="currentColor" d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z"/>';
 
-const THEME_COLOR = { light: "#f4f5f7", dark: "#0e131b" };
+const THEME_COLOR = { light: "#edeff2", dark: "#0f1214" };
 
 function getStoredTheme() {
   try {
@@ -75,16 +75,6 @@ document.getElementById("themeToggle").addEventListener("click", (event) => {
 // Ici on refait le calcul complet (icône + ARIA + theme-color).
 applyTheme(getStoredTheme() || getSystemTheme());
 
-// Tant que l'utilisateur n'a pas choisi lui-même, le thème suit le système
-// en direct (changement de thème de l'OS ou du navigateur).
-try {
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-    if (!getStoredTheme()) applyTheme(getSystemTheme());
-  });
-} catch (err) {
-  /* anciens navigateurs : on ignore */
-}
-
 /* ============================================================
  * ÉCRANS
  * ============================================================ */
@@ -102,6 +92,13 @@ function showScreen(name) {
   Object.values(screens).forEach((el) => (el.hidden = true));
   screens[name].hidden = false;
   window.scrollTo(0, 0);
+
+  // Onglet actif dans la barre du haut + records sur l'accueil.
+  const navHome = document.getElementById("navHome");
+  const navCourse = document.getElementById("navCourse");
+  if (navHome) navHome.classList.toggle("is-on", name === "home");
+  if (navCourse) navCourse.classList.toggle("is-on", name === "course");
+  if (name === "home") refreshRecords();
 }
 
 // Tous les boutons « Retour à l'accueil » du jeu, en un seul endroit.
@@ -347,8 +344,39 @@ function headerLabels(st) {
 // Enregistre la réponse et décide si la partie s'arrête juste après.
 function applyAnswer(st, correct) {
   if (correct) st.score += 1;
+  (st.results = st.results || []).push(correct);
+  if (!correct && st.current) (st.missed = st.missed || []).push(st.current);
   const lastOfShort = st.mode === "short" && st.qIndex >= SHORT_TOTAL;
   st.forceEnd = lastOfShort || (st.mode === "infinite" && !correct);
+}
+
+// Barre de progression en 10 segments (mode 10 panneaux uniquement).
+function renderProgress(el, st) {
+  if (!el) return;
+  if (st.mode !== "short") {
+    el.hidden = true;
+    return;
+  }
+  el.hidden = false;
+  const results = st.results || [];
+  el.innerHTML = "";
+  for (let i = 0; i < SHORT_TOTAL; i++) {
+    const seg = document.createElement("i");
+    if (i < results.length) seg.className = results[i] ? "is-ok" : "is-bad";
+    else if (i === results.length) seg.className = "is-cur";
+    el.appendChild(seg);
+  }
+}
+
+// Records du mode infini, affichés sur l'accueil.
+function refreshRecords() {
+  const box = document.getElementById("homeRecords");
+  const text = document.getElementById("homeRecordsText");
+  if (!box || !text) return;
+  const f = getRecord(RECORD_KEYS.find);
+  const t = getRecord(RECORD_KEYS.text);
+  box.hidden = !(f || t);
+  text.textContent = `Tes records en mode infini : trouve le panneau ${f}, trouve le nom ${t}`;
 }
 
 function commentForScore(pct) {
@@ -358,7 +386,48 @@ function commentForScore(pct) {
   return "Ça mérite une bonne session de révision, retente ta chance.";
 }
 
+// Récap des panneaux ratés (dédoublonnés) en fin de partie.
+function renderMissed(box, missed) {
+  const unique = [...new Map(missed.map((m) => [m.code, m])).values()];
+  box.innerHTML = "";
+  box.hidden = unique.length === 0;
+  if (unique.length === 0) return;
+
+  const title = document.createElement("h3");
+  title.className = "course-group-title";
+  title.textContent = `À revoir (${unique.length})`;
+  box.appendChild(title);
+
+  const grid = document.createElement("div");
+  grid.className = "course-grid";
+  unique.forEach((sign) => {
+    const url = imageUrlCache.get(sign.code);
+    const cell = document.createElement("div");
+    cell.className = "course-item";
+    if (url) {
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = sign.meaning;
+      img.draggable = false;
+      cell.appendChild(img);
+    }
+    const meaning = document.createElement("span");
+    meaning.className = "course-item-meaning";
+    meaning.textContent = sign.meaning;
+    const code = document.createElement("span");
+    code.className = "course-item-code";
+    code.textContent = sign.code;
+    cell.appendChild(meaning);
+    cell.appendChild(code);
+    grid.appendChild(cell);
+  });
+  box.appendChild(grid);
+}
+
 function fillEndScreen(st, ids, recordKey) {
+  const missedBox = ids.missed && document.getElementById(ids.missed);
+  if (missedBox) renderMissed(missedBox, st.missed || []);
+
   const title = document.getElementById(ids.title);
   const score = document.getElementById(ids.score);
   const comment = document.getElementById(ids.comment);
@@ -410,32 +479,11 @@ const elFind = {
   counter: document.getElementById("findQuestionCounter"),
   score: document.getElementById("findScoreCounter"),
   btnNext: document.getElementById("btnFindNext"),
+  progress: document.getElementById("findProgress"),
 };
 
-/* ---------- Taille des cases adaptée à l'écran ---------- */
 
-// Taille de case lisible, calculée d'après la largeur disponible (nombre de
-// colonnes cible selon l'écran). La grille remplit la hauteur restante et
-// scrolle en interne : la page, elle, ne scrolle pas.
-function fitSignGrid() {
-  const grid = elFind.grid;
-  if (grid.hidden || grid.children.length === 0 || screens.quizFind.hidden) return;
 
-  const GAP = 10, PAD = 0, MIN = 64, MAX = 120;
-  const availW = grid.clientWidth - PAD * 2;
-  if (availW <= 0) return;
-
-  const cols = window.innerWidth < 600 ? 4 : window.innerWidth < 1000 ? 6 : 9;
-  const size = Math.max(MIN, Math.min(MAX, Math.floor((availW - GAP * (cols - 1)) / cols)));
-  grid.style.setProperty("--cell", size + "px");
-
-  const top = grid.getBoundingClientRect().top;
-  // Marge basse : bouton « Panneau suivant » + paddings de la page.
-  const maxH = Math.max(200, window.innerHeight - top - (window.innerWidth <= 800 ? 84 : 24));
-  grid.style.maxHeight = maxH + "px";
-}
-
-window.addEventListener("resize", fitSignGrid);
 
 // Construit la grille une seule fois, dans l'ordre de SIGNS. Les panneaux
 // sans image disponible sont simplement absents et ne seront jamais tirés.
@@ -475,7 +523,6 @@ async function buildSignGrid() {
 
   elFind.loading.hidden = true;
   elFind.grid.hidden = false;
-  fitSignGrid();
   // Une grille vide ou construite sur un chargement partiel sera reconstruite
   // au prochain lancement du mode.
   findState.gridBuilt = findState.pool.length > 0 && preloadOk;
@@ -484,6 +531,8 @@ async function buildSignGrid() {
 async function startFindGame(mode) {
   findState.mode = mode;
   findState.score = 0;
+  findState.results = [];
+  findState.missed = [];
   findState.qIndex = 0;
   findState.locked = false;
   findState.forceEnd = false;
@@ -499,7 +548,6 @@ async function startFindGame(mode) {
     return;
   }
 
-  fitSignGrid();
   findState.queue = shuffle(findState.pool);
   nextFindQuestion();
 }
@@ -522,6 +570,7 @@ function nextFindQuestion() {
   const labels = headerLabels(findState);
   elFind.counter.textContent = labels.counter;
   elFind.score.textContent = labels.score;
+  renderProgress(elFind.progress, findState);
   elFind.prompt.textContent = `Retrouve le panneau : ${sign.meaning}`;
 }
 
@@ -548,6 +597,7 @@ function handleFindAnswer(cell, sign) {
 
   applyAnswer(findState, isCorrect);
   elFind.score.textContent = headerLabels(findState).score;
+  renderProgress(elFind.progress, findState);
   elFind.btnNext.textContent = findState.forceEnd ? "Voir le résultat" : "Panneau suivant";
   elFind.btnNext.hidden = false;
   revealButton(elFind.btnNext);
@@ -556,7 +606,7 @@ function handleFindAnswer(cell, sign) {
 function endFind() {
   fillEndScreen(
     findState,
-    { title: "findEndTitle", score: "findEndScore", comment: "findEndComment" },
+    { title: "findEndTitle", score: "findEndScore", comment: "findEndComment", missed: "findEndMissed" },
     RECORD_KEYS.find
   );
   showScreen("endFind");
@@ -602,11 +652,14 @@ const elText = {
   suggestions: document.getElementById("textSuggestions"),
   feedback: document.getElementById("textFeedback"),
   btnNext: document.getElementById("btnTextNext"),
+  progress: document.getElementById("textProgress"),
 };
 
 function startTextGame(mode) {
   textState.mode = mode;
   textState.score = 0;
+  textState.results = [];
+  textState.missed = [];
   textState.qIndex = 0;
   textState.locked = false;
   textState.forceEnd = false;
@@ -654,6 +707,7 @@ async function nextTextQuestion() {
   const labels = headerLabels(textState);
   elText.counter.textContent = labels.counter;
   elText.score.textContent = labels.score;
+  renderProgress(elText.progress, textState);
 
   elText.loading.textContent = "chargement…";
   elText.image.hidden = true;
@@ -786,6 +840,7 @@ function submitTextAnswer(value) {
   elText.feedback.textContent = correct ? `Exact : ${meaning}` : `Raté. Réponse : ${meaning}`;
   elText.feedback.className = "text-feedback " + (correct ? "is-correct" : "is-wrong");
   elText.score.textContent = headerLabels(textState).score;
+  renderProgress(elText.progress, textState);
   elText.btnNext.textContent = textState.forceEnd ? "Voir le résultat" : "Panneau suivant";
   elText.btnNext.hidden = false;
   revealButton(elText.btnNext);
@@ -794,7 +849,7 @@ function submitTextAnswer(value) {
 function endText() {
   fillEndScreen(
     textState,
-    { title: "textEndTitle", score: "textEndScore", comment: "textEndComment" },
+    { title: "textEndTitle", score: "textEndScore", comment: "textEndComment", missed: "textEndMissed" },
     RECORD_KEYS.text
   );
   showScreen("endText");
@@ -987,6 +1042,12 @@ elCourse.search.addEventListener("input", () => {
 document.getElementById("btnStartCourse").addEventListener("click", async () => {
   showScreen("course");
   await buildCourseView();
+});
+
+// Barre du haut : mêmes destinations que les boutons de l'accueil.
+document.getElementById("navHome").addEventListener("click", () => showScreen("home"));
+document.getElementById("navCourse").addEventListener("click", () => {
+  document.getElementById("btnStartCourse").click();
 });
 
 /* ============================================================
