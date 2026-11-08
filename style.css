@@ -207,17 +207,6 @@ footer {
 .board-link:hover h2 { text-decoration: underline; text-underline-offset: 5px; }
 .board-go { margin-left: auto; font-size: 2rem; line-height: 1; }
 
-/* Reflet sur le panneau, une seule fois au chargement */
-.board::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.28) 50%, transparent 65%);
-  transform: translateX(-120%);
-  animation: sheen 1.6s 0.5s ease-out 1 forwards;
-  pointer-events: none;
-}
-@keyframes sheen { to { transform: translateX(120%); } }
 
 /* ============================================================
  * QUIZ (commun)
@@ -522,6 +511,5 @@ main#app:has(#screen-quiz-find:not([hidden])) { display: flex; flex-direction: c
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .board::after { display: none; }
   * { transition: none !important; }
 }
